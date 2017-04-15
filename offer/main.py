@@ -11,16 +11,12 @@ def main(screen):
     """Main process for the GUI handling."""
     # init the window
     w = view.OfferCurses()
-    curses.echo()
 
     # main loop for the curses modul
     while 1:
-        s = w.input(y=3, text='')
-        if s == "q":
+        s = w.input(y=26, x=83, text='huh? ', length=2)
+        if s == '':
             break
-        w.w.insertln()
-
-        w.output(s)
 
 
 def run():
