@@ -14,7 +14,8 @@ def main(screen):
 
     # main loop for the curses modul
     while 1:
-        s = w.input(y=26, x=83, text='huh? ', length=2)
+        w.output_table_line([1, 2, 3], col_widths=[10, 70, 30])
+        s = w.input(y=10, x=10)
         if s == '':
             break
 
