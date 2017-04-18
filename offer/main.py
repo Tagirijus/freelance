@@ -4,6 +4,10 @@ import npyscreen
 # from offer.entries import SimpleEntry
 
 
-def run():
-    """Execute the programm via curses.wrapper()."""
-    print('Testing ...')
+class OfferApp(npyscreen.NPSApp):
+    """Main app for the programm."""
+    def main(self):
+        F  = npyscreen.Form(name = "Welcome to Npyscreen",)
+        t  = F.add(npyscreen.TitleText, name = "Text:",)
+
+        F.edit()
