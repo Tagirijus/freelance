@@ -19,18 +19,18 @@ class BaseEntry(object):
         """Init the class."""
         self._title = str(title)
         self._comment = str(comment)
-        self._amount = Decimal(str(amount))
+        self._amount = Decimal('0.0')               # set default
+        self.set_amount(amount)                     # try to set arguments value
         self._time = time.to_timedelta(time_input)
-        self._price = round(Decimal(str(price)), 2)
+        self._price = Decimal('0.00')               # set default
+        self.set_price(price)                       # try to set arguments value
         self._id = str(uuid.uuid1())
 
-    @property
-    def comment(self):
+    def get_comment(self):
         """Get comment."""
         return self._comment
 
-    @comment.setter
-    def comment(self, value):
+    def set_comment(self, value):
         """Set comment."""
         try:
             # has to be convertable to string
@@ -39,13 +39,11 @@ class BaseEntry(object):
             # otherwise pass
             pass
 
-    @property
-    def title(self):
+    def get_title(self):
         """Get title."""
         return self._title
 
-    @title.setter
-    def title(self, value):
+    def set_title(self, value):
         """Set title."""
         try:
             # has to be convertable to string
@@ -54,13 +52,11 @@ class BaseEntry(object):
             # otherwise pass
             pass
 
-    @property
-    def amount(self):
+    def get_amount(self):
         """Get amount."""
         return self._amount
 
-    @amount.setter
-    def amount(self, value):
+    def set_amount(self, value):
         """Set amount."""
         # try to set a new amount
         try:
@@ -70,13 +66,11 @@ class BaseEntry(object):
             # otherwise don't do anything
             pass
 
-    @property
-    def time(self):
+    def get_time(self):
         """Get time."""
         return self._time
 
-    @time.setter
-    def time(self, value):
+    def set_time(self, value):
         """Set time."""
         self._time = time.to_timedelta(value)
 
@@ -84,13 +78,11 @@ class BaseEntry(object):
         """Get hours as decimal."""
         return time.get_decimal_hours_from_timedelta(self._time)
 
-    @property
-    def price(self):
+    def get_price(self):
         """Get price."""
         return self._price
 
-    @price.setter
-    def price(self, value):
+    def set_price(self, value):
         """Set price."""
         # try to set a new price
         try:
@@ -100,35 +92,56 @@ class BaseEntry(object):
             # otherwise don't do anything
             pass
 
-    @property
-    def id(self):
+    def get_id(self):
         """Get id."""
         return self._id
-
-    @id.setter
-    def id(self, value):
-        """Do not set the id, if user tries to."""
-        pass
 
 
 class ModEntry(BaseEntry):
     """Entry for modulating respecting other entries."""
 
-    def __init__(self, title='Mod entry'):
+    def __init__(
+        self,
+        title='Mod entry',
+        is_time=True,
+        multiplicator=1.0
+    ):
         """Initialize the class."""
         super(ModEntry, self).__init__()
-        self._connected = []
         self._title = str(title)
+        self._connected = []
+        self._is_time = bool(is_time)
+        self._multiplicator = Decimal('1.0')  # set default
+        self.set_multiplicator(multiplicator)  # try to set arguments value
 
-    @property
-    def connected(self):
-        """Get connected value."""
+    def get_multiplicator(self):
+        """Get multiplicator."""
+        return self._multiplicator
+
+    def set_multiplicator(self, value):
+        """Set multiplicator."""
+        # try to set a new multiplicator
+        try:
+            # only works, if input is integer, float or string
+            self._multiplicator = Decimal(str(value))
+        except Exception:
+            # otherwise don't do anything
+            pass
+
+    def is_time(self, set_it=None):
+        """Get or set is_time value."""
+        if set_it == None:
+            # set_it not set, so show me the value
+            return self._is_time
+        else:
+            # parameter given, set the value
+            self._is_time = bool(set_it)
+            # and return it afterwards
+            return self._is_time
+
+    def get_connected(self):
+        """Get connected list."""
         return self._connected
-
-    @connected.setter
-    def connected(self, value):
-        """Do not set the connected value."""
-        pass
 
     def connect_entry(self, entry_id):
         """Append to the self._connected list."""

@@ -13,4 +13,4 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
 def main():
     """Run the programm."""
     a = ModEntry()
-    print(a)
+    print(a.is_time())
