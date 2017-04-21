@@ -1,4 +1,9 @@
-"""Time calculation module."""
+"""
+Time calculation module.
+
+Neede, since timdelta has no strftime() function, neither hs the time module
+from datetime. So I wrote my own 'little parser'.
+"""
 
 from datetime import timedelta
 from decimal import Decimal

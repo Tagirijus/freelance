@@ -12,5 +12,4 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
 def main():
     """Run the programm."""
     a = BaseEntry()
-    a.time = '0:00:20'
-    print(a.get_hours())
+    print(a)
