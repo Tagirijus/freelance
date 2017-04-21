@@ -109,3 +109,32 @@ class BaseEntry(object):
     def id(self, value):
         """Do not set the id, if user tries to."""
         pass
+
+
+class ModEntry(BaseEntry):
+    """Entry for modulating respecting other entries."""
+
+    def __init__(self, title='Mod entry'):
+        """Initialize the class."""
+        super(ModEntry, self).__init__()
+        self._connected = []
+        self._title = str(title)
+
+    @property
+    def connected(self):
+        """Get connected value."""
+        return self._connected
+
+    @connected.setter
+    def connected(self, value):
+        """Do not set the connected value."""
+        pass
+
+    def connect_entry(self, entry_id):
+        """Append to the self._connected list."""
+        self._connected.append(str(entry_id))
+
+    def disconnect_entry(self, entry_id):
+        """Delete the entry_id from the self._connected list."""
+        if str(entry_id) in self._connected:
+            self._connected.pop(self._connected.index(str(entry_id)))

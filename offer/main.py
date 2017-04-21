@@ -1,6 +1,7 @@
 """The main programm is executed here."""
 
 from offer.entries import BaseEntry
+from offer.entries import ModEntry
 import os
 
 
@@ -11,5 +12,5 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
 
 def main():
     """Run the programm."""
-    a = BaseEntry()
+    a = ModEntry()
     print(a)
