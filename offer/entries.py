@@ -409,3 +409,24 @@ class ConnectEntry(BaseEntry):
             entry_id=entry_id,
             disconnect=True
         )
+
+
+def move_entry(entry_list=None, entry_index=None, index=None):
+    """Move an entry with entry_id in entry_list up/down."""
+    if entry_list is None or entry_index is None or index is None:
+        print('BREAK')
+        return
+
+    # calculate new index: move up (index == 1) or down (index == -1)
+    new_index = entry_index + index
+
+    # put at beginning, if it's at the end and it's moved up
+    if new_index >= len(entry_list):
+        new_index = 0
+
+    # put at the end, if it's at the beginning and moved down
+    if new_index < 0:
+        new_index = len(entry_list) - 1
+
+    # move it!
+    entry_list.insert(new_index, entry_list.pop(entry_index))
