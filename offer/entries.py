@@ -46,12 +46,7 @@ class BaseEntry(object):
 
     def set_title(self, value):
         """Set title."""
-        try:
-            # has to be convertable to string
-            self._title = str(value)
-        except Exception:
-            # otherwise pass
-            pass
+        self._title = str(value)
 
     def get_amount(self):
         """Get amount."""
@@ -104,6 +99,62 @@ class BaseEntry(object):
         return self._connected
 
 
+class MultiplyEntry(BaseEntry):
+    """
+    A multiplying entry.
+
+    This entry type is similar to the BaseEntry, except that
+    it calculates the time according to a given hour_rate value.
+    The class has a new value "hour_rate" which will be multiplicated
+    by the amount and thus calculates the time.
+    """
+
+    def __init__(
+        self,
+        title='Multiply entry',
+        comment='',
+        amount=1.0,
+        hour_rate=1.0
+    ):
+        """Initialize the class."""
+        super(MultiplyEntry, self).__init__()
+        self._title = str(title)
+        self._comment = str(comment)
+        self._amount = Decimal('0.0')               # set default
+        self.set_amount(amount)                     # try to set arguments value
+        self._hour_rate = time_module.to_timedelta(hour_rate)
+
+    def get_time(self, *args, **kwargs):
+        """Get own amount * own hour as time."""
+        return float(self.get_amount()) * self.get_hour_rate()
+
+    def set_time(self, value):
+        """Disable the function."""
+        pass
+
+    def get_hours(self, *args, **kwargs):
+        """Get hours as decimal."""
+        return time_module.get_decimal_hours_from_timedelta(
+            self.get_time()
+        )
+
+    def get_price(self, wage=Decimal('0.00'), *args, **kwargs):
+        """Get own time * wage as price."""
+        return round(self.get_hours() * wage, 2)
+
+    def set_price(self, value):
+        """Disable function."""
+        pass
+
+    def get_hour_rate(self):
+        """Get hour_rate."""
+        return self._hour_rate
+
+    def set_hour_rate(self, value):
+        """Set hour_rate."""
+        self._hour_rate = time_module.to_timedelta(value)
+
+
 class ConnectEntry(BaseEntry):
     """
     This entry type can connect to other entries.
@@ -126,13 +177,13 @@ class ConnectEntry(BaseEntry):
         super(ConnectEntry, self).__init__()
         self._title = str(title)
         self._comment = str(comment)
-        self._amount = Decimal('0.0')               # set default
-        self.set_amount(amount)                     # try to set arguments value
+        self._amount = Decimal('0.0')           # set default
+        self.set_amount(amount)                 # try to set arguments value
         self._is_time = bool(is_time)
-        self._multiplicator = Decimal('1.0')  # set default
-        self.set_multiplicator(multiplicator)  # try to set arguments value
+        self._multiplicator = Decimal('1.0')    # set default
+        self.set_multiplicator(multiplicator)   # try to set arguments value
 
-    def get_time(self, entry_list=None):
+    def get_time(self, entry_list=None, *args, **kwargs):
         """
         Get time according to entry_list or zero.
 
@@ -163,6 +214,10 @@ class ConnectEntry(BaseEntry):
             # return the result
             return out * float(self.get_amount())
 
+    def set_time(self, value):
+        """Disable the function."""
+        pass
+
     def get_hours(self, entry_list=None):
         """Get hours as decimal."""
         if type(entry_list) is None:
@@ -171,10 +226,6 @@ class ConnectEntry(BaseEntry):
             return time_module.get_decimal_hours_from_timedelta(
                 self.get_time(entry_list=entry_list)
             )
-
-    def set_time(self, value):
-        """Disable the function."""
-        pass
 
     def get_price(self, entry_list=None, wage=Decimal('0.00')):
         """
@@ -277,65 +328,3 @@ class ConnectEntry(BaseEntry):
             entry_id=entry_id,
             disconnect=True
         )
-
-
-class MultiplyEntry(BaseEntry):
-    """
-    A multiplying entry.
-
-    This entry type is similar to the BaseEntry, except that
-    it calculates the time according to a given hour_rate value.
-    The class has a new value "hour_rate" which will be multiplicated
-    by the amount and thus calculates the time.
-    """
-
-    def __init__(
-        self,
-        title='Multiply entry',
-        comment='',
-        amount=1.0,
-        hour_rate=1.0
-    ):
-        """Initialize the class."""
-        super(MultiplyEntry, self).__init__()
-        self._title = str(title)
-        self._comment = str(comment)
-        self._amount = Decimal('0.0')               # set default
-        self.set_amount(amount)                     # try to set arguments value
-        self._hour_rate = time_module.to_timedelta(hour_rate)
-
-    def get_time(self, *args, **kwargs):
-        """Get own amount * own hour as time."""
-        return float(self.get_amount()) * self.get_hour_rate()
-
-    def set_time(self, value):
-        """Disable the function."""
-        pass
-
-    def get_hours(self, *args, **kwargs):
-        """Get hours as decimal."""
-        return time_module.get_decimal_hours_from_timedelta(
-            self.get_time()
-        )
-
-    def get_price(self, wage=Decimal('0.00'), *args, **kwargs):
-        """Get own time * wage as price."""
-        return round(self.get_hours() * wage, 2)
-
-    def set_price(self, value):
-        """Disable function."""
-        pass
-
-    def get_hour_rate(self):
-        """Get hour_rate."""
-        return self._hour_rate
-
-    def set_hour_rate(self, value):
-        """Set hour_rate."""
-        # try to set a new hour_rate
-        try:
-            # only works, if input is integer, float or string
-            self._hour_rate = Decimal(str(value))
-        except Exception:
-            # otherwise don't do anything
-            pass
