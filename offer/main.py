@@ -30,5 +30,5 @@ def main():
     b = ConnectEntry()
 
     print(a.to_json())
-    b.from_json(a.to_json())
+    b = b.from_json(a.to_json())
     print(b.to_json())

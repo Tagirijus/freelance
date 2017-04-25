@@ -158,7 +158,7 @@ def test_json_conversion_baseentry():
     assert b.get_price() != a.get_price()
 
     # load a into b with json
-    b.from_json(a.to_json())
+    b = BaseEntry().from_json(a.to_json())
 
     # now the values must be the same
     assert b.get_title() == a.get_title()
@@ -190,7 +190,7 @@ def test_json_conversion_multiplyentry():
     assert b.get_hour_rate() != a.get_hour_rate()
 
     # load a into b with json
-    b.from_json(a.to_json())
+    b = MultiplyEntry().from_json(a.to_json())
 
     # now the values must be the same
     assert b.get_title() == a.get_title()
@@ -226,7 +226,7 @@ def test_json_conversion_connectentry():
     assert b.get_connected() != a.get_connected()
 
     # load a into b with json
-    b.from_json(a.to_json())
+    b = ConnectEntry().from_json(a.to_json())
 
     # now the values must be the same
     assert b.get_title() == a.get_title()

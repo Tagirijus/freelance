@@ -11,23 +11,27 @@ class BaseEntry(object):
 
     def __init__(
         self,
-        title='Base entry',
+        id=None,
+        title='',
         comment='',
-        amount=1.0,
-        amount_format='{d}',
+        amount=0.0,
+        amount_format='',
         time=0.0,
-        price=0.00
+        price=0.0
     ):
         """Init the class."""
+        if id is None:
+            self._id = str(uuid.uuid1())
+        else:
+            self._id = str(id)
         self._title = str(title)
         self._comment = str(comment)
         self._amount = Decimal('0.0')               # set Default
         self.set_amount(amount)                     # try to set arguments value
         self._amount_format = str(amount_format)
         self._time = time_module.to_timedelta(time)
-        self._price = Decimal('0.00')               # set default
+        self._price = Decimal('0.0')                # set default
         self.set_price(price)                       # try to set arguments value
-        self._id = str(uuid.uuid1())
         self._connected = set()
 
     def set_title(self, value):
@@ -187,7 +191,8 @@ class BaseEntry(object):
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
 
-    def from_json(self, js=None):
+    @classmethod
+    def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
             return
@@ -199,30 +204,56 @@ class BaseEntry(object):
             # do not load it
             return
 
-        # load stuff into object, if it exists
-        #   object will have default value, if json does not hold it
-        #   (in case the loaded file is older nad new features were added)
-        # FIXME: function possible with iterations?
+        # create new entry object from json
+        if preset_loading:
+            id = None
+        else:
+            if 'id' in js.keys():
+                id = js['id']
+            else:
+                id = None
+
         if 'title' in js.keys():
-            self.set_title(js['title'])
+            title = js['title']
+        else:
+            title = ''
 
         if 'comment' in js.keys():
-            self.set_comment(js['comment'])
+            comment = js['comment']
+        else:
+            comment = ''
 
         if 'amount' in js.keys():
-            self.set_amount(js['amount'])
+            amount = js['amount']
+        else:
+            amount = 0.0
 
         if 'amount_format' in js.keys():
-            self.set_amount_format(js['amount_format'])
-
-        if 'id' in js.keys():
-            self._id = js['id']
+            amount_format = js['amount_format']
+        else:
+            amount_format = ''
 
         if 'time' in js.keys():
-            self.set_time(js['time'])
+            time = js['time']
+        else:
+            time = 0.0
 
         if 'price' in js.keys():
-            self.set_price(js['price'])
+            price = js['price']
+        else:
+            price = 0.0
+
+        out = cls(
+            id=id,
+            title=title,
+            comment=comment,
+            amount=amount,
+            amount_format=amount_format,
+            time=time,
+            price=price
+        )
+
+        return out
 
 
 class MultiplyEntry(BaseEntry):
@@ -237,15 +268,17 @@ class MultiplyEntry(BaseEntry):
 
     def __init__(
         self,
-        title='Multiply entry',
+        id=None,
+        title='',
         comment='',
-        amount=1.0,
-        amount_format='{d}',
-        hour_rate=1.0
+        amount=0.0,
+        amount_format='',
+        hour_rate=0.0
     ):
         """Initialize the class."""
         # values of the BaseEntry class
         super(MultiplyEntry, self).__init__(
+            id=id,
             title=title,
             comment=comment,
             amount=amount,
@@ -303,7 +336,8 @@ class MultiplyEntry(BaseEntry):
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
 
-    def from_json(self, js=None):
+    @classmethod
+    def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
             return
@@ -315,27 +349,50 @@ class MultiplyEntry(BaseEntry):
             # do not load it
             return
 
-        # load stuff into object, if it exists
-        #   object will have default value, if json does not hold it
-        #   (in case the loaded file is older nad new features were added)
-        # FIXME: function possible with iterations?
+        # create new entry object from json
+        if preset_loading:
+            id = None
+        else:
+            if 'id' in js.keys():
+                id = js['id']
+            else:
+                id = None
+
         if 'title' in js.keys():
-            self.set_title(js['title'])
+            title = js['title']
+        else:
+            title = ''
 
         if 'comment' in js.keys():
-            self.set_comment(js['comment'])
+            comment = js['comment']
+        else:
+            comment = ''
 
         if 'amount' in js.keys():
-            self.set_amount(js['amount'])
+            amount = js['amount']
+        else:
+            amount = 0.0
 
         if 'amount_format' in js.keys():
-            self.set_amount_format(js['amount_format'])
-
-        if 'id' in js.keys():
-            self._id = js['id']
+            amount_format = js['amount_format']
+        else:
+            amount_format = ''
 
         if 'hour_rate' in js.keys():
-            self.set_hour_rate(js['hour_rate'])
+            hour_rate = js['hour_rate']
+        else:
+            hour_rate = 0.0
+
+        out = cls(
+            id=id,
+            title=title,
+            comment=comment,
+            amount=amount,
+            amount_format=amount_format,
+            hour_rate=hour_rate
+        )
+
+        return out
 
 
 class ConnectEntry(BaseEntry):
@@ -350,16 +407,18 @@ class ConnectEntry(BaseEntry):
 
     def __init__(
         self,
-        title='Connect entry',
+        id=None,
+        title='',
         comment='',
-        amount=1.0,
-        amount_format='{d}',
+        amount=0.0,
+        amount_format='',
         is_time=True,
-        multiplicator=1.0
+        multiplicator=0.0
     ):
         """Initialize the class."""
         # values of the BaseEntry class
         super(ConnectEntry, self).__init__(
+            id=id,
             title=title,
             comment=comment,
             amount=amount,
@@ -368,7 +427,7 @@ class ConnectEntry(BaseEntry):
 
         # new values for this class
         self._is_time = bool(is_time)
-        self._multiplicator = Decimal('1.0')    # set default
+        self._multiplicator = Decimal('0.0')    # set default
         self.set_multiplicator(multiplicator)   # try to set arguments value
 
     def set_time(self, value):
@@ -535,7 +594,8 @@ class ConnectEntry(BaseEntry):
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
 
-    def from_json(self, js=None):
+    @classmethod
+    def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
             return
@@ -547,33 +607,59 @@ class ConnectEntry(BaseEntry):
             # do not load it
             return
 
-        # load stuff into object, if it exists
-        #   object will have default value, if json does not hold it
-        #   (in case the loaded file is older nad new features were added)
-        # FIXME: function possible with iterations?
+        # create new entry object from json
+        if preset_loading:
+            id = None
+        else:
+            if 'id' in js.keys():
+                id = js['id']
+            else:
+                id = None
+
         if 'title' in js.keys():
-            self.set_title(js['title'])
+            title = js['title']
+        else:
+            title = ''
 
         if 'comment' in js.keys():
-            self.set_comment(js['comment'])
+            comment = js['comment']
+        else:
+            comment = ''
 
         if 'amount' in js.keys():
-            self.set_amount(js['amount'])
+            amount = js['amount']
+        else:
+            amount = 0.0
 
         if 'amount_format' in js.keys():
-            self.set_amount_format(js['amount_format'])
-
-        if 'id' in js.keys():
-            self._id = js['id']
+            amount_format = js['amount_format']
+        else:
+            amount_format = ''
 
         if 'is_time' in js.keys():
-            self.set_is_time(js['is_time'])
+            is_time = js['is_time']
+        else:
+            is_time = True
 
         if 'multiplicator' in js.keys():
-            self.set_multiplicator(js['multiplicator'])
+            multiplicator = js['multiplicator']
+        else:
+            multiplicator = 0.0
+
+        out = cls(
+            id=id,
+            title=title,
+            comment=comment,
+            amount=amount,
+            amount_format=amount_format,
+            is_time=is_time,
+            multiplicator=multiplicator
+        )
 
         if 'connected' in js.keys():
-            self._connected = set(js['connected'])
+            out._connected = set(js['connected'])
+
+        return out
 
 
 def move_entry(entry_list=None, entry_index=None, index=None):
@@ -594,6 +680,3 @@ def move_entry(entry_list=None, entry_index=None, index=None):
 
     # move it!
     entry_list.insert(new_index, entry_list.pop(entry_index))
-
-# TODO
-# - to_json() mit Typ abspeichern
