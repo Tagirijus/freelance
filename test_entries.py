@@ -133,3 +133,106 @@ def test_integrety_entry():
         entry_list=entries,
         wage=wage
         ) == Decimal('112.50')
+
+def test_json_conversion_baseentry():
+    """Test the json conversion."""
+    # init the individual object
+    a = BaseEntry(
+        title='Total individual',
+        comment='Individual comment!',
+        amount=1.25,
+        amount_format='{M}:{S} min',
+        time='1:45',
+        price=1000
+    )
+
+    # make new default object
+    b = BaseEntry()
+
+    # for now the values must not be the same
+    assert b.get_title() != a.get_title()
+    assert b.get_comment() != a.get_comment()
+    assert b.get_amount() != a.get_amount()
+    assert b.get_amount_format() != a.get_amount_format()
+    assert b.get_time() != a.get_time()
+    assert b.get_price() != a.get_price()
+
+    # load a into b with json
+    b.from_json(a.to_json())
+
+    # now the values must be the same
+    assert b.get_title() == a.get_title()
+    assert b.get_comment() == a.get_comment()
+    assert b.get_amount() == a.get_amount()
+    assert b.get_amount_format() == a.get_amount_format()
+    assert b.get_time() == a.get_time()
+    assert b.get_price() == a.get_price()
+
+def test_json_conversion_multiplyentry():
+    """Test the json conversion."""
+    # init the individual object
+    a = MultiplyEntry(
+        title='Total individual',
+        comment='Individual comment!',
+        amount=1.25,
+        amount_format='{M}:{S} min',
+        hour_rate=0.75
+    )
+
+    # make new default object
+    b = MultiplyEntry()
+
+    # for now the values must not be the same
+    assert b.get_title() != a.get_title()
+    assert b.get_comment() != a.get_comment()
+    assert b.get_amount() != a.get_amount()
+    assert b.get_amount_format() != a.get_amount_format()
+    assert b.get_hour_rate() != a.get_hour_rate()
+
+    # load a into b with json
+    b.from_json(a.to_json())
+
+    # now the values must be the same
+    assert b.get_title() == a.get_title()
+    assert b.get_comment() == a.get_comment()
+    assert b.get_amount() == a.get_amount()
+    assert b.get_amount_format() == a.get_amount_format()
+    assert b.get_hour_rate() == a.get_hour_rate()
+
+def test_json_conversion_connectentry():
+    """Test the json conversion."""
+    # init the individual object
+    a = ConnectEntry(
+        title='Total individual',
+        comment='Individual comment!',
+        amount=1.23,
+        amount_format='{M}:{S} min',
+        is_time=False,
+        multiplicator=9.99
+    )
+    c = BaseEntry()
+    a.connect_entry([a, c], c.get_id())
+
+    # make new default object
+    b = ConnectEntry()
+
+    # for now the values must not be the same
+    assert b.get_title() != a.get_title()
+    assert b.get_comment() != a.get_comment()
+    assert b.get_amount() != a.get_amount()
+    assert b.get_amount_format() != a.get_amount_format()
+    assert b.get_is_time() != a.get_is_time()
+    assert b.get_multiplicator() != a.get_multiplicator()
+    assert b.get_connected() != a.get_connected()
+
+    # load a into b with json
+    b.from_json(a.to_json())
+
+    # now the values must be the same
+    assert b.get_title() == a.get_title()
+    assert b.get_comment() == a.get_comment()
+    assert b.get_amount() == a.get_amount()
+    assert b.get_amount_format() == a.get_amount_format()
+    assert b.get_is_time() == a.get_is_time()
+    assert b.get_multiplicator() == a.get_multiplicator()
+    assert b.get_connected() == a.get_connected()

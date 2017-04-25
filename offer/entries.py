@@ -1,6 +1,7 @@
 """The classes for entries."""
 
 from decimal import Decimal
+import json
 from offer import time as time_module
 import uuid
 
@@ -169,6 +170,59 @@ class BaseEntry(object):
         """Get connected list."""
         return self._connected
 
+    def to_json(self, indent=2):
+        """Convert all data to json format."""
+        out = {}
+
+        # fetch all important data for this entry type
+        out['title'] = self.get_title()
+        out['comment'] = self.get_comment()
+        out['amount'] = float(self.get_amount())
+        out['amount_format'] = self.get_amount_format()
+        out['id'] = self.get_id()
+        out['time'] = float(self.get_hours())
+        out['price'] = float(self.get_price())
+
+        # return the json
+        return json.dumps(out, indent=indent, sort_keys=True)
+
+    def from_json(self, js=None):
+        """Convert all data from json format."""
+        if js is None:
+            return
+
+        # get js as dict
+        try:
+            js = json.loads(js)
+        except Exception:
+            # do not load it
+            return
+
+        # load stuff into object, if it exists
+        #   object will have default value, if json does not hold it
+        #   (in case the loaded file is older nad new features were added)
+        # FIXME: function possible with iterations?
+        if 'title' in js.keys():
+            self.set_title(js['title'])
+
+        if 'comment' in js.keys():
+            self.set_comment(js['comment'])
+
+        if 'amount' in js.keys():
+            self.set_amount(js['amount'])
+
+        if 'amount_format' in js.keys():
+            self.set_amount_format(js['amount_format'])
+
+        if 'id' in js.keys():
+            self._id = js['id']
+
+        if 'time' in js.keys():
+            self.set_time(js['time'])
+
+        if 'price' in js.keys():
+            self.set_price(js['price'])
+
 
 class MultiplyEntry(BaseEntry):
     """
@@ -229,6 +283,57 @@ class MultiplyEntry(BaseEntry):
     def get_hour_rate(self):
         """Get hour_rate."""
         return self._hour_rate
+
+    def to_json(self, indent=2):
+        """Convert all data to json format."""
+        out = {}
+
+        # fetch all important data for this entry type
+        out['title'] = self.get_title()
+        out['comment'] = self.get_comment()
+        out['amount'] = float(self.get_amount())
+        out['amount_format'] = self.get_amount_format()
+        out['id'] = self.get_id()
+        out['hour_rate'] = float(time_module.get_decimal_hours_from_timedelta(
+            self.get_hour_rate()
+        ))
+
+        # return the json
+        return json.dumps(out, indent=indent, sort_keys=True)
+
+    def from_json(self, js=None):
+        """Convert all data from json format."""
+        if js is None:
+            return
+
+        # get js as dict
+        try:
+            js = json.loads(js)
+        except Exception:
+            # do not load it
+            return
+
+        # load stuff into object, if it exists
+        #   object will have default value, if json does not hold it
+        #   (in case the loaded file is older nad new features were added)
+        # FIXME: function possible with iterations?
+        if 'title' in js.keys():
+            self.set_title(js['title'])
+
+        if 'comment' in js.keys():
+            self.set_comment(js['comment'])
+
+        if 'amount' in js.keys():
+            self.set_amount(js['amount'])
+
+        if 'amount_format' in js.keys():
+            self.set_amount_format(js['amount_format'])
+
+        if 'id' in js.keys():
+            self._id = js['id']
+
+        if 'hour_rate' in js.keys():
+            self.set_hour_rate(js['hour_rate'])
 
 
 class ConnectEntry(BaseEntry):
@@ -410,11 +515,67 @@ class ConnectEntry(BaseEntry):
             disconnect=True
         )
 
+    def to_json(self, indent=2):
+        """Convert all data to json format."""
+        out = {}
+
+        # fetch all important data for this entry type
+        out['title'] = self.get_title()
+        out['comment'] = self.get_comment()
+        out['amount'] = float(self.get_amount())
+        out['amount_format'] = self.get_amount_format()
+        out['id'] = self.get_id()
+        out['is_time'] = self.get_is_time()
+        out['multiplicator'] = float(self.get_multiplicator())
+        out['connected'] = list(self.get_connected())
+
+        # return the json
+        return json.dumps(out, indent=indent, sort_keys=True)
+
+    def from_json(self, js=None):
+        """Convert all data from json format."""
+        if js is None:
+            return
+
+        # get js as dict
+        try:
+            js = json.loads(js)
+        except Exception:
+            # do not load it
+            return
+
+        # load stuff into object, if it exists
+        #   object will have default value, if json does not hold it
+        #   (in case the loaded file is older nad new features were added)
+        # FIXME: function possible with iterations?
+        if 'title' in js.keys():
+            self.set_title(js['title'])
+
+        if 'comment' in js.keys():
+            self.set_comment(js['comment'])
+
+        if 'amount' in js.keys():
+            self.set_amount(js['amount'])
+
+        if 'amount_format' in js.keys():
+            self.set_amount_format(js['amount_format'])
+
+        if 'id' in js.keys():
+            self._id = js['id']
+
+        if 'is_time' in js.keys():
+            self.set_is_time(js['is_time'])
+
+        if 'multiplicator' in js.keys():
+            self.set_multiplicator(js['multiplicator'])
+
+        if 'connected' in js.keys():
+            self._connected = set(js['connected'])
+
 
 def move_entry(entry_list=None, entry_index=None, index=None):
     """Move an entry with entry_id in entry_list up/down."""
     if entry_list is None or entry_index is None or index is None:
-        print('BREAK')
         return
 
     # calculate new index: move up (index == 1) or down (index == -1)
