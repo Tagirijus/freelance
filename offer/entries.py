@@ -74,10 +74,22 @@ class BaseEntry(object):
         """
         Get amount as string with possible formatting.
 
+        In case the offer is for music production for example, it would
+        be good if the quantity of the offer posting would not be listed
+        as a decimal rather than a readable time format. So instead of
+        "1,5 minutes" -> "1:30 min" or similar. With the following format
+        options you can achieve this - also with leading zeros:
+
         {d}:    amount in decimal
         {H}:    amount converted to hours (will be leading number)
         {M}:    amount to minutes (if no {H}, it will be leading number)
         {S}:    amount seconds (if no {H} or {M} it will be leading number)
+
+        Means that 1.5 with fmt == "{H}:{M}" would output 1:30, while
+        fmt == "{M}:{S}" would output 1:30 as well, because the highest
+        possible number formatting will get its value from the integer part
+        of the decimal and the other from the fractional part.
+        1.75 with fmt == "{H}:{M}:{S}" would output 1:45:00 for example.
         """
         # get self._amount_format if no argument is given
         if fmt is None:
