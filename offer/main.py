@@ -29,6 +29,6 @@ def main():
     # make new default object
     b = ConnectEntry()
 
-    print(b.get_connected())
+    print(a.to_json())
     b.from_json(a.to_json())
-    print(b.get_connected())
+    print(b.to_json())

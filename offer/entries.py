@@ -175,6 +175,7 @@ class BaseEntry(object):
         out = {}
 
         # fetch all important data for this entry type
+        out['type'] = self.__class__.__name__
         out['title'] = self.get_title()
         out['comment'] = self.get_comment()
         out['amount'] = float(self.get_amount())
@@ -289,6 +290,7 @@ class MultiplyEntry(BaseEntry):
         out = {}
 
         # fetch all important data for this entry type
+        out['type'] = self.__class__.__name__
         out['title'] = self.get_title()
         out['comment'] = self.get_comment()
         out['amount'] = float(self.get_amount())
@@ -520,6 +522,7 @@ class ConnectEntry(BaseEntry):
         out = {}
 
         # fetch all important data for this entry type
+        out['type'] = self.__class__.__name__
         out['title'] = self.get_title()
         out['comment'] = self.get_comment()
         out['amount'] = float(self.get_amount())
@@ -591,3 +594,6 @@ def move_entry(entry_list=None, entry_index=None, index=None):
 
     # move it!
     entry_list.insert(new_index, entry_list.pop(entry_index))
+
+# TODO
+# - to_json() mit Typ abspeichern
