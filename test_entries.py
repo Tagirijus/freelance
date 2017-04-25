@@ -112,7 +112,7 @@ def test_integrety_entry():
     assert entries[2].get_title() == 'Title C'
     assert entries[2].get_comment() == 'Comment C'
     assert entries[2].get_amount() == Decimal('2.5')
-    assert entries[2].is_time() == False
+    assert entries[2].get_is_time() == False
     assert entries[2].get_time(
         entry_list=entries
         ) == time.to_timedelta(0)
@@ -125,7 +125,7 @@ def test_integrety_entry():
     assert entries[3].get_title() == 'Title D'
     assert entries[3].get_comment() == 'Comment D'
     assert entries[3].get_amount() == Decimal('3.0')
-    assert entries[3].is_time() == True
+    assert entries[3].get_is_time() == True
     assert entries[3].get_time(
         entry_list=entries
         ) == time.to_timedelta('2:15:00')

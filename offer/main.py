@@ -26,6 +26,7 @@ def main():
         title='Title B',
         comment='Comment B',
         amount=2.0,
+        amount_format='{M}:{S} min',
         hour_rate=0.5
     )
 
@@ -41,6 +42,7 @@ def main():
         title='Title D',
         comment='Comment D',
         amount=3.0,
+        amount_format='{S} %',
         is_time=True,
         multiplicator=0.75
     )
@@ -88,7 +90,7 @@ def main():
         out = []
         out.append(str(e.get_title()))
         out.append(str(e.get_comment()))
-        out.append(str(e.get_amount()))
+        out.append(str(e.get_amount_str()))
         out.append(str(e.get_time(entry_list=entries)))
         out.append(str(e.get_price(wage=wage, entry_list=entries)))
 
