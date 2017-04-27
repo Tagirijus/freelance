@@ -1,11 +1,12 @@
 """
-A simple tool for generating an offer.
+A client and project management suite.
 
-This tool calculates prices according to hour times wage. It can be handy
-for self-employed people, who has to send offers to clients. It is also
-handy for just calculating the estimated time for a specific task.
+You can organize clients, projects, write offers and invoices.
 """
 
+# erst einmal nur das offer Modul
+# später wird gefragt, was geladen werden soll:
+# z.B. Kunden bearbeiten, Projekte, Rechnungen, Angebote ...
 from offer import main
 
 if __name__ == '__main__':

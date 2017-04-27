@@ -1,34 +1,24 @@
-"""The main programm is executed here."""
+"""
+A tool for generating an offer.
 
+This tool calculates prices according to hour times wage. It can be handy
+for self-employed people, who has to send offers to clients. It is also
+handy for just calculating the estimated time for a specific task.
+"""
+
+from clients.client import Client
+from clients.project import Project
+from decimal import Decimal
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.entries import move_entry
 import os
-from decimal import Decimal
-
-
-BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
-    :os.path.dirname(os.path.realpath(__file__)).rfind('/')
-]
+from settings.settings import Settings
 
 
 def main():
     """Run the programm."""
-    a = ConnectEntry(
-        title='Total individual',
-        comment='Individual comment!',
-        amount=1.23,
-        amount_format='{M}:{S} min',
-        is_time=False,
-        multiplicator=9.99
-    )
-    c = BaseEntry()
-    a.connect_entry([a, c], c.get_id())
-
-    # make new default object
-    b = ConnectEntry()
-
-    print(a.to_json())
-    b = b.from_json(a.to_json())
-    print(b.to_json())
+    s = Settings()
+    s.save_settings_to_file()
+    print(s.client_company)

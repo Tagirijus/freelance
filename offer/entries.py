@@ -24,36 +24,15 @@ class BaseEntry(object):
             self._id = str(uuid.uuid1())
         else:
             self._id = str(id)
-        self._title = str(title)
-        self._comment = str(comment)
+        self.title = str(title)
+        self.comment = str(comment)
         self._amount = Decimal('0.0')               # set Default
         self.set_amount(amount)                     # try to set arguments value
-        self._amount_format = str(amount_format)
+        self.amount_format = str(amount_format)
         self._time = time_module.to_timedelta(time)
         self._price = Decimal('0.0')                # set default
         self.set_price(price)                       # try to set arguments value
         self._connected = set()
-
-    def set_title(self, value):
-        """Set title."""
-        self._title = str(value)
-
-    def get_title(self):
-        """Get title."""
-        return self._title
-
-    def set_comment(self, value):
-        """Set comment."""
-        try:
-            # has to be convertable to string
-            self._comment = str(value)
-        except Exception:
-            # otherwise pass
-            pass
-
-    def get_comment(self):
-        """Get comment."""
-        return self._comment
 
     def set_amount(self, value):
         """Set amount."""
@@ -66,14 +45,6 @@ class BaseEntry(object):
     def get_amount(self):
         """Get amount."""
         return self._amount
-
-    def set_amount_format(self, value):
-        """Set amount_format."""
-        self._amount_format = str(value)
-
-    def get_amount_format(self):
-        """Get amount_format."""
-        return self._amount_format
 
     def get_amount_str(self, fmt=None):
         """
@@ -98,7 +69,7 @@ class BaseEntry(object):
         """
         # get self._amount_format if no argument is given
         if fmt is None:
-            fmt = self.get_amount_format()
+            fmt = self.amount_format
 
         # init formating output variable
         format_me = {}
@@ -195,14 +166,14 @@ class BaseEntry(object):
     def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
-            return
+            return cls()
 
         # get js as dict
         try:
             js = json.loads(js)
         except Exception:
-            # do not load it
-            return
+            # return default object
+            return cls()
 
         # create new entry object from json
         if preset_loading:
@@ -243,7 +214,7 @@ class BaseEntry(object):
         else:
             price = 0.0
 
-        out = cls(
+        return cls(
             id=id,
             title=title,
             comment=comment,
@@ -252,8 +223,6 @@ class BaseEntry(object):
             time=time,
             price=price
         )
-
-        return out
 
 
 class MultiplyEntry(BaseEntry):
@@ -340,14 +309,14 @@ class MultiplyEntry(BaseEntry):
     def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
-            return
+            return cls()
 
         # get js as dict
         try:
             js = json.loads(js)
         except Exception:
-            # do not load it
-            return
+            # return default object
+            return cls()
 
         # create new entry object from json
         if preset_loading:
@@ -383,7 +352,7 @@ class MultiplyEntry(BaseEntry):
         else:
             hour_rate = 0.0
 
-        out = cls(
+        return cls(
             id=id,
             title=title,
             comment=comment,
@@ -391,8 +360,6 @@ class MultiplyEntry(BaseEntry):
             amount_format=amount_format,
             hour_rate=hour_rate
         )
-
-        return out
 
 
 class ConnectEntry(BaseEntry):
@@ -598,14 +565,14 @@ class ConnectEntry(BaseEntry):
     def from_json(cls, js=None, preset_loading=True):
         """Convert all data from json format."""
         if js is None:
-            return
+            return cls()
 
         # get js as dict
         try:
             js = json.loads(js)
         except Exception:
-            # do not load it
-            return
+            # return default object
+            return cls()
 
         # create new entry object from json
         if preset_loading:
@@ -646,7 +613,7 @@ class ConnectEntry(BaseEntry):
         else:
             multiplicator = 0.0
 
-        out = cls(
+        return cls(
             id=id,
             title=title,
             comment=comment,
