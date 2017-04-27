@@ -17,13 +17,17 @@ class BaseEntry(object):
         amount=0.0,
         amount_format='',
         time=0.0,
-        price=0.0
+        price=0.0,
+        connected=None
     ):
         """Init the class."""
+        # gen ID if not set, otherwise get it from argument
         if id is None:
             self._id = str(uuid.uuid1())
         else:
             self._id = str(id)
+
+        # get other variables from arguments
         self.title = str(title)
         self.comment = str(comment)
         self._amount = Decimal('0.0')               # set Default
@@ -32,7 +36,12 @@ class BaseEntry(object):
         self._time = time_module.to_timedelta(time)
         self._price = Decimal('0.0')                # set default
         self.set_price(price)                       # try to set arguments value
-        self._connected = set()
+
+        # get the connected list (for ConnectEntry only)
+        if type(connected) is set:
+            self._connected = connected
+        else:
+            self._connected = set()
 
     def set_amount(self, value):
         """Set amount."""
@@ -142,7 +151,7 @@ class BaseEntry(object):
         return self._id
 
     def get_connected(self):
-        """Get connected list."""
+        """Get connected set."""
         return self._connected
 
     def to_json(self, indent=2):
@@ -151,10 +160,10 @@ class BaseEntry(object):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
-        out['title'] = self.get_title()
-        out['comment'] = self.get_comment()
+        out['title'] = self.title
+        out['comment'] = self.comment
         out['amount'] = float(self.get_amount())
-        out['amount_format'] = self.get_amount_format()
+        out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
         out['time'] = float(self.get_hours())
         out['price'] = float(self.get_price())
@@ -163,19 +172,22 @@ class BaseEntry(object):
         return json.dumps(out, indent=indent, sort_keys=True)
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=True):
+    def from_json(cls, js=None, preset_loading=False):
         """Convert all data from json format."""
         if js is None:
             return cls()
 
         # get js as dict
-        try:
-            js = json.loads(js)
-        except Exception:
-            # return default object
-            return cls()
+        if type(js) is not dict:
+            try:
+                js = json.loads(js)
+            except Exception:
+                # return default object
+                return cls()
 
         # create new entry object from json
+
+        # get ID if it's no preset_loading
         if preset_loading:
             id = None
         else:
@@ -184,6 +196,7 @@ class BaseEntry(object):
             else:
                 id = None
 
+        # get other values
         if 'title' in js.keys():
             title = js['title']
         else:
@@ -293,10 +306,10 @@ class MultiplyEntry(BaseEntry):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
-        out['title'] = self.get_title()
-        out['comment'] = self.get_comment()
+        out['title'] = self.title
+        out['comment'] = self.comment
         out['amount'] = float(self.get_amount())
-        out['amount_format'] = self.get_amount_format()
+        out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
         out['hour_rate'] = float(time_module.get_decimal_hours_from_timedelta(
             self.get_hour_rate()
@@ -306,19 +319,22 @@ class MultiplyEntry(BaseEntry):
         return json.dumps(out, indent=indent, sort_keys=True)
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=True):
+    def from_json(cls, js=None, preset_loading=False):
         """Convert all data from json format."""
         if js is None:
             return cls()
 
         # get js as dict
-        try:
-            js = json.loads(js)
-        except Exception:
-            # return default object
-            return cls()
+        if type(js) is not dict:
+            try:
+                js = json.loads(js)
+            except Exception:
+                # return default object
+                return cls()
 
         # create new entry object from json
+
+        # get ID if it's no preset_loading
         if preset_loading:
             id = None
         else:
@@ -327,6 +343,7 @@ class MultiplyEntry(BaseEntry):
             else:
                 id = None
 
+        # get other values
         if 'title' in js.keys():
             title = js['title']
         else:
@@ -379,6 +396,7 @@ class ConnectEntry(BaseEntry):
         comment='',
         amount=0.0,
         amount_format='',
+        connected=None,
         is_time=True,
         multiplicator=0.0
     ):
@@ -389,7 +407,8 @@ class ConnectEntry(BaseEntry):
             title=title,
             comment=comment,
             amount=amount,
-            amount_format=amount_format
+            amount_format=amount_format,
+            connected=connected
         )
 
         # new values for this class
@@ -549,10 +568,10 @@ class ConnectEntry(BaseEntry):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
-        out['title'] = self.get_title()
-        out['comment'] = self.get_comment()
+        out['title'] = self.title
+        out['comment'] = self.comment
         out['amount'] = float(self.get_amount())
-        out['amount_format'] = self.get_amount_format()
+        out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
         out['is_time'] = self.get_is_time()
         out['multiplicator'] = float(self.get_multiplicator())
@@ -562,19 +581,22 @@ class ConnectEntry(BaseEntry):
         return json.dumps(out, indent=indent, sort_keys=True)
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=True):
+    def from_json(cls, js=None, preset_loading=False):
         """Convert all data from json format."""
         if js is None:
             return cls()
 
         # get js as dict
-        try:
-            js = json.loads(js)
-        except Exception:
-            # return default object
-            return cls()
+        if type(js) is not dict:
+            try:
+                js = json.loads(js)
+            except Exception:
+                # return default object
+                return cls()
 
         # create new entry object from json
+
+        # get ID, if it's no preset_loading
         if preset_loading:
             id = None
         else:
@@ -583,6 +605,7 @@ class ConnectEntry(BaseEntry):
             else:
                 id = None
 
+        # get other values
         if 'title' in js.keys():
             title = js['title']
         else:
@@ -613,6 +636,12 @@ class ConnectEntry(BaseEntry):
         else:
             multiplicator = 0.0
 
+        # get connected entries, if it's no preset_loading
+        if 'connected' in js.keys() and not preset_loading:
+            connected = set(js['connected'])
+        else:
+            connected = None
+
         return cls(
             id=id,
             title=title,
@@ -620,30 +649,6 @@ class ConnectEntry(BaseEntry):
             amount=amount,
             amount_format=amount_format,
             is_time=is_time,
-            multiplicator=multiplicator
+            multiplicator=multiplicator,
+            connected=connected
         )
-
-        if 'connected' in js.keys():
-            out._connected = set(js['connected'])
-
-        return out
-
-
-def move_entry(entry_list=None, entry_index=None, index=None):
-    """Move an entry with entry_id in entry_list up/down."""
-    if entry_list is None or entry_index is None or index is None:
-        return
-
-    # calculate new index: move up (index == 1) or down (index == -1)
-    new_index = entry_index + index
-
-    # put at beginning, if it's at the end and it's moved up
-    if new_index >= len(entry_list):
-        new_index = 0
-
-    # put at the end, if it's at the beginning and moved down
-    if new_index < 0:
-        new_index = len(entry_list) - 1
-
-    # move it!
-    entry_list.insert(new_index, entry_list.pop(entry_index))

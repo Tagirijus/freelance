@@ -46,6 +46,7 @@ class Client(object):
         out = {}
 
         # fetch all variables
+        out['type'] = self.__class__.__name__
         out['client_id'] = self.client_id
         out['company'] = self.company
         out['salutation'] = self.salutation
@@ -67,11 +68,12 @@ class Client(object):
             return cls()
 
         # get js as dict
-        try:
-            js = json.loads(js)
-        except Exception:
-            # return default object
-            return cls()
+        if type(js) is not dict:
+            try:
+                js = json.loads(js)
+            except Exception:
+                # return default object
+                return cls()
 
         # create new entry object from json
         if 'client_id' in js.keys():

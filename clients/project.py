@@ -1,5 +1,8 @@
 """The class holding informatin about the project."""
 
+import json
+
+
 class Project(object):
     """This class holds and project information."""
 
@@ -64,6 +67,7 @@ class Project(object):
         out = {}
 
         # fetch teh variables
+        out['type'] = self.__class__.__name__
         out['client_id'] = self.client_id
         out['title'] = self.title
         out['hours_per_day'] = self._hours_per_day
@@ -80,11 +84,12 @@ class Project(object):
             return cls()
 
         # get js as dict
-        try:
-            js = json.loads(js)
-        except Exception:
-            # return default object
-            return cls()
+        if type(js) is not dict:
+            try:
+                js = json.loads(js)
+            except Exception:
+                # return default object
+                return cls()
 
         # create object from variables
         if 'client_id' in js.keys():

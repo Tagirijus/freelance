@@ -1,4 +1,4 @@
-"""Testing app."""
+"""Testing app for entry classes."""
 
 from decimal import Decimal
 from offer.entries import BaseEntry
@@ -94,23 +94,23 @@ def test_integrety_entry():
     wage = Decimal('50.00')
 
     # check values for BaseEntry
-    assert entries[0].get_title() == 'Title A'
-    assert entries[0].get_comment() == 'Comment A'
+    assert entries[0].title == 'Title A'
+    assert entries[0].comment == 'Comment A'
     assert entries[0].get_amount() == Decimal('1.0')
     assert entries[0].get_time() == time.to_timedelta(1.0)
     assert entries[0].get_price() == Decimal('50.00')
 
     # check values for MultiplyEntry
-    assert entries[1].get_title() == 'Title B'
-    assert entries[1].get_comment() == 'Comment B'
+    assert entries[1].title == 'Title B'
+    assert entries[1].comment == 'Comment B'
     assert entries[1].get_amount() == Decimal('2.0')
     assert entries[1].get_hour_rate() == time.to_timedelta(0.5)
     assert entries[1].get_time() == time.to_timedelta(1.0)
     assert entries[1].get_price(wage=wage) == Decimal('50.00')
 
     # check values for first ConnectEntry
-    assert entries[2].get_title() == 'Title C'
-    assert entries[2].get_comment() == 'Comment C'
+    assert entries[2].title == 'Title C'
+    assert entries[2].comment == 'Comment C'
     assert entries[2].get_amount() == Decimal('2.5')
     assert entries[2].get_is_time() == False
     assert entries[2].get_time(
@@ -122,8 +122,8 @@ def test_integrety_entry():
         ) == Decimal('125.00')
 
     # check values for second ConnectEntry
-    assert entries[3].get_title() == 'Title D'
-    assert entries[3].get_comment() == 'Comment D'
+    assert entries[3].title == 'Title D'
+    assert entries[3].comment == 'Comment D'
     assert entries[3].get_amount() == Decimal('3.0')
     assert entries[3].get_is_time() == True
     assert entries[3].get_time(
@@ -150,21 +150,35 @@ def test_json_conversion_baseentry():
     b = BaseEntry()
 
     # for now the values must not be the same
-    assert b.get_title() != a.get_title()
-    assert b.get_comment() != a.get_comment()
+    assert b.get_id() != a.get_id()
+    assert b.title != a.title
+    assert b.comment != a.comment
     assert b.get_amount() != a.get_amount()
-    assert b.get_amount_format() != a.get_amount_format()
+    assert b.amount_format != a.amount_format
     assert b.get_time() != a.get_time()
     assert b.get_price() != a.get_price()
 
-    # load a into b with json
-    b = BaseEntry().from_json(a.to_json())
+    # load a into b with json as object with same attrbutes
+    b = BaseEntry().from_json(js=a.to_json(), preset_loading=False)
 
     # now the values must be the same
-    assert b.get_title() == a.get_title()
-    assert b.get_comment() == a.get_comment()
+    assert b.get_id() == a.get_id()
+    assert b.title == a.title
+    assert b.comment == a.comment
     assert b.get_amount() == a.get_amount()
-    assert b.get_amount_format() == a.get_amount_format()
+    assert b.amount_format == a.amount_format
+    assert b.get_time() == a.get_time()
+    assert b.get_price() == a.get_price()
+
+    # load a into b with json as preset
+    b = BaseEntry().from_json(js=a.to_json(), preset_loading=True)
+
+    # now the values must be the same
+    assert b.get_id() != a.get_id()     # not same, since preset_loading
+    assert b.title == a.title
+    assert b.comment == a.comment
+    assert b.get_amount() == a.get_amount()
+    assert b.amount_format == a.amount_format
     assert b.get_time() == a.get_time()
     assert b.get_price() == a.get_price()
 
@@ -183,20 +197,33 @@ def test_json_conversion_multiplyentry():
     b = MultiplyEntry()
 
     # for now the values must not be the same
-    assert b.get_title() != a.get_title()
-    assert b.get_comment() != a.get_comment()
+    assert b.get_id() != a.get_id()
+    assert b.title != a.title
+    assert b.comment != a.comment
     assert b.get_amount() != a.get_amount()
-    assert b.get_amount_format() != a.get_amount_format()
+    assert b.amount_format != a.amount_format
     assert b.get_hour_rate() != a.get_hour_rate()
 
-    # load a into b with json
-    b = MultiplyEntry().from_json(a.to_json())
+    # load a into b with json as object with same attrbutes
+    b = MultiplyEntry().from_json(js=a.to_json(), preset_loading=False)
 
     # now the values must be the same
-    assert b.get_title() == a.get_title()
-    assert b.get_comment() == a.get_comment()
+    assert b.get_id() == a.get_id()
+    assert b.title == a.title
+    assert b.comment == a.comment
     assert b.get_amount() == a.get_amount()
-    assert b.get_amount_format() == a.get_amount_format()
+    assert b.amount_format == a.amount_format
+    assert b.get_hour_rate() == a.get_hour_rate()
+
+    # load a into b with json as a preset
+    b = MultiplyEntry().from_json(js=a.to_json(), preset_loading=True)
+
+    # now the values must be the same - preset alike
+    assert b.get_id() != a.get_id()     # not same, since preset_loading
+    assert b.title == a.title
+    assert b.comment == a.comment
+    assert b.get_amount() == a.get_amount()
+    assert b.amount_format == a.amount_format
     assert b.get_hour_rate() == a.get_hour_rate()
 
 def test_json_conversion_connectentry():
@@ -212,27 +239,43 @@ def test_json_conversion_connectentry():
     )
     c = BaseEntry()
     a.connect_entry([a, c], c.get_id())
+    assert c.get_id() in a.get_connected()
 
     # make new default object
     b = ConnectEntry()
 
     # for now the values must not be the same
-    assert b.get_title() != a.get_title()
-    assert b.get_comment() != a.get_comment()
+    assert b.get_id() != a.get_id()
+    assert b.title != a.title
+    assert b.comment != a.comment
     assert b.get_amount() != a.get_amount()
-    assert b.get_amount_format() != a.get_amount_format()
+    assert b.amount_format != a.amount_format
     assert b.get_is_time() != a.get_is_time()
     assert b.get_multiplicator() != a.get_multiplicator()
     assert b.get_connected() != a.get_connected()
 
-    # load a into b with json
-    b = ConnectEntry().from_json(a.to_json())
+    # load a into b with json as object with same attrbutes
+    b = ConnectEntry().from_json(js=a.to_json(), preset_loading=False)
 
     # now the values must be the same
-    assert b.get_title() == a.get_title()
-    assert b.get_comment() == a.get_comment()
+    assert b.get_id() == a.get_id()
+    assert b.title == a.title
+    assert b.comment == a.comment
     assert b.get_amount() == a.get_amount()
-    assert b.get_amount_format() == a.get_amount_format()
+    assert b.amount_format == a.amount_format
     assert b.get_is_time() == a.get_is_time()
     assert b.get_multiplicator() == a.get_multiplicator()
     assert b.get_connected() == a.get_connected()
+
+    # load a into b with json as a preset
+    b = ConnectEntry().from_json(js=a.to_json(), preset_loading=True)
+
+    # now the values must be the same - preset alike
+    assert b.get_id() != a.get_id()     # except the id, since it's preset_loading
+    assert b.title == a.title
+    assert b.comment == a.comment
+    assert b.get_amount() == a.get_amount()
+    assert b.amount_format == a.amount_format
+    assert b.get_is_time() == a.get_is_time()
+    assert b.get_multiplicator() == a.get_multiplicator()
+    assert b.get_connected() == set()   # except the set, since it's preset_loading

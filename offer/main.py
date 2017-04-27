@@ -14,7 +14,7 @@ from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.entries import move_entry
 import os
-from settings.settings import Settings
+from general.settings import Settings
 
 
 def main():

@@ -1,4 +1,4 @@
-"""Testing app."""
+"""Testing app for own time module."""
 
 from offer import time
 
