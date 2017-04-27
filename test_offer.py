@@ -1,12 +1,11 @@
 """Testing app for offer class."""
 
-from general import general as gen
+from general import load_save
 from offer.offer import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer import time
-import json
 
 
 class TestOffer(object):
@@ -85,7 +84,7 @@ def test_offer_json_conversion():
     )
 
     # generate it to another new object
-    new_offer = gen.load_offer_from_json(js=myoffer.to_json())
+    new_offer = load_save.load_offer_from_json(js=myoffer.to_json())
 
     # check if everything loaded up correctly
     assert myoffer.title == new_offer.title

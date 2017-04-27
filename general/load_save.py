@@ -1,4 +1,4 @@
-"""General / global functions."""
+"""Load and save functions."""
 
 import json
 from offer.offer import Offer
