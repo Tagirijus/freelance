@@ -1,5 +1,7 @@
 """The class holding informatin about the client."""
 
+import json
+
 
 class Client(object):
     """This class holds the detailed client information."""
