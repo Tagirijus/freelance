@@ -237,7 +237,7 @@ def test_json_conversion_connectentry():
         comment='Individual comment!',
         amount=1.23,
         amount_format='{M}:{S} min',
-        is_time=False,
+        is_time=True,
         multiplicator=9.99
     )
     c = BaseEntry()

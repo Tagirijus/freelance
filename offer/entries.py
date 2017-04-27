@@ -28,11 +28,11 @@ class BaseEntry(object):
             self._id = str(id)
 
         # get other variables from arguments
-        self.title = str(title)
-        self.comment = str(comment)
+        self.title = '' if title is None else str(title)
+        self.comment = '' if comment is None else str(comment)
         self._amount = Decimal('0.0')               # set Default
         self.set_amount(amount)                     # try to set arguments value
-        self.amount_format = str(amount_format)
+        self.amount_format = '' if amount_format is None else str(amount_format)
         self._time = time_module.to_timedelta(time)
         self._price = Decimal('0.0')                # set default
         self.set_price(price)                       # try to set arguments value
@@ -200,32 +200,32 @@ class BaseEntry(object):
         if 'title' in js.keys():
             title = js['title']
         else:
-            title = ''
+            title = None
 
         if 'comment' in js.keys():
             comment = js['comment']
         else:
-            comment = ''
+            comment = None
 
         if 'amount' in js.keys():
             amount = js['amount']
         else:
-            amount = 0.0
+            amount = None
 
         if 'amount_format' in js.keys():
             amount_format = js['amount_format']
         else:
-            amount_format = ''
+            amount_format = None
 
         if 'time' in js.keys():
             time = js['time']
         else:
-            time = 0.0
+            time = None
 
         if 'price' in js.keys():
             price = js['price']
         else:
-            price = 0.0
+            price = None
 
         return cls(
             id=id,
@@ -251,11 +251,11 @@ class MultiplyEntry(BaseEntry):
     def __init__(
         self,
         id=None,
-        title='',
-        comment='',
-        amount=0.0,
-        amount_format='',
-        hour_rate=0.0
+        title=None,
+        comment=None,
+        amount=None,
+        amount_format=None,
+        hour_rate=None
     ):
         """Initialize the class."""
         # values of the BaseEntry class
@@ -347,27 +347,27 @@ class MultiplyEntry(BaseEntry):
         if 'title' in js.keys():
             title = js['title']
         else:
-            title = ''
+            title = None
 
         if 'comment' in js.keys():
             comment = js['comment']
         else:
-            comment = ''
+            comment = None
 
         if 'amount' in js.keys():
             amount = js['amount']
         else:
-            amount = 0.0
+            amount = None
 
         if 'amount_format' in js.keys():
             amount_format = js['amount_format']
         else:
-            amount_format = ''
+            amount_format = None
 
         if 'hour_rate' in js.keys():
             hour_rate = js['hour_rate']
         else:
-            hour_rate = 0.0
+            hour_rate = None
 
         return cls(
             id=id,
@@ -392,13 +392,13 @@ class ConnectEntry(BaseEntry):
     def __init__(
         self,
         id=None,
-        title='',
-        comment='',
-        amount=0.0,
-        amount_format='',
+        title=None,
+        comment=None,
+        amount=None,
+        amount_format=None,
         connected=None,
-        is_time=True,
-        multiplicator=0.0
+        is_time=None,
+        multiplicator=None
     ):
         """Initialize the class."""
         # values of the BaseEntry class
@@ -609,32 +609,32 @@ class ConnectEntry(BaseEntry):
         if 'title' in js.keys():
             title = js['title']
         else:
-            title = ''
+            title = None
 
         if 'comment' in js.keys():
             comment = js['comment']
         else:
-            comment = ''
+            comment = None
 
         if 'amount' in js.keys():
             amount = js['amount']
         else:
-            amount = 0.0
+            amount = None
 
         if 'amount_format' in js.keys():
             amount_format = js['amount_format']
         else:
-            amount_format = ''
+            amount_format = None
 
         if 'is_time' in js.keys():
             is_time = js['is_time']
         else:
-            is_time = True
+            is_time = None
 
         if 'multiplicator' in js.keys():
             multiplicator = js['multiplicator']
         else:
-            multiplicator = 0.0
+            multiplicator = None
 
         # get connected entries, if it's no preset_loading
         if 'connected' in js.keys() and not preset_loading:

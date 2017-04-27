@@ -8,15 +8,15 @@ class Project(object):
 
     def __init__(
         self,
-        client_id='',
-        title='',
-        hours_per_day=4,
-        work_days=[0, 1, 2, 3, 4],
-        minimum_days=2
+        client_id=None,
+        title=None,
+        hours_per_day=None,
+        work_days=None,
+        minimum_days=None
     ):
         """Initialize the class."""
-        self.client_id = str(client_id)
-        self.title = str(title)
+        self.client_id = '' if client_id is None else str(client_id)
+        self.title = '' if title is None else str(title)
         self._hours_per_day = 4                 # set default
         self.set_hours_per_day(hours_per_day)   # try to set argument
         self._work_days = [0, 1, 2, 3, 4]       # set default
@@ -66,7 +66,7 @@ class Project(object):
         """Convert variables data to json format."""
         out = {}
 
-        # fetch teh variables
+        # fetch the variables
         out['type'] = self.__class__.__name__
         out['client_id'] = self.client_id
         out['title'] = self.title
@@ -94,18 +94,28 @@ class Project(object):
         # create object from variables
         if 'client_id' in js.keys():
             client_id = js['client_id']
+        else:
+            client_id = None
 
         if 'title' in js.keys():
             title = js['title']
+        else:
+            title = None
 
         if 'hours_per_day' in js.keys():
             hours_per_day = js['hours_per_day']
+        else:
+            hours_per_day = None
 
         if 'work_days' in js.keys():
             work_days = js['work_days']
+        else:
+            work_days = None
 
         if 'minimum_days' in js.keys():
             minimum_days = js['minimum_days']
+        else:
+            minimum_days = None
 
         # return new object
         return cls(
