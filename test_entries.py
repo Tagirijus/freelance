@@ -112,27 +112,28 @@ def test_integrety_entry():
     assert entries[2].title == 'Title C'
     assert entries[2].comment == 'Comment C'
     assert entries[2].get_amount() == Decimal('2.5')
-    assert entries[2].get_is_time() == False
+    assert entries[2].get_is_time() is False
     assert entries[2].get_time(
         entry_list=entries
-        ) == time.to_timedelta(0)
+    ) == time.to_timedelta(0)
     assert entries[2].get_price(
         entry_list=entries,
         wage=wage
-        ) == Decimal('125.00')
+    ) == Decimal('125.00')
 
     # check values for second ConnectEntry
     assert entries[3].title == 'Title D'
     assert entries[3].comment == 'Comment D'
     assert entries[3].get_amount() == Decimal('3.0')
-    assert entries[3].get_is_time() == True
+    assert entries[3].get_is_time() is True
     assert entries[3].get_time(
         entry_list=entries
-        ) == time.to_timedelta('2:15:00')
+    ) == time.to_timedelta('2:15:00')
     assert entries[3].get_price(
         entry_list=entries,
         wage=wage
-        ) == Decimal('112.50')
+    ) == Decimal('112.50')
+
 
 def test_json_conversion_baseentry():
     """Test the json conversion."""
@@ -182,6 +183,7 @@ def test_json_conversion_baseentry():
     assert b.get_time() == a.get_time()
     assert b.get_price() == a.get_price()
 
+
 def test_json_conversion_multiplyentry():
     """Test the json conversion."""
     # init the individual object
@@ -225,6 +227,7 @@ def test_json_conversion_multiplyentry():
     assert b.get_amount() == a.get_amount()
     assert b.amount_format == a.amount_format
     assert b.get_hour_rate() == a.get_hour_rate()
+
 
 def test_json_conversion_connectentry():
     """Test the json conversion."""
