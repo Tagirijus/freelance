@@ -56,12 +56,12 @@ class Offer(object):
         new_index = entry_index + new_index
 
         # put at beginning, if it's at the end and it's moved up
-        if new_index >= len(entry_list):
+        if new_index >= len(self._entry_list):
             new_index = 0
 
         # put at the end, if it's at the beginning and moved down
         if new_index < 0:
-            new_index = len(entry_list) - 1
+            new_index = len(self._entry_list) - 1
 
         # move it!
         self._entry_list.insert(new_index, self._entry_list.pop(entry_index))
