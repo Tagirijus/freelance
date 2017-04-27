@@ -17,7 +17,8 @@ class Client(object):
         post_code=None,
         city=None,
         tax_id=None,
-        language=None
+        language=None,
+        date_fmt=None
     ):
         """Initialize the class."""
         self.client_id = '' if client_id is None else str(client_id)
@@ -30,6 +31,7 @@ class Client(object):
         self.city = '' if city is None else str(city)
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = '' if language is None else str(language)
+        self.date_fmt = '' if date_fmt is None else str(date_fmt)
 
     def get_projects(self, project_list):
         """Get list of projects for only that client."""
@@ -59,6 +61,7 @@ class Client(object):
         out['city'] = self.city
         out['tax_id'] = self.tax_id
         out['language'] = self.language
+        out['date_fmt'] = self.date_fmt
 
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
@@ -128,6 +131,11 @@ class Client(object):
         else:
             language = None
 
+        if 'date_fmt' in js.keys():
+            date_fmt = js['date_fmt']
+        else:
+            date_fmt = None
+
         # return new object
         return cls(
             client_id=client_id,
@@ -139,5 +147,6 @@ class Client(object):
             post_code=post_code,
             city=city,
             tax_id=tax_id,
-            language=language
+            language=language,
+            date_fmt=date_fmt
         )
