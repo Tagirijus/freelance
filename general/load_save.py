@@ -37,3 +37,27 @@ def load_offer_from_json(js=None):
     out.set_entry_list(correct_entries)
 
     return out
+
+
+def load_project_from_json(js=None):
+    """Load a Project object from json string."""
+    # if no js is given, return default Project object
+    if type(js) is None:
+        return Project()
+
+    # generate main object
+    out = Project().from_json(js=js)
+
+    # important: convert entry_list entries to correct entry objects
+    correct_entries = []
+    for entry in out.get_offer_list():
+        js_tmp = json.loads(entry)
+        # check the type for the entry
+        if 'type' in js_tmp.keys():
+            # it is an Offer object
+            if js_tmp['type'] == 'Offer':
+                correct_entries.append(load_offer_from_json(js=js_tmp))
+
+    out.set_offer_list(correct_entries)
+
+    return out

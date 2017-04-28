@@ -484,7 +484,7 @@ class ConnectEntry(BaseEntry):
             # otherwise iterate through entry_list and find prices of
             # entries which ids exist in the self._connected list
             # and multiply them
-            out = Decimal(0)
+            out = Decimal('0.00')
             for entry in entry_list:
                 if entry.get_id() in self._connected:
                     # if its in the list, multiply its price and add it

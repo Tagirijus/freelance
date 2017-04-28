@@ -74,7 +74,6 @@ class Offer(object):
     def append(self, value):
         """Add entry to the entry_list."""
         if type(self._entry_list) is list:
-            print('Added:', value)
             self._entry_list.append(value)
 
     def pop(self, index):
