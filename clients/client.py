@@ -35,6 +35,13 @@ class Client(object):
         self.language = '' if language is None else str(language)
         self.date_fmt = '' if date_fmt is None else str(date_fmt)
 
+    def get_project_list(self, project_list=None):
+        """Get project_list for client from global project_list."""
+        if type(project_list) is list:
+            return [p for p in project_list if p.get_client_id() == self.get_client_id()]
+        else:
+            return []
+
     def set_client_id(self, value, client_list=None):
         """Try to set client_id if it's not in the client_list already."""
         done = False
