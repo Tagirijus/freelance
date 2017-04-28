@@ -14,10 +14,11 @@ from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 import os
 from general.settings import Settings
+from general.default import Default
 
 
 def main():
     """Run the programm."""
     s = Settings()
+    s.set_def_language('de')
     s.save_settings_to_file()
-    print(s.client_company)
