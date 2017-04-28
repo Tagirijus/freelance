@@ -9,23 +9,53 @@ class Project(object):
     def __init__(
         self,
         client_id=None,
+        client_list=None,
         title=None,
+        project_list=None,
         hours_per_day=None,
         work_days=None,
         minimum_days=None,
         offer_list=None
     ):
         """Initialize the class."""
-        self.client_id = '' if client_id is None else str(client_id)
-        self.title = '' if title is None else str(title)
-        self._hours_per_day = 4                 # set default
-        self.set_hours_per_day(hours_per_day)   # try to set argument
-        self._work_days = [0, 1, 2, 3, 4]       # set default
-        self.set_work_days(work_days)           # try to set argument
-        self._minimum_days = 2                  # set default
-        self.set_minimum_days(minimum_days)     # try to set argument
-        self._offer_list = []                   # set default
-        self.set_offer_list(offer_list)         # try to set argument
+        self._client_id = ''                        # set default
+        self.set_client_id(client_id, client_list)  # tr to set argument
+        self._title = ''                            # set default
+        self.set_title(title, project_list)         # try to set argument
+        self._hours_per_day = 4                     # set default
+        self.set_hours_per_day(hours_per_day)       # try to set argument
+        self._work_days = [0, 1, 2, 3, 4]           # set default
+        self.set_work_days(work_days)               # try to set argument
+        self._minimum_days = 2                      # set default
+        self.set_minimum_days(minimum_days)         # try to set argument
+        self._offer_list = []                       # set default
+        self.set_offer_list(offer_list)             # try to set argument
+
+    def set_title(self, value, project_list=None):
+        """Try to set title list, if it's not already in the project_list."""
+        done = False
+        if type(project_list) is list:
+            if not str(value) in [t.get_title() for t in project_list]:
+                self._title = str(value)
+                done = True
+        return done
+
+    def get_title(self):
+        """Get title."""
+        return self._title
+
+    def set_client_id(self, value, client_list=None):
+        """Try to set client_id, if it's in the client_list."""
+        done = False
+        if type(client_list) is list:
+            if str(value) in [i.get_client_id() for i in client_list]:
+                self._client_id = str(value)
+                done = True
+        return done
+
+    def get_client_id(self):
+        """Get client_id."""
+        return self._client_id
 
     def set_offer_list(self, value):
         """Set offer_list."""
@@ -75,9 +105,9 @@ class Project(object):
         # move it!
         self._offer_list.insert(new_index, self._offer_list.pop(offer_index))
 
-    def get_id(self):
+    def get_project_id(self):
         """Generate id with [client_id]_[title]."""
-        return self.client_id + '_' + self.title
+        return self.get_client_id() + '_' + self.get_title()
 
     def get_hours_per_day(self):
         """Get hours_per_day."""
@@ -123,8 +153,8 @@ class Project(object):
 
         # fetch the variables
         out['type'] = self.__class__.__name__
-        out['client_id'] = self.client_id
-        out['title'] = self.title
+        out['client_id'] = self.get_client_id()
+        out['title'] = self.get_title()
         out['hours_per_day'] = self._hours_per_day
         out['work_days'] = self._work_days
         out['minimum_days'] = self._minimum_days

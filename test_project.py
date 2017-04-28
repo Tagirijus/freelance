@@ -162,7 +162,7 @@ def test_project_json_conversion():
     myproject_b_copy = load_save.load_project_from_json(js=myproject_b.to_json())
 
     # project client_ids has to be identical
-    assert myproject_b.client_id == myproject_b_copy.client_id
+    assert myproject_b.get_client_id() == myproject_b_copy.get_client_id()
 
     # in both projects the 1st offer's 2nd entry's price should be identical
     wage = Decimal('50.00')

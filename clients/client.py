@@ -9,6 +9,7 @@ class Client(object):
     def __init__(
         self,
         client_id=None,
+        client_list=None,
         company=None,
         salutation=None,
         name=None,
@@ -21,7 +22,8 @@ class Client(object):
         date_fmt=None
     ):
         """Initialize the class."""
-        self.client_id = '' if client_id is None else str(client_id)
+        self._client_id = ''                        # set default
+        self.set_client_id(client_id, client_list)  # try to set argument
         self.company = '' if company is None else str(company)
         self.salutation = '' if salutation is None else str(salutation)
         self.name = '' if name is None else str(name)
@@ -32,6 +34,19 @@ class Client(object):
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = '' if language is None else str(language)
         self.date_fmt = '' if date_fmt is None else str(date_fmt)
+
+    def set_client_id(self, value, client_list=None):
+        """Try to set client_id if it's not in the client_list already."""
+        done = False
+        if type(client_list) is list:
+            if str(value) in [i.get_client_id() for i in client_list]:
+                self._client_id = str(value)
+                done = True
+        return done
+
+    def get_client_id(self):
+        """Get client_id."""
+        return self._client_id
 
     def get_projects(self, project_list):
         """Get list of projects for only that client."""
@@ -51,7 +66,7 @@ class Client(object):
 
         # fetch all variables
         out['type'] = self.__class__.__name__
-        out['client_id'] = self.client_id
+        out['client_id'] = self.get_client_id()
         out['company'] = self.company
         out['salutation'] = self.salutation
         out['name'] = self.name
