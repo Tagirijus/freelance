@@ -52,7 +52,7 @@ class Project(object):
             self._client_id = str(value)
             return True
         if type(client_list) is list:
-            if not str(value) in [i.get_client_id() for i in client_list]:
+            if str(value) in [i.get_client_id() for i in client_list]:
                 self._client_id = str(value)
                 return True
         return False
