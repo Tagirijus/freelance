@@ -1,6 +1,7 @@
 """Load and save functions."""
 
 import json
+from clients.project import Project
 from offer.offer import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry

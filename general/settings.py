@@ -82,7 +82,6 @@ class Settings(object):
         self.client_language = 'en' if client_language is None else client_language
 
         # project default values
-        self.project_client_id = '' if project_client_id is None else project_client_id
         self.project_title = '' if project_title is None else project_title
         self.project_hours_per_day = (0 if project_hours_per_day is None else
                                       project_hours_per_day)
@@ -155,7 +154,6 @@ class Settings(object):
         out['client_tax_id'] = self.client_tax_id
         out['client_language'] = self.client_language
 
-        out['project_client_id'] = self.project_client_id
         out['project_title'] = self.project_title
         out['project_hours_per_day'] = self.project_hours_per_day
         out['project_work_days'] = self.project_work_days
@@ -244,9 +242,6 @@ class Settings(object):
 
         if 'client_language' in js.keys():
             self.client_language = js['client_language']
-
-        if 'project_client_id' in js.keys():
-            self.project_client_id = js['project_client_id']
 
         if 'project_title' in js.keys():
             self.project_title = js['project_title']

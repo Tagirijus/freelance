@@ -37,8 +37,7 @@ class TestOffer(object):
 
     # init the offer
     out = Offer(
-        title='Testing offer',
-        number='9'
+        title='Testing offer'
     )
 
     # add entries to its list
@@ -88,7 +87,6 @@ def test_offer_json_conversion():
 
     # check if everything loaded up correctly
     assert myoffer.title == new_offer.title
-    assert myoffer.number == new_offer.number
 
     # prices for connect entries must be the same
     assert(myoffer.get_entry_list()[2].get_price(myoffer.get_entry_list()) ==

@@ -12,7 +12,6 @@ from decimal import Decimal
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.entries import move_entry
 import os
 from general.settings import Settings
 

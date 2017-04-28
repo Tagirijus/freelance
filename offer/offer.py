@@ -9,15 +9,15 @@ class Offer(object):
 
     def __init__(
         self,
-        title='',
-        number='1',
+        title=None,
+        project_id=None,
         date_fmt=None,
         date=None,
         entry_list=None
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
-        self.number = '1' if number is None else str(number)
+        self.project_id = '' if project_id is None else str(project_id)
         self.date_fmt = date_fmt
         self._date = datetime.now()             # set default
         self.set_date(date, fmt=self.date_fmt)  # try to set argument
@@ -83,7 +83,7 @@ class Offer(object):
             self._entry_list.pop(index)
 
     def move(self, entry_index=None, new_index=None):
-        """Move an entry with entry_id in entry_list up/down."""
+        """Move an entry with entry_index in entry_list up/down."""
         if entry_index is None or new_index is None:
             return
 
@@ -116,7 +116,7 @@ class Offer(object):
         # fetch the variables
         out['type'] = self.__class__.__name__
         out['title'] = self.title
-        out['number'] = self.number
+        out['project_id'] = self.project_id
         out['date_fmt'] = self.date_fmt
         out['date'] = self.get_date().strftime('%Y-%m-%d')
 
@@ -151,10 +151,10 @@ class Offer(object):
         else:
             title = None
 
-        if 'number' in js.keys():
-            number = js['number']
+        if 'project_id' in js.keys():
+            project_id = js['project_id']
         else:
-            number = None
+            project_id = None
 
         if 'date_fmt' in js.keys():
             date_fmt = js['date_fmt']
@@ -177,7 +177,7 @@ class Offer(object):
         # return new object
         return cls(
             title=title,
-            number=number,
+            project_id=project_id,
             date_fmt=date_fmt,
             date=date,
             entry_list=entry_list

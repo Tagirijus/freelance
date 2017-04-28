@@ -12,7 +12,8 @@ class Project(object):
         title=None,
         hours_per_day=None,
         work_days=None,
-        minimum_days=None
+        minimum_days=None,
+        offer_list=None
     ):
         """Initialize the class."""
         self.client_id = '' if client_id is None else str(client_id)
@@ -23,6 +24,60 @@ class Project(object):
         self.set_work_days(work_days)           # try to set argument
         self._minimum_days = 2                  # set default
         self.set_minimum_days(minimum_days)     # try to set argument
+        self._offer_list = []                   # set default
+        self.set_offer_list(offer_list)         # try to set argument
+
+    def set_offer_list(self, value):
+        """Set offer_list."""
+        # is list for working and dict while loading
+        if type(value) is list:
+            self._offer_list = value
+
+    def get_offer_list(self):
+        """Get offer_list."""
+        return self._offer_list
+
+    def append_offer(self, value):
+        """Add offer to the offer_list."""
+        if type(self._offer_list) is list:
+            print('Added:', value)
+            self._offer_list.append(value)
+
+    def pop_offer(self, index):
+        """Pop offer with the given index from list."""
+        if type(self._offer_list) is list:
+            self._offer_list.pop(index)
+
+    def move_offer(self, offer_index=None, new_index=None):
+        """Move an offer with offer_index in entry_list up/down."""
+        if offer_index is None or new_index is None:
+            return
+
+        # only go on, if entry_list is a list
+        if type(self._offer_list) is not list:
+            return
+
+        # cancel, if offer_index is out of range
+        if offer_index >= len(self._offer_list):
+            return
+
+        # calculate new index: move up (new_index == 1) or down (new_index == -1)
+        new_index = offer_index + new_index
+
+        # put at beginning, if it's at the end and it's moved up
+        if new_index >= len(self._offer_list):
+            new_index = 0
+
+        # put at the end, if it's at the beginning and moved down
+        if new_index < 0:
+            new_index = len(self._offer_list) - 1
+
+        # move it!
+        self._offer_list.insert(new_index, self._offer_list.pop(offer_index))
+
+    def get_id(self):
+        """Generate id with [client_id]_[title]."""
+        return self.client_id + '_' + self.title
 
     def get_hours_per_day(self):
         """Get hours_per_day."""
@@ -74,6 +129,14 @@ class Project(object):
         out['work_days'] = self._work_days
         out['minimum_days'] = self._minimum_days
 
+        # fetch the jsons from the entries
+        out['offer_list'] = []
+        for offer in self.get_offer_list():
+            try:
+                out['offer_list'].append(offer.to_json(indent=indent))
+            except Exception:
+                out['offer_list'].append(offer)
+
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
 
@@ -117,11 +180,17 @@ class Project(object):
         else:
             minimum_days = None
 
+        if 'offer_list' in js.keys():
+            offer_list = js['offer_list']
+        else:
+            offer_list = None
+
         # return new object
         return cls(
             client_id=client_id,
             title=title,
             hours_per_day=hours_per_day,
             work_days=work_days,
-            minimum_days=minimum_days
+            minimum_days=minimum_days,
+            offer_list=offer_list
         )
