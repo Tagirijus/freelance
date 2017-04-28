@@ -2,6 +2,9 @@
 
 from datetime import datetime
 import json
+from offer.entries import BaseEntry
+from offer.entries import MultiplyEntry
+from offer.entries import ConnectEntry
 
 
 class Offer(object):
@@ -63,7 +66,7 @@ class Offer(object):
 
     def set_entry_list(self, value):
         """Set entry_list."""
-        # is list for working and dict while loading
+        # is list for working and json-string while loading
         if type(value) is list:
             self._entry_list = value
 
@@ -71,31 +74,32 @@ class Offer(object):
         """Get entry_list."""
         return self._entry_list
 
-    def append(self, value):
+    def append(self, entry=None):
         """Add entry to the entry_list."""
-        if type(self._entry_list) is list:
-            self._entry_list.append(value)
+        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
+                    type(entry) is ConnectEntry)
+
+        if not is_entry:
+            return
+
+        self._entry_list.append(entry)
 
     def pop(self, index):
         """Pop entry with the given index from list."""
-        if type(self._entry_list) is list:
+        if index < len(self._entry_list):
             self._entry_list.pop(index)
 
-    def move(self, entry_index=None, new_index=None):
+    def move(self, entry_index=None, direction=None):
         """Move an entry with entry_index in entry_list up/down."""
-        if entry_index is None or new_index is None:
-            return
-
-        # only go on, if entry_list is a list
-        if type(self._entry_list) is not list:
+        if entry_index is None or direction is None:
             return
 
         # cancel, if entry_index is out of range
         if entry_index >= len(self._entry_list):
             return
 
-        # calculate new index: move up (new_index == 1) or down (new_index == -1)
-        new_index = entry_index + new_index
+        # calculate new index: move up (direction == 1) or down (direction == -1)
+        new_index = entry_index + direction
 
         # put at beginning, if it's at the end and it's moved up
         if new_index >= len(self._entry_list):

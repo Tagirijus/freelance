@@ -6,19 +6,21 @@ for self-employed people, who has to send offers to clients. It is also
 handy for just calculating the estimated time for a specific task.
 """
 
+from clients.client import ClientList
 from clients.client import Client
+from clients.project import ProjectList
 from clients.project import Project
-from decimal import Decimal
-from offer.entries import BaseEntry
-from offer.entries import MultiplyEntry
-from offer.entries import ConnectEntry
-import os
 from general.settings import Settings
-from general.default import Default
 
 
 def main():
     """Run the programm."""
     s = Settings()
-    s.set_def_language('de')
-    s.save_settings_to_file()
+    client_list = ClientList(data_path=s.data_path)
+    project_list = ProjectList(data_path=s.data_path)
+
+    # add some clients
+    client = client_list.get_client_list()[0]
+    for x in client.get_project_list(
+            project_list.get_project_list()):
+        print(client.get_client_id(), x.get_project_id())

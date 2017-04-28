@@ -1,6 +1,12 @@
-"""The class holding informatin about the project."""
+"""The class holding informatin about the project and the project_list."""
 
 import json
+from offer.offer import Offer
+from offer.entries import BaseEntry
+from offer.entries import MultiplyEntry
+from offer.entries import ConnectEntry
+import os
+import shutil
 
 
 class Project(object):
@@ -71,32 +77,29 @@ class Project(object):
         """Get offer_list."""
         return self._offer_list
 
-    def append_offer(self, value):
+    def append_offer(self, offer=None):
         """Add offer to the offer_list."""
-        if type(self._offer_list) is list:
-            print('Added:', value)
-            self._offer_list.append(value)
+        if type(offer) is not Offer:
+            return
+
+        self._offer_list.append(offer)
 
     def pop_offer(self, index):
         """Pop offer with the given index from list."""
-        if type(self._offer_list) is list:
+        if index < len(self._offer_list):
             self._offer_list.pop(index)
 
-    def move_offer(self, offer_index=None, new_index=None):
+    def move_offer(self, offer_index=None, direction=None):
         """Move an offer with offer_index in entry_list up/down."""
-        if offer_index is None or new_index is None:
-            return
-
-        # only go on, if entry_list is a list
-        if type(self._offer_list) is not list:
+        if offer_index is None or direction is None:
             return
 
         # cancel, if offer_index is out of range
         if offer_index >= len(self._offer_list):
             return
 
-        # calculate new index: move up (new_index == 1) or down (new_index == -1)
-        new_index = offer_index + new_index
+        # calculate new index: move up (direction == 1) or down (direction == -1)
+        new_index = offer_index + direction
 
         # put at beginning, if it's at the end and it's moved up
         if new_index >= len(self._offer_list):
@@ -228,3 +231,183 @@ class Project(object):
             minimum_days=minimum_days,
             offer_list=offer_list
         )
+
+
+class ProjectList(object):
+    """The list holding the project objects."""
+
+    def __init__(
+        self,
+        data_path=None,
+        project_list=None
+    ):
+        """Initialize the class."""
+        self.data_path = data_path
+        self._project_list = self.load_from_file()
+        self.set_project_list(project_list)
+
+    def append(self, project=None):
+        """Append a project, if its id does not exists already."""
+        if type(project) is not Project:
+            return
+
+        # check if ID does not exist and append it only then
+        if not project.get_project_id() in self.get_all_ids():
+            self._project_list.append(project)
+
+    def pop(self, index):
+        """Pop client with the given index from list."""
+        if index < len(self._project_list):
+            self._project_list.pop(index)
+
+    def move(self, entry_index=None, direction=None):
+        """Move an entry with entry_index in client_list up/down."""
+        if entry_index is None or direction is None:
+            return
+
+        # cancel, if entry_index is out of range
+        if entry_index >= len(self._project_list):
+            return
+
+        # calculate new index: move up (direction == 1) or down (direction == -1)
+        new_index = entry_index + direction
+
+        # put at beginning, if it's at the end and it's moved up
+        if new_index >= len(self._project_list):
+            new_index = 0
+
+        # put at the end, if it's at the beginning and moved down
+        if new_index < 0:
+            new_index = len(self._project_list) - 1
+
+        # move it!
+        self._project_list.insert(new_index, self._project_list.pop(entry_index))
+
+    def get_all_ids(self):
+        """Get all project IDs."""
+        return [project_id.get_project_id() for project_id in self._project_list]
+
+    def set_project_list(self, project_list=None):
+        """Try to set project list."""
+        if type(project_list) is list:
+            # each type inside list has to be Project object
+            for i in project_list:
+                if type(i) is not Project:
+                    return
+
+            # done and correct, set it
+            self._project_list = project_list
+
+    def get_project_list(self):
+        """Get the project list."""
+        return self._project_list
+
+    def load_offer_from_json(self, js=None):
+        """Load a Offer object from json string."""
+        # if no js is given, return default Offer object
+        if type(js) is None:
+            return Offer()
+
+        # generate main object
+        out = Offer().from_json(js=js)
+
+        # important: convert entry_list entries to correct entry objects
+        correct_entries = []
+        for entry in out.get_entry_list():
+            js_tmp = json.loads(entry)
+            # check the type for the entry
+            if 'type' in js_tmp.keys():
+                # it's BaseEntry - convert it from json and append it
+                if js_tmp['type'] == 'BaseEntry':
+                    correct_entries.append(BaseEntry().from_json(js=js_tmp))
+
+                # it's MultiplyEntry - convert it from json and append it
+                if js_tmp['type'] == 'MultiplyEntry':
+                    correct_entries.append(MultiplyEntry().from_json(js=js_tmp))
+
+                # it's ConnectEntry - convert it from json and append it
+                if js_tmp['type'] == 'ConnectEntry':
+                    correct_entries.append(ConnectEntry().from_json(js=js_tmp))
+        out.set_entry_list(correct_entries)
+
+        return out
+
+    def save_to_file(self, data_path=None):
+        """
+        Save projects from project_list.
+
+        Save it to [data_path]/projects/[project_id].flproject.
+        """
+        if data_path is None:
+            if self.data_path is None:
+                return False
+            else:
+                data_path = self.data_path
+
+        # check if project directory exists and create one if needed
+        if not os.path.isdir(data_path + '/projects'):
+            os.mkdir(data_path + '/projects')
+
+        # cycle through projects and save each project into its own file
+        for project in self.get_project_list():
+            # cancel this entry, if it's no Project object
+            if type(project) is not Project:
+                continue
+
+            # generate filenames
+            filename = data_path + '/projects/' + project.get_project_id() + '.flproject'
+            filename_bu = (data_path + '/projects/' + project.get_project_id() +
+                           '.flproject_bu')
+
+            # if it already exists, save a backup
+            if os.path.isfile(filename):
+                shutil.copy2(filename, filename_bu)
+
+            # write the file
+            f = open(filename, 'w')
+            f.write(project.to_json())
+            f.close()
+        return True
+
+    def load_from_file(self, data_path=None):
+        """Load the projects files and return project list."""
+        # if no js is given, return default Project object
+        if data_path is None:
+            if self.data_path is None:
+                return []
+            else:
+                data_path = self.data_path
+
+        # cycle through the files and append them converted from json to the list
+        out = []
+
+        path = data_path + '/projects/'
+
+        # check if the data_path/clients directory exists and cancel otherwise
+        if not os.path.isdir(path):
+            return []
+
+        for file in sorted(os.listdir(path)):
+            if file.endswith('.flproject'):
+                # load the file
+                f = open(path + file, 'r')
+                load = f.read()
+                f.close()
+
+            # generate main object
+            tmp = Project().from_json(js=load)
+
+            # important: convert entry_list entries to correct entry objects
+            correct_entries = []
+            for entry in tmp.get_offer_list():
+                js_tmp = json.loads(entry)
+                # check the type for the entry
+                if 'type' in js_tmp.keys():
+                    # it is an Offer object
+                    if js_tmp['type'] == 'Offer':
+                        correct_entries.append(self.load_offer_from_json(js=js_tmp))
+
+            tmp.set_offer_list(correct_entries)
+            out.append(tmp)
+
+        return out

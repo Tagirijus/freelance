@@ -14,8 +14,7 @@ def test_client_integrity():
         street='Würstchenstraße 85',
         post_code='11183',
         city='Bockwurstingen',
-        language='de',
-        date_fmt='%d.%m.%Y'
+        language='de'
     )
 
     client_2 = Client(
@@ -27,8 +26,7 @@ def test_client_integrity():
         street='Würstchenstraße 85',
         post_code='11183',
         city='Bockwurstingen',
-        language='de',
-        date_fmt='%d.%m.%Y'
+        language='de'
     )
 
     client_3 = Client(
@@ -40,8 +38,7 @@ def test_client_integrity():
         street='Famous-Street 35',
         post_code='356cb',
         city='Famous-Town',
-        language='en',
-        date_fmt='%m.%d.%Y'
+        language='en'
     )
 
     # add them all to the global client_list
@@ -71,8 +68,7 @@ def test_client_json_conversion():
         street='Am Stackelstick 113',
         post_code='33947',
         city='Fummelbummel',
-        language='de',
-        date_fmt='%d.%m.%Y'
+        language='de'
     )
 
     # get new client from existing one via json
