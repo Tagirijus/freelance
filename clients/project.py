@@ -33,12 +33,14 @@ class Project(object):
 
     def set_title(self, value, project_list=None):
         """Try to set title list, if it's not already in the project_list."""
-        done = False
+        if project_list is None:
+            self._title = str(value)
+            return True
         if type(project_list) is list:
             if not str(value) in [t.get_title() for t in project_list]:
                 self._title = str(value)
-                done = True
-        return done
+                return True
+        return False
 
     def get_title(self):
         """Get title."""
@@ -46,12 +48,14 @@ class Project(object):
 
     def set_client_id(self, value, client_list=None):
         """Try to set client_id, if it's in the client_list."""
-        done = False
+        if client_list is None:
+            self._client_id = str(value)
+            return True
         if type(client_list) is list:
-            if str(value) in [i.get_client_id() for i in client_list]:
+            if not str(value) in [i.get_client_id() for i in client_list]:
                 self._client_id = str(value)
-                done = True
-        return done
+                return True
+        return False
 
     def get_client_id(self):
         """Get client_id."""
