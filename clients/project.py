@@ -394,20 +394,20 @@ class ProjectList(object):
                 load = f.read()
                 f.close()
 
-            # generate main object
-            tmp = Project().from_json(js=load)
+                # generate main object
+                tmp = Project().from_json(js=load)
 
-            # important: convert entry_list entries to correct entry objects
-            correct_entries = []
-            for entry in tmp.get_offer_list():
-                js_tmp = json.loads(entry)
-                # check the type for the entry
-                if 'type' in js_tmp.keys():
-                    # it is an Offer object
-                    if js_tmp['type'] == 'Offer':
-                        correct_entries.append(self.load_offer_from_json(js=js_tmp))
+                # important: convert entry_list entries to correct entry objects
+                correct_entries = []
+                for entry in tmp.get_offer_list():
+                    js_tmp = json.loads(entry)
+                    # check the type for the entry
+                    if 'type' in js_tmp.keys():
+                        # it is an Offer object
+                        if js_tmp['type'] == 'Offer':
+                            correct_entries.append(self.load_offer_from_json(js=js_tmp))
 
-            tmp.set_offer_list(correct_entries)
-            out.append(tmp)
+                tmp.set_offer_list(correct_entries)
+                out.append(tmp)
 
         return out
