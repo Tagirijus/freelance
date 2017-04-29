@@ -11,22 +11,16 @@ from clients.client import Client
 from clients.project import ProjectList
 from clients.project import Project
 from general.settings import Settings
-import uuid
+import time
 
 
 def main():
     """Run the programm."""
+    start = time.time()
     s = Settings()
     client_list = ClientList(data_path=s.data_path)
     project_list = ProjectList(data_path=s.data_path)
 
-    # client = client_list.get_client_list()[0]
-    # for x in client.get_project_list(
-    #         project_list.get_project_list()):
-    #     print(client.get_client_id(), x.get_project_id())
-
     print(len(project_list.get_project_list()))
-    # generate many projects for a
-    # for x in range(0,350):
-    #     project_list.append(Project(client_id='k', title=str(uuid.uuid1())))
-    # print(len(project_list.get_project_list()))
+
+    print("--- %s seconds ---" % (round(time.time() - start, 4)))
