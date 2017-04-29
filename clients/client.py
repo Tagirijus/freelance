@@ -1,4 +1,8 @@
-"""The class holding informatin about the client and the client_list."""
+"""
+The class holding informatin about the client and the client_list.
+
+The classes do not have privat values and setter and getter methods!
+"""
 
 import json
 import os
@@ -11,7 +15,6 @@ class Client(object):
     def __init__(
         self,
         client_id=None,
-        client_list=None,
         company=None,
         salutation=None,
         name=None,
@@ -23,8 +26,7 @@ class Client(object):
         language=None
     ):
         """Initialize the class."""
-        self._client_id = ''                        # set default
-        self.set_client_id(client_id, client_list)  # try to set argument
+        self.client_id = 'no_id' if client_id is None else str(client_id)
         self.company = '' if company is None else str(company)
         self.salutation = '' if salutation is None else str(salutation)
         self.name = '' if name is None else str(name)
@@ -35,50 +37,13 @@ class Client(object):
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = '' if language is None else str(language)
 
-    def get_project_list(self, project_list=None):
-        """Get project_list for client from global project_list."""
-        if type(project_list) is list:
-            return [p for p in project_list if p.get_client_id() == self.get_client_id()]
-        else:
-            return []
-
-    def set_client_id(self, value, client_list=None):
-        """Try to set client_id if it's not in the client_list already."""
-        if client_list is None:
-            self._client_id = str(value)
-            return True
-        if type(client_list) is list:
-            if not str(value) in [i.get_client_id() for i in client_list]:
-                self._client_id = str(value)
-                return True
-        return False
-
-    def get_client_id(self):
-        """Get client_id."""
-        if self._client_id == '':
-            return 'no_id'
-        else:
-            return self._client_id
-
-    def get_projects(self, project_list):
-        """Get list of projects for only that client."""
-        out = []
-        for project in project_list:
-            try:
-                if project.client_id == self.client_id:
-                    out.append(project)
-            except Exception:
-                pass
-
-        return out
-
     def to_json(self, indent=2):
         """Convert variables data to json format."""
         out = {}
 
         # fetch all variables
         out['type'] = self.__class__.__name__
-        out['client_id'] = self.get_client_id()
+        out['client_id'] = self.client_id
         out['company'] = self.company
         out['salutation'] = self.salutation
         out['name'] = self.name
@@ -181,9 +146,10 @@ class ClientList(object):
         client_list=None
     ):
         """Initialize the class."""
+        if data_path is None or not os.path.isdir(data_path):
+            raise IOError
         self.data_path = data_path
-        self._client_list = self.load_from_file()
-        self.set_client_list(client_list)
+        self.client_list = self.load_from_file() if client_list is None else client_list
 
     def append(self, client=None):
         """Append a client, if its id does not exists already."""
@@ -191,55 +157,19 @@ class ClientList(object):
             return
 
         # check if ID does not exist and append it only then
-        if not client.get_client_id() in self.get_all_ids():
-            self._client_list.append(client)
+        if client.client_id not in self.get_all_ids():
+            self.client_list.append(client)
 
     def pop(self, index):
         """Pop client with the given index from list."""
-        if index < len(self._client_list):
-            self._client_list.pop(index)
-
-    def move(self, entry_index=None, direction=None):
-        """Move an entry with entry_index in client_list up/down."""
-        if entry_index is None or direction is None:
-            return
-
-        # cancel, if entry_index is out of range
-        if entry_index >= len(self._client_list):
-            return
-
-        # calculate new index: move up (direction == 1) or down (direction == -1)
-        new_index = entry_index + direction
-
-        # put at beginning, if it's at the end and it's moved up
-        if new_index >= len(self._client_list):
-            new_index = 0
-
-        # put at the end, if it's at the beginning and moved down
-        if new_index < 0:
-            new_index = len(self._client_list) - 1
-
-        # move it!
-        self._client_list.insert(new_index, self._client_list.pop(entry_index))
+        try:
+            self.client_list.pop(index)
+        except Exception:
+            pass
 
     def get_all_ids(self):
         """Get all client IDs."""
-        return [client_id.get_client_id() for client_id in self._client_list]
-
-    def set_client_list(self, client_list=None):
-        """Try to set client list."""
-        if type(client_list) is list:
-            # each type inside list has to be Client object
-            for i in client_list:
-                if type(i) is not Client:
-                    return
-
-            # done and correct, set it
-            self._client_list = client_list
-
-    def get_client_list(self):
-        """Get the client list."""
-        return self._client_list
+        return [client_id.client_id for client_id in self.client_list]
 
     def save_to_file(self, data_path=None):
         """Save clients from client_list to [data_path]/clients/[client_id].flclient."""
@@ -254,14 +184,14 @@ class ClientList(object):
             os.mkdir(data_path + '/clients')
 
         # cycle through clients and save each client into its own file
-        for client in self.get_client_list():
+        for client in self.client_list:
             # cancel this entry, if it's no Client object
             if type(client) is not Client:
                 continue
 
             # generate filenames
-            filename = data_path + '/clients/' + client.get_client_id() + '.flclient'
-            filename_bu = (data_path + '/clients/' + client.get_client_id() +
+            filename = data_path + '/clients/' + client.client_id + '.flclient'
+            filename_bu = (data_path + '/clients/' + client.client_id +
                            '.flclient_bu')
 
             # if it already exists, save a backup

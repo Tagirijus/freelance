@@ -21,6 +21,6 @@ def main():
     client_list = ClientList(data_path=s.data_path)
     project_list = ProjectList(data_path=s.data_path)
 
-    print(len(project_list.get_project_list()))
+    print(len(project_list.project_list))
 
     print("--- %s seconds ---" % (round(time.time() - start, 4)))

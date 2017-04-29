@@ -1,4 +1,8 @@
-"""The class holds a list of entries."""
+"""
+The class holds a list of entries.
+
+The classes do not have privat values and setter and getter methods!
+"""
 
 from datetime import datetime
 import json
@@ -22,57 +26,8 @@ class Offer(object):
         self.title = '' if title is None else str(title)
         self.project_id = '' if project_id is None else str(project_id)
         self.date_fmt = date_fmt
-        self._date = datetime.now()             # set default
-        self.set_date(date, fmt=self.date_fmt)  # try to set argument
-        self._entry_list = []                   # set default
-        self.set_entry_list(entry_list)         # try to set argument
-
-    def set_date(self, value, fmt=None):
-        """Set the date."""
-        # given value is a datetime object
-        if type(value) is datetime:
-            self._date = value
-
-        # given value is string and fmt not given (guess it)
-        elif type(value) is str and fmt is None:
-            # try class date_fmt variable
-            try:
-                self._date = datetime.strptime(value, self.date_fmt)
-            except Exception:
-                pass
-
-            # try '%Y-%m-%d' format
-            try:
-                self._date = datetime.strptime(value, '%Y-%m-%d')
-            except Exception:
-                pass
-
-            # try '%d.%m.%Y' format
-            try:
-                self._date = datetime.strptime(value, '%d.%m.%Y')
-            except Exception:
-                pass
-
-        # given value is string and fmt is given
-        elif type(value) is str and type(fmt) is str:
-            try:
-                self._date = datetime.strptime(value, fmt)
-            except Exception:
-                pass
-
-    def get_date(self):
-        """Get date."""
-        return self._date
-
-    def set_entry_list(self, value):
-        """Set entry_list."""
-        # is list for working and json-string while loading
-        if type(value) is list:
-            self._entry_list = value
-
-    def get_entry_list(self):
-        """Get entry_list."""
-        return self._entry_list
+        self.date = datetime.now() if date is None else date
+        self.entry_list = [] if entry_list is None else entry_list
 
     def append(self, entry=None):
         """Add entry to the entry_list."""
@@ -82,12 +37,14 @@ class Offer(object):
         if not is_entry:
             return
 
-        self._entry_list.append(entry)
+        self.entry_list.append(entry)
 
     def pop(self, index):
         """Pop entry with the given index from list."""
-        if index < len(self._entry_list):
-            self._entry_list.pop(index)
+        try:
+            self.entry_list.pop(index)
+        except Exception:
+            pass
 
     def move(self, entry_index=None, direction=None):
         """Move an entry with entry_index in entry_list up/down."""
@@ -95,22 +52,22 @@ class Offer(object):
             return
 
         # cancel, if entry_index is out of range
-        if entry_index >= len(self._entry_list):
+        if entry_index >= len(self.entry_list):
             return
 
         # calculate new index: move up (direction == 1) or down (direction == -1)
         new_index = entry_index + direction
 
         # put at beginning, if it's at the end and it's moved up
-        if new_index >= len(self._entry_list):
+        if new_index >= len(self.entry_list):
             new_index = 0
 
         # put at the end, if it's at the beginning and moved down
         if new_index < 0:
-            new_index = len(self._entry_list) - 1
+            new_index = len(self.entry_list) - 1
 
         # move it!
-        self._entry_list.insert(new_index, self._entry_list.pop(entry_index))
+        self.entry_list.insert(new_index, self.entry_list.pop(entry_index))
 
     def to_json(self, indent=2):
         """Convert variables data to json format."""
@@ -121,11 +78,14 @@ class Offer(object):
         out['title'] = self.title
         out['project_id'] = self.project_id
         out['date_fmt'] = self.date_fmt
-        out['date'] = self.get_date().strftime('%Y-%m-%d')
+        try:
+            out['date'] = self.date.strftime('%Y-%m-%d')
+        except Exception as e:
+            out['date'] = datetime.now().strftime('%Y-%m-%d')
 
         # fetch the jsons from the entries
         out['entry_list'] = []
-        for entry in self.get_entry_list():
+        for entry in self.entry_list:
             try:
                 out['entry_list'].append(entry.to_json(indent=indent))
             except Exception:

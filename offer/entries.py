@@ -1,4 +1,8 @@
-"""The classes for entries."""
+"""
+The classes for entries.
+
+The classes have privat values and setter and getter methods.
+"""
 
 from decimal import Decimal
 import json

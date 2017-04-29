@@ -23,6 +23,8 @@ class Settings(object):
         # settings and programm
         self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
                           if data_path is None else data_path)
+        if not os.path.isdir(str(self.data_path)):
+            raise IOError
         self.def_language = 'en' if def_language is None else def_language
         self.set_def_language(def_language)
         self.languages = ['en'] if languages is None else languages

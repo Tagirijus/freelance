@@ -47,15 +47,6 @@ def test_client_integrity():
     client_list.append(client_2)
     client_list.append(client_3)
 
-    # try to change 3rd client_id to the first - should return false!
-    change_me = client_list[2].set_client_id(
-        value='WEHW01',
-        client_list=client_list
-    )
-    assert change_me is False
-    # also the client_id should not have changed
-    assert client_list[2].get_client_id() == 'BCIP01'
-
 
 def test_client_json_conversion():
     """Test conversion of client object to / from json."""
@@ -78,4 +69,4 @@ def test_client_json_conversion():
     assert client_4.street == new_client.street
 
     # both have the same ID
-    assert client_4.get_client_id() == new_client.get_client_id()
+    assert client_4.client_id == new_client.client_id
