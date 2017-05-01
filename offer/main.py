@@ -7,9 +7,9 @@ handy for just calculating the estimated time for a specific task.
 """
 
 from clients.list import List
+from clients.list import get_inactive_list
+from clients.list import activate_project
 from general.settings import Settings
-from clients.client import Client
-from clients.project import Project
 import time
 
 
@@ -19,5 +19,21 @@ def main():
 
     s = Settings()
     l = List(data_path=s.data_path)
+
+    ld = get_inactive_list(settings=s)
+
+    print('Act   len:', len(l.project_list))
+    print('Deact len:', len(ld.project_list))
+    print()
+
+    # deactivate the project
+    #l.deactivate_project(project=l.project_list[0], inactive_dir=s.inactive_dir)
+
+    # active the project again
+    activate_project(l, ld, ld.project_list[1])
+
+    print('Act   len:', len(l.project_list))
+    print('Deact len:', len(ld.project_list))
+    print()
 
     print("--- %s seconds ---" % (round(time.time() - start, 4)))

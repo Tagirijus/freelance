@@ -8,6 +8,7 @@ project_id.
 
 from clients.client import Client
 from clients.project import Project
+from general.settings import Settings
 import json
 from offer.offer import Offer
 from offer.entries import BaseEntry
@@ -15,6 +16,36 @@ from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 import os
 import shutil
+
+
+def get_inactive_list(settings=None):
+    """Get inactive clients and projects and return it into new list."""
+    if type(settings) is Settings:
+        data_path = settings.data_path
+        client_dir = '/clients' + settings.inactive_dir
+        project_dir = '/projects' + settings.inactive_dir
+        return List(
+            data_path=data_path,
+            client_dir=client_dir,
+            project_dir=project_dir
+        )
+
+
+def activate_project(
+    active_list=None,
+    inactive_list=None,
+    inactive_project=None
+):
+    """Activate the project."""
+    are_lists = type(active_list) is List and type(inactive_list) is List
+    is_project = type(inactive_project) is Project
+
+    if not are_lists and not is_project:
+        return False
+
+    active_list.add_project(project=inactive_project.copy())
+    inactive_list.remove_project(project=inactive_project)
+    return True
 
 
 class List(object):
@@ -30,7 +61,7 @@ class List(object):
     ):
         """Initialize the class."""
         self.data_path = data_path
-        if not os.path.isdir(self.data_path):
+        if not os.path.isdir(str(self.data_path)):
             raise IOError
 
         self.client_dir = client_dir
@@ -79,6 +110,51 @@ class List(object):
         except Exception:
             return False
 
+    def deactivate_client(self, client=None, inactive_dir=None):
+        """Pop client and move its file to the inactive dir."""
+        # create absolute path to deactivated_dir and working dir
+        path_deact = self.data_path + self.client_dir + str(inactive_dir)
+        path = self.data_path + self.client_dir
+
+        # check arguments and directory
+        one_not_set = client is None or inactive_dir is None
+        is_client = type(client) is Client
+        is_dir = os.path.isdir(path_deact)
+
+        # cancel if one argument is not set or client isn't Client
+        if one_not_set or not is_client:
+            return False
+
+        # first all the clients projects
+        for p in self.get_client_projects(client=client):
+            self.deactivate_project(
+                project=p,
+                inactive_dir=inactive_dir
+            )
+
+        # and now the client itself !!!
+        # create dir if it does not exist
+        if not is_dir:
+            os.mkdir(path_deact)
+
+        # generate filenames
+        filename_old = path + '/' + client.client_id + '.flclient'
+        filename_new = path_deact + '/' + client.client_id + '.flclient'
+        filename_new_bu = path_deact + '/' + client.client_id + '.flclient_bu'
+
+        # if it already exists, save a backup
+        if os.path.isfile(filename_new):
+            shutil.copy2(filename_new, filename_new_bu)
+
+        # move the old file to the inactive directory and pop variable from list
+        try:
+            shutil.move(filename_old, filename_new)
+            self.client_list.pop(self.client_list.index(client))
+        except Exception:
+            return False
+
+        return True
+
     def set_client_id(self, client=None, client_id=None):
         """Try to set new client ID for client and its projects."""
         is_client = type(client) is Client
@@ -110,7 +186,7 @@ class List(object):
         """Add a project, if its ID does not already exist and the client exist."""
         is_project = type(project) is Project
         id_exists = project.client_id in [c.client_id for c in self.client_list]
-        pid_exists = project.project_id in [p.project_id for p in self.project_list]
+        pid_exists = project.project_id() in [p.project_id() for p in self.project_list]
 
         # cancel if it's no project or the client_id does not exist
         #   or the project_id already exists
@@ -125,7 +201,7 @@ class List(object):
     def remove_project(self, project=None):
         """Remove project, if it exists (according to its ID)."""
         is_project = type(project) is Project
-        pid_exists = project.project_id in [p.project_id for p in self.project_list]
+        pid_exists = project.project_id() in [p.project_id() for p in self.project_list]
 
         # cancel if it's no project or project_id does not exist
         if not is_project or not pid_exists:
@@ -138,6 +214,43 @@ class List(object):
             return True
         except Exception:
             return False
+
+    def deactivate_project(self, project=None, inactive_dir=None):
+        """Pop project and move its file to the inactive dir."""
+        # create absolute path to deactivated_dir and working dir
+        path_deact = self.data_path + self.project_dir + str(inactive_dir)
+        path = self.data_path + self.project_dir
+
+        # check arguments and directory
+        one_not_set = project is None or inactive_dir is None
+        is_project = type(project) is Project
+        is_dir = os.path.isdir(path_deact)
+
+        # cancel if one argument is not set or project isn't Project
+        if one_not_set or not is_project:
+            return False
+
+        # create dir if it does not exist
+        if not is_dir:
+            os.mkdir(path_deact)
+
+        # generate filenames
+        filename_old = path + '/' + project.project_id() + '.flproject'
+        filename_new = path_deact + '/' + project.project_id() + '.flproject'
+        filename_new_bu = path_deact + '/' + project.project_id() + '.flproject_bu'
+
+        # if it already exists, save a backup
+        if os.path.isfile(filename_new):
+            shutil.copy2(filename_new, filename_new_bu)
+
+        # move the old file to the inactive directory and pop variable from list
+        try:
+            shutil.move(filename_old, filename_new)
+            self.project_list.pop(self.project_list.index(project))
+        except Exception:
+            return False
+
+        return True
 
     def set_project_title(self, project=None, title=None):
         """Try to set new project title for project."""
@@ -181,7 +294,7 @@ class List(object):
         path = self.data_path + self.client_dir
 
         # check if the data_path/clients directory exists and cancel otherwise
-        if not os.path.isdir(path):
+        if not os.path.isdir(str(path)):
             return []
 
         # cycle through the files and append them converted from json to the list
@@ -206,7 +319,7 @@ class List(object):
         path = self.data_path + self.project_dir
 
         # check if the data_path/clients directory exists and cancel otherwise
-        if not os.path.isdir(path):
+        if not os.path.isdir(str(path)):
             return []
 
         for file in sorted(os.listdir(path)):
@@ -289,7 +402,9 @@ class List(object):
         path = self.data_path + self.client_dir
 
         # create dir if it does not exist
-        if not os.path.isdir(path):
+        is_dir = os.path.isdir(str(path))
+        is_file = os.path.isfile(str(path))
+        if not is_dir and not is_file:
             os.mkdir(path)
 
         # generate filenames
@@ -321,7 +436,7 @@ class List(object):
         path = self.data_path + self.project_dir
 
         # generate filenames
-        filename = path + '/' + project.project_id + '.flproject'
+        filename = path + '/' + project.project_id() + '.flproject'
 
         # check if the file exists and delete it
         if os.path.isfile(filename):
@@ -338,12 +453,14 @@ class List(object):
         path = self.data_path + self.project_dir
 
         # create dir if it does not exist
-        if not os.path.isdir(path):
+        is_dir = os.path.isdir(str(path))
+        is_file = os.path.isfile(str(path))
+        if not is_dir and not is_file:
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + project.project_id + '.flproject'
-        filename_bu = path + '/' + project.project_id + '.flproject_bu'
+        filename = path + '/' + project.project_id() + '.flproject'
+        filename_bu = path + '/' + project.project_id() + '.flproject_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):

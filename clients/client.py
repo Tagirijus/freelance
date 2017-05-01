@@ -35,6 +35,12 @@ class Client(object):
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = '' if language is None else str(language)
 
+    def fullname(self):
+        """Return name + familyname."""
+        name = self.name
+        family_name = ' ' + self.family_name if self.family_name != '' else ''
+        return name + family_name
+
     def to_json(self, indent=2):
         """Convert variables data to json format."""
         out = {}
@@ -133,3 +139,7 @@ class Client(object):
             tax_id=tax_id,
             language=language
         )
+
+    def copy(self):
+        """Return copy of own object as new object."""
+        return Client().from_json(js=self.to_json())

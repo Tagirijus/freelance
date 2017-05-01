@@ -78,7 +78,7 @@ class Offer(object):
         out['date_fmt'] = self.date_fmt
         try:
             out['date'] = self.date.strftime('%Y-%m-%d')
-        except Exception as e:
+        except Exception:
             out['date'] = datetime.now().strftime('%Y-%m-%d')
 
         # fetch the jsons from the entries
@@ -143,3 +143,7 @@ class Offer(object):
             date=date,
             entry_list=entry_list
         )
+
+    def copy(self):
+        """Copy the own offer into new offer object."""
+        return Offer().from_json(js=self.to_json())

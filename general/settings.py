@@ -24,7 +24,9 @@ class Settings(object):
         # settings and programm
         self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
                           if data_path is None else data_path)
-        if not os.path.isdir(str(self.data_path)):
+        is_dir = os.path.isdir(str(self.data_path))
+        is_file = os.path.isfile(str(self.data_path))
+        if not is_dir or is_file:
             raise IOError
         self.inactive_dir = '/inactive' if inactive_dir is None else inactive_dir
         self.def_language = 'en' if def_language is None else str(def_language)
@@ -142,12 +144,15 @@ class Settings(object):
 
     def generate_data_path(self):
         """Check if data_path exists or create dir."""
-        # does it exist?
-        if os.path.isdir(self.data_path):
-            # yep! go on
-            return
-        else:
-            # nope? create it!
+        is_dir = os.path.isdir(str(self.data_path))
+        is_file = os.path.isfile(str(self.data_path))
+
+        # raise error, if it is a file
+        if is_file:
+            raise IOError
+
+        # create if it does not exist
+        if not is_dir:
             os.mkdir(self.data_path)
 
     def save_settings_to_file(self):

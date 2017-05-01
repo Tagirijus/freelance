@@ -61,7 +61,6 @@ class Project(object):
         # move it!
         self.offer_list.insert(new_index, self.offer_list.pop(offer_index))
 
-    @property
     def project_id(self):
         """Generate id with [client_id]_[title]."""
         return self.client_id + '_' + self.title
@@ -143,3 +142,7 @@ class Project(object):
             minimum_days=minimum_days,
             offer_list=offer_list
         )
+
+    def copy(self):
+        """Return copy of own object as new object."""
+        return Project().from_json(js=self.to_json())
