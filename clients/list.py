@@ -48,6 +48,11 @@ def activate_project(
     return True
 
 
+def us(string=''):
+    """Return string with underscores instead of whitespace."""
+    return string.replace(' ', '_')
+
+
 class List(object):
     """List holding clients and projects."""
 
@@ -335,7 +340,10 @@ class List(object):
                 # important: convert entry_list entries to correct entry objects
                 correct_entries = []
                 for entry in tmp.offer_list:
-                    js_tmp = json.loads(entry)
+                    if type(entry) is not dict:
+                        js_tmp = json.loads(entry)
+                    else:
+                        js_tmp = entry
                     # check the type for the entry
                     if 'type' in js_tmp.keys():
                         # it is an Offer object
@@ -359,7 +367,10 @@ class List(object):
         # important: convert entry_list entries to correct entry objects
         correct_entries = []
         for entry in out.entry_list:
-            js_tmp = json.loads(entry)
+            if type(entry) is not dict:
+                js_tmp = json.loads(entry)
+            else:
+                js_tmp = entry
             # check the type for the entry
             if 'type' in js_tmp.keys():
                 # it's BaseEntry - convert it from json and append it
@@ -385,7 +396,7 @@ class List(object):
         path = self.data_path + self.client_dir
 
         # generate filenames
-        filename = path + '/' + client.client_id + '.flclient'
+        filename = path + '/' + us(client.client_id) + '.flclient'
 
         # check if the file exists and delete it
         if os.path.isfile(filename):
@@ -408,8 +419,8 @@ class List(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + client.client_id + '.flclient'
-        filename_bu = path + '/' + client.client_id + '.flclient_bu'
+        filename = path + '/' + us(client.client_id) + '.flclient'
+        filename_bu = path + '/' + us(client.client_id) + '.flclient_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
@@ -436,7 +447,7 @@ class List(object):
         path = self.data_path + self.project_dir
 
         # generate filenames
-        filename = path + '/' + project.project_id() + '.flproject'
+        filename = path + '/' + us(project.project_id()) + '.flproject'
 
         # check if the file exists and delete it
         if os.path.isfile(filename):
@@ -459,8 +470,8 @@ class List(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + project.project_id() + '.flproject'
-        filename_bu = path + '/' + project.project_id() + '.flproject_bu'
+        filename = path + '/' + us(project.project_id()) + '.flproject'
+        filename_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):

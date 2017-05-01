@@ -17,15 +17,13 @@ class Offer(object):
     def __init__(
         self,
         title=None,
-        project_id=None,
         date_fmt=None,
         date=None,
         entry_list=None
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
-        self.project_id = '' if project_id is None else str(project_id)
-        self.date_fmt = date_fmt
+        self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self.date = datetime.now() if date is None else date
         self.entry_list = [] if entry_list is None else entry_list
 
@@ -67,14 +65,13 @@ class Offer(object):
         # move it!
         self.entry_list.insert(new_index, self.entry_list.pop(entry_index))
 
-    def to_json(self, indent=2):
-        """Convert variables data to json format."""
+    def to_dict(self):
+        """Convert object to dict."""
         out = {}
 
         # fetch the variables
         out['type'] = self.__class__.__name__
         out['title'] = self.title
-        out['project_id'] = self.project_id
         out['date_fmt'] = self.date_fmt
         try:
             out['date'] = self.date.strftime('%Y-%m-%d')
@@ -85,12 +82,20 @@ class Offer(object):
         out['entry_list'] = []
         for entry in self.entry_list:
             try:
-                out['entry_list'].append(entry.to_json(indent=indent))
+                out['entry_list'].append(entry.to_dict())
             except Exception:
                 out['entry_list'].append(entry)
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert variables data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None):
@@ -111,11 +116,6 @@ class Offer(object):
             title = js['title']
         else:
             title = None
-
-        if 'project_id' in js.keys():
-            project_id = js['project_id']
-        else:
-            project_id = None
 
         if 'date_fmt' in js.keys():
             date_fmt = js['date_fmt']
@@ -138,7 +138,6 @@ class Offer(object):
         # return new object
         return cls(
             title=title,
-            project_id=project_id,
             date_fmt=date_fmt,
             date=date,
             entry_list=entry_list

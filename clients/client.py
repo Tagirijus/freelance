@@ -41,8 +41,8 @@ class Client(object):
         family_name = ' ' + self.family_name if self.family_name != '' else ''
         return name + family_name
 
-    def to_json(self, indent=2):
-        """Convert variables data to json format."""
+    def to_dict(self):
+        """Convert object to dict."""
         out = {}
 
         # fetch all variables
@@ -58,8 +58,16 @@ class Client(object):
         out['tax_id'] = self.tax_id
         out['language'] = self.language
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert variables data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None):

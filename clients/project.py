@@ -65,8 +65,8 @@ class Project(object):
         """Generate id with [client_id]_[title]."""
         return self.client_id + '_' + self.title
 
-    def to_json(self, indent=2):
-        """Convert variables data to json format."""
+    def to_dict(self):
+        """Convert object to dict."""
         out = {}
 
         # fetch the variables
@@ -81,12 +81,20 @@ class Project(object):
         out['offer_list'] = []
         for offer in self.offer_list:
             try:
-                out['offer_list'].append(offer.to_json(indent=indent))
+                out['offer_list'].append(offer.to_dict())
             except Exception:
                 out['offer_list'].append(offer)
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert variables data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None):

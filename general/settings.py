@@ -14,7 +14,8 @@ class Settings(object):
         inactive_dir=None,
         def_language=None,
         languages=None,
-        defaults=None
+        defaults=None,
+        keep_offer_preset_date=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -46,6 +47,10 @@ class Settings(object):
                 data_path=self.data_path,
                 language=str(lang)
             )
+
+        # preset settings
+        self.keep_offer_preset_date = (False if keep_offer_preset_date is None
+                                       else keep_offer_preset_date)
 
     def set_def_language(self, value=None):
         """Set default language if it exists in the self.languages."""
@@ -100,7 +105,7 @@ class Settings(object):
                     language=language
                 )
 
-    def to_json(self, indent=2):
+    def to_json(self, indent=2, ensure_ascii=False):
         """Convert settings data to json format."""
         out = {}
 
@@ -109,9 +114,15 @@ class Settings(object):
         out['inactive_dir'] = self.inactive_dir
         out['def_language'] = self.def_language
         out['languages'] = self.languages
+        out['keep_offer_preset_date'] = self.keep_offer_preset_date
 
         # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return json.dumps(
+            out,
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     def feed_json(self, js=None):
         """Feed settings variables from json string."""
@@ -137,6 +148,9 @@ class Settings(object):
 
         if 'languages' in js.keys():
             self.languages = js['languages']
+
+        if 'keep_offer_preset_date' in js.keys():
+            self.keep_offer_preset_date = js['keep_offer_preset_date']
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

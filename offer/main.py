@@ -7,9 +7,15 @@ handy for just calculating the estimated time for a specific task.
 """
 
 from clients.list import List
-from clients.list import get_inactive_list
-from clients.list import activate_project
+# from clients.list import get_inactive_list
+# from clients.list import activate_project
+from datetime import datetime
+from general.preset import Preset
 from general.settings import Settings
+from offer.offer import Offer
+from offer.entries import BaseEntry
+from offer.entries import MultiplyEntry
+from offer.entries import ConnectEntry
 import time
 
 
@@ -19,21 +25,8 @@ def main():
 
     s = Settings()
     l = List(data_path=s.data_path)
+    p = Preset(data_path=s.data_path)
 
-    ld = get_inactive_list(settings=s)
-
-    print('Act   len:', len(l.project_list))
-    print('Deact len:', len(ld.project_list))
-    print()
-
-    # deactivate the project
-    #l.deactivate_project(project=l.project_list[0], inactive_dir=s.inactive_dir)
-
-    # active the project again
-    activate_project(l, ld, ld.project_list[1])
-
-    print('Act   len:', len(l.project_list))
-    print('Deact len:', len(ld.project_list))
-    print()
+    # ld = get_inactive_list(settings=s)
 
     print("--- %s seconds ---" % (round(time.time() - start, 4)))

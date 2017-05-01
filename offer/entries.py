@@ -16,12 +16,12 @@ class BaseEntry(object):
     def __init__(
         self,
         id=None,
-        title='',
-        comment='',
-        amount=0.0,
-        amount_format='',
-        time=0.0,
-        price=0.0,
+        title=None,
+        comment=None,
+        amount=None,
+        amount_format=None,
+        time=None,
+        price=None,
         connected=None
     ):
         """Init the class."""
@@ -155,8 +155,8 @@ class BaseEntry(object):
         """Get connected set."""
         return self._connected
 
-    def to_json(self, indent=2):
-        """Convert all data to json format."""
+    def to_dict(self):
+        """Convert all data to a dict."""
         out = {}
 
         # fetch all important data for this entry type
@@ -169,8 +169,16 @@ class BaseEntry(object):
         out['time'] = float(self.get_hours())
         out['price'] = float(self.get_price())
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert all data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None, preset_loading=False):
@@ -238,6 +246,10 @@ class BaseEntry(object):
             price=price
         )
 
+    def copy(self):
+        """Return a copy of this object."""
+        return BaseEntry().from_json(js=self.to_json())
+
 
 class MultiplyEntry(BaseEntry):
     """
@@ -301,8 +313,8 @@ class MultiplyEntry(BaseEntry):
         """Get hour_rate."""
         return self._hour_rate
 
-    def to_json(self, indent=2):
-        """Convert all data to json format."""
+    def to_dict(self):
+        """Convert object to dict."""
         out = {}
 
         # fetch all important data for this entry type
@@ -316,8 +328,16 @@ class MultiplyEntry(BaseEntry):
             self.get_hour_rate()
         ))
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert all data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None, preset_loading=False):
@@ -378,6 +398,10 @@ class MultiplyEntry(BaseEntry):
             amount_format=amount_format,
             hour_rate=hour_rate
         )
+
+    def copy(self):
+        """Return a copy of this object."""
+        return MultiplyEntry().from_json(js=self.to_json())
 
 
 class ConnectEntry(BaseEntry):
@@ -558,8 +582,8 @@ class ConnectEntry(BaseEntry):
             disconnect=True
         )
 
-    def to_json(self, indent=2):
-        """Convert all data to json format."""
+    def to_dict(self):
+        """Convert object to dict."""
         out = {}
 
         # fetch all important data for this entry type
@@ -573,8 +597,16 @@ class ConnectEntry(BaseEntry):
         out['multiplicator'] = float(self.get_multiplicator())
         out['connected'] = list(self.get_connected())
 
-        # return the json
-        return json.dumps(out, indent=indent, sort_keys=True)
+        return out
+
+    def to_json(self, indent=2, ensure_ascii=False):
+        """Convert all data to json format."""
+        return json.dumps(
+            self.to_dict(),
+            indent=indent,
+            ensure_ascii=ensure_ascii,
+            sort_keys=True
+        )
 
     @classmethod
     def from_json(cls, js=None, preset_loading=False):
@@ -648,3 +680,7 @@ class ConnectEntry(BaseEntry):
             multiplicator=multiplicator,
             connected=connected
         )
+
+    def copy(self):
+        """Return a copy of this object."""
+        return ConnectEntry().from_json(js=self.to_json())
