@@ -11,6 +11,7 @@ class Settings(object):
     def __init__(
         self,
         data_path=None,
+        inactive_dir=None,
         def_language=None,
         languages=None,
         defaults=None
@@ -25,7 +26,8 @@ class Settings(object):
                           if data_path is None else data_path)
         if not os.path.isdir(str(self.data_path)):
             raise IOError
-        self.def_language = 'en' if def_language is None else def_language
+        self.inactive_dir = '/inactive' if inactive_dir is None else inactive_dir
+        self.def_language = 'en' if def_language is None else str(def_language)
         self.set_def_language(def_language)
         self.languages = ['en'] if languages is None else languages
 
@@ -42,10 +44,6 @@ class Settings(object):
                 data_path=self.data_path,
                 language=str(lang)
             )
-
-    def get_def_language(self):
-        """Return the default language."""
-        return self._def_language
 
     def set_def_language(self, value=None):
         """Set default language if it exists in the self.languages."""
@@ -106,6 +104,7 @@ class Settings(object):
 
         # fetch all setting variables
         out['data_path'] = self.data_path
+        out['inactive_dir'] = self.inactive_dir
         out['def_language'] = self.def_language
         out['languages'] = self.languages
 
@@ -127,6 +126,9 @@ class Settings(object):
         # feed settings variables
         if 'data_path' in js.keys():
             self.data_path = js['data_path']
+
+        if 'inactive_dir' in js.keys():
+            self.inactive_dir = js['inactive_dir']
 
         if 'def_language' in js.keys():
             self.def_language = js['def_language']

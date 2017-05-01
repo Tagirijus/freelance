@@ -48,23 +48,21 @@ class Offer(object):
 
     def move(self, entry_index=None, direction=None):
         """Move an entry with entry_index in entry_list up/down."""
-        if entry_index is None or direction is None:
-            return
+        one_not_set = entry_index is None or direction is None
+        out_of_range = entry_index >= len(self.entry_list)
 
-        # cancel, if entry_index is out of range
-        if entry_index >= len(self.entry_list):
+        # cancel, if one argument is not set or entry_index is out of range
+        if one_not_set or out_of_range:
             return
 
         # calculate new index: move up (direction == 1) or down (direction == -1)
         new_index = entry_index + direction
 
         # put at beginning, if it's at the end and it's moved up
-        if new_index >= len(self.entry_list):
-            new_index = 0
+        new_index = 0 if new_index >= len(self.entry_list) else new_index
 
         # put at the end, if it's at the beginning and moved down
-        if new_index < 0:
-            new_index = len(self.entry_list) - 1
+        new_index = len(self.entry_list) - 1 if new_index < 0 else new_index
 
         # move it!
         self.entry_list.insert(new_index, self.entry_list.pop(entry_index))

@@ -26,10 +26,7 @@ class BaseEntry(object):
     ):
         """Init the class."""
         # gen ID if not set, otherwise get it from argument
-        if id is None:
-            self._id = str(uuid.uuid1())
-        else:
-            self._id = str(id)
+        self._id = str(uuid.uuid1()) if id is None else str(id)
 
         # get other variables from arguments
         self.title = '' if title is None else str(title)
@@ -435,15 +432,11 @@ class ConnectEntry(BaseEntry):
         can cost x-times multiplied the original working time of a task.
         This class can calculate it.
         """
-        # if is_time() == False, return 0 timedelta
-        if not self.get_is_time() or type(entry_list) is None:
+        # if is_time() == False or entry_list not a list, return 0 timedelta
+        if not self.get_is_time() or type(entry_list) is not list:
             return time_module.to_timedelta(0)
         # is_time() == True, calculate time respecting other entires
         else:
-            # cancel and return zero, if entry_list is no list
-            if type(entry_list) != list:
-                return time_module.to_timedelta(0)
-
             # otherwise iterate through entry_list and find
             # entries which ids exist in the self._connected list
             out = time_module.to_timedelta(0)
@@ -530,12 +523,11 @@ class ConnectEntry(BaseEntry):
         not exists in the found entry.get_connected() set and appends
         it to the own self._connected set then, if it.
         """
-        # if one argument is not given, cancel
-        if type(entry_list) is None or type(entry_id) is None:
-            return
+        one_not_set = type(entry_list) is not list or type(entry_id) is None
+        is_own_id = entry_id == self.get_id()
 
-        # also cancel if entry_id is the own
-        if entry_id == self.get_id():
+        # cancel if one argument is not given or if entry_id is the own
+        if one_not_set or is_own_id:
             return
 
         # check if other entry id exists in entry_list

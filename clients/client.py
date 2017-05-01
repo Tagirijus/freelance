@@ -5,8 +5,6 @@ The classes do not have privat values and setter and getter methods!
 """
 
 import json
-import os
-import shutil
 
 
 class Client(object):
@@ -135,99 +133,3 @@ class Client(object):
             tax_id=tax_id,
             language=language
         )
-
-
-class ClientList(object):
-    """The list holding the client objects."""
-
-    def __init__(
-        self,
-        data_path=None,
-        client_list=None
-    ):
-        """Initialize the class."""
-        if data_path is None or not os.path.isdir(data_path):
-            raise IOError
-        self.data_path = data_path
-        self.client_list = self.load_from_file() if client_list is None else client_list
-
-    def append(self, client=None):
-        """Append a client, if its id does not exists already."""
-        if type(client) is not Client:
-            return
-
-        # check if ID does not exist and append it only then
-        if client.client_id not in self.get_all_ids():
-            self.client_list.append(client)
-
-    def pop(self, index):
-        """Pop client with the given index from list."""
-        try:
-            self.client_list.pop(index)
-        except Exception:
-            pass
-
-    def get_all_ids(self):
-        """Get all client IDs."""
-        return [client_id.client_id for client_id in self.client_list]
-
-    def save_to_file(self, data_path=None):
-        """Save clients from client_list to [data_path]/clients/[client_id].flclient."""
-        if data_path is None:
-            if self.data_path is None:
-                return False
-            else:
-                data_path = self.data_path
-
-        # check if client directory exists and create one if needed
-        if not os.path.isdir(data_path + '/clients'):
-            os.mkdir(data_path + '/clients')
-
-        # cycle through clients and save each client into its own file
-        for client in self.client_list:
-            # cancel this entry, if it's no Client object
-            if type(client) is not Client:
-                continue
-
-            # generate filenames
-            filename = data_path + '/clients/' + client.client_id + '.flclient'
-            filename_bu = (data_path + '/clients/' + client.client_id +
-                           '.flclient_bu')
-
-            # if it already exists, save a backup
-            if os.path.isfile(filename):
-                shutil.copy2(filename, filename_bu)
-
-            # write the file
-            f = open(filename, 'w')
-            f.write(client.to_json())
-            f.close()
-        return True
-
-    def load_from_file(self, data_path=None):
-        """Load the clients from file and return client_list."""
-        if data_path is None:
-            if self.data_path is None:
-                return []
-            else:
-                data_path = self.data_path
-
-        path = data_path + '/clients/'
-
-        # check if the data_path/clients directory exists and cancel otherwise
-        if not os.path.isdir(path):
-            return []
-
-        # cycle through the files and append them converted from json to the list
-        out = []
-        for file in sorted(os.listdir(path)):
-            if file.endswith('.flclient'):
-                # load the file
-                f = open(path + file, 'r')
-                load = f.read()
-                f.close()
-
-                # convert file content to Client object and append it
-                out.append(Client().from_json(js=load))
-
-        return out
