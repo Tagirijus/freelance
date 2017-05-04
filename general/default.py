@@ -49,13 +49,6 @@ class Default(object):
         connectentry_multiplicator=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
-        self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
-            :os.path.dirname(os.path.realpath(__file__)).rfind('/')
-        ]
-
-        # settings and programm
-        self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
-                          if data_path is None else data_path)
         self.language = 'en' if language is None else language
         self.offer_template = '' if offer_template is None else offer_template
         self.offer_filename = '' if offer_filename is None else offer_filename
@@ -119,18 +112,15 @@ class Default(object):
         self.connectentry_multiplicator = (0.0 if connectentry_multiplicator is None else
                                            connectentry_multiplicator)
 
-        # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
-        self.generate_data_path()
-
-        # try to load settings from self.data_path/freelance.settings afterwards
-        self.load_settings_from_file()
+        # try to load default automatically
+        if data_path is not None:
+            self.load_settings_from_file(data_path)
 
     def to_json(self, indent=2):
         """Convert settings data to json format."""
         out = {}
 
         # fetch all setting variables
-        out['data_path'] = self.data_path
         out['language'] = self.language
         out['offer_template'] = self.offer_template
         out['offer_filename'] = self.offer_filename
@@ -189,9 +179,6 @@ class Default(object):
             return
 
         # feed settings variables
-        if 'data_path' in js.keys():
-            self.data_path = js['data_path']
-
         if 'language' in js.keys():
             self.language = js['language']
 
@@ -300,42 +287,27 @@ class Default(object):
         if 'connectentry_multiplicator' in js.keys():
             self.connectentry_multiplicator = js['connectentry_multiplicator']
 
-    def gen_abs_path_to_default_file(self):
+    def gen_abs_path_to_default_file(self, data_path):
         """Generate the absolut path to the settings file."""
-        return self.data_path + '/defaults_' + self.language + '.settings'
+        return data_path + '/defaults_' + self.language + '.settings'
 
-    def generate_data_path(self):
-        """Check if data_path exists or create dir."""
-        # does it exist?
-        if os.path.isdir(self.data_path):
-            # yep! go on
-            return
-        else:
-            # nope? create it!
-            os.mkdir(self.data_path)
-
-    def delete_default_file(self):
+    def delete_default_file(self, data_path):
         """Delete the default file in data_path."""
-        if os.path.isfile(self.gen_abs_path_to_default_file()):
-            os.remove(self.gen_abs_path_to_default_file())
+        if os.path.isfile(self.gen_abs_path_to_default_file(data_path)):
+            os.remove(self.gen_abs_path_to_default_file(data_path))
 
-    def save_defaults_to_file(self, new_data_path=None):
+    def save_defaults_to_file(self, data_path):
         """Save the default to file in data_path."""
-        # get new data_path or use old one
-        if new_data_path is not None:
-            self.data_path = new_data_path
-
-        # save it
-        f = open(self.gen_abs_path_to_default_file(), 'w')
+        f = open(self.gen_abs_path_to_default_file(data_path), 'w')
         f.write(self.to_json())
         f.close()
 
-    def load_settings_from_file(self):
+    def load_settings_from_file(self, data_path):
         """Load the settings from file in data_path."""
         # check if the file exists
-        if os.path.isfile(self.gen_abs_path_to_default_file()):
+        if os.path.isfile(self.gen_abs_path_to_default_file(data_path)):
             # load content from file
-            f = open(self.gen_abs_path_to_default_file(), 'r')
+            f = open(self.gen_abs_path_to_default_file(data_path), 'r')
             loaded = f.read().strip()
             f.close()
 

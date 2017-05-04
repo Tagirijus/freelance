@@ -1,0 +1,20 @@
+This programm is for managing clients and their projects as a freelancer. For now you can assign offers to a project. Later it will also be possible to add invoices as well. Maybe even a linked system to ledger cli timetracking data, which will generate an invoice based on time tracking.
+
+
+General shortcuts:
+
+-> Ctrl+X: brings up the menu
+-> Ctrl+Q: cancel button (Q for "quit")
+-> Ctrl+O: ok button (O for "ok")
+
+
+Client list / Project list:
+
+-> INS: create a new client / project, depending on the selected list
+-> DEL: deactivate ("delete") the selected client / project
+-> ENTER: edit the selected client / project
+
+
+In the settings you can set up default texts and other settings.
+
+Hope this programm will help some freelancers out there! (:

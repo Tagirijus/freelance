@@ -78,7 +78,7 @@ class Settings(object):
                 self.languages.pop(self.languages.index(str(language)))
 
                 # delete the file
-                self.defaults[language].delete_default_file()
+                self.defaults[language].delete_default_file(self.data_path)
 
                 # remove the self.defaults dict entry
                 del self.defaults[language]

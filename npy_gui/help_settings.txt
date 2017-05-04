@@ -1,0 +1,28 @@
+Data path:
+The path, which should direct to a folder for storing this programms settings and all the clients and projects database.
+
+
+Default language:
+Choose which default language should be used, when creating new stuff.
+
+
+Inactive dir:
+The subfolder inside clients or projects folder inside the data_path holding the inactive ("deleted") data. A data structure could look like this:
+
+data_path/ -> settings and defaults
+data_path/clients/ -> client data
+data_path/clients/inactive -> inactive/deleted client data
+data_path/projects/ -> project data
+data_path/projects/inactive -> inactive/deleted project data
+
+
+Offer:
+"Keep offer date" will keep the date from the saved offer preset. Probably a stupid idea, when creating NEW offers. Don't know why I kept this setting ...
+
+
+Defaults:
+A list of default packs. Generally it is meant to hold default texts etc. in  differnet language per "pack".
+
+-> INS: create a new pack
+-> DEL: delete (no revert!!) a pack
+-> ENTER: edit the selected pack
