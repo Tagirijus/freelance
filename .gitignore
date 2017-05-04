@@ -1,5 +1,5 @@
 /.cache
 /todo.txt
-/data_path.settings
+/data_path.flsettings
 /*.sublime-project
 /*.sublime-workspace

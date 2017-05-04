@@ -319,8 +319,13 @@ class Default(object):
         if os.path.isfile(self.gen_abs_path_to_default_file()):
             os.remove(self.gen_abs_path_to_default_file())
 
-    def save_defaults_to_file(self):
+    def save_defaults_to_file(self, new_data_path=None):
         """Save the default to file in data_path."""
+        # get new data_path or use old one
+        if new_data_path is not None:
+            self.data_path = new_data_path
+
+        # save it
         f = open(self.gen_abs_path_to_default_file(), 'w')
         f.write(self.to_json())
         f.close()

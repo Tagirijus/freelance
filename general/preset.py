@@ -28,7 +28,9 @@ class Preset(object):
     ):
         """Initialize the class."""
         self.data_path = data_path
-        if not os.path.isdir(str(self.data_path)):
+
+        is_dir = os.path.isdir(str(self.data_path))
+        if not is_dir:
             raise IOError
 
         self.offer_dir = offer_dir
@@ -262,3 +264,14 @@ class Preset(object):
         """Save all presets."""
         self.save_offer_list_to_file()
         self.save_entry_list_to_file()
+
+    def reload(self, data_path=None):
+        """Reload the presets."""
+        is_dir = os.path.isdir(str(data_path))
+
+        if not is_dir:
+            raise IOError
+
+        self.data_path = data_path
+        self.offer_list = self.load_offer_list_from_file()
+        self.entry_list = self.load_entry_list_from_file()

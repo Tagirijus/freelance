@@ -22,6 +22,12 @@ class Settings(object):
             :os.path.dirname(os.path.realpath(__file__)).rfind('/')
         ]
 
+        # check if data_path.flsettings exist in the base path of the script
+        if os.path.isfile(self.BASE_PATH + '/data_path.flsettings'):
+            f = open(self.BASE_PATH + '/data_path.flsettings', 'r')
+            data_path = f.read().strip()
+            f.close()
+
         # settings and programm
         self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
                           if data_path is None else data_path)
@@ -37,6 +43,10 @@ class Settings(object):
         # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
         self.generate_data_path()
 
+        # preset settings
+        self.keep_offer_preset_date = (False if keep_offer_preset_date is None
+                                       else bool(keep_offer_preset_date))
+
         # try to load settings from self.data_path/freelance.settings afterwards
         self.load_settings_from_file()
 
@@ -47,10 +57,6 @@ class Settings(object):
                 data_path=self.data_path,
                 language=str(lang)
             )
-
-        # preset settings
-        self.keep_offer_preset_date = (False if keep_offer_preset_date is None
-                                       else keep_offer_preset_date)
 
     def set_def_language(self, value=None):
         """Set default language if it exists in the self.languages."""
@@ -171,7 +177,15 @@ class Settings(object):
 
     def save_settings_to_file(self):
         """Save the settings to file in data_path."""
-        # save settings
+        # generate data_path if it does not exist
+        self.generate_data_path()
+
+        # save the path to BASE_PATH/data_path.flsettings
+        f = open(self.BASE_PATH + '/data_path.flsettings', 'w')
+        f.write(self.data_path)
+        f.close()
+
+        # save settings to the data_path
         f = open(self.gen_abs_path_to_settings_file(), 'w')
         f.write(self.to_json())
         f.close()
@@ -179,7 +193,7 @@ class Settings(object):
         # save defaults
         try:
             for lang in self.defaults.keys():
-                self.defaults[lang].save_defaults_to_file()
+                self.defaults[lang].save_defaults_to_file(new_data_path=self.data_path)
         except Exception:
             pass
 

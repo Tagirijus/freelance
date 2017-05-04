@@ -66,7 +66,9 @@ class List(object):
     ):
         """Initialize the class."""
         self.data_path = data_path
-        if not os.path.isdir(str(self.data_path)):
+
+        is_dir = os.path.isdir(str(self.data_path))
+        if not is_dir:
             raise IOError
 
         self.client_dir = client_dir
@@ -518,3 +520,14 @@ class List(object):
             project_dir=self.project_dir[:],
             project_list=new_project_list
         )
+
+    def reload(self, data_path=None):
+        """Reload the list."""
+        is_dir = os.path.isdir(str(data_path))
+
+        if not is_dir:
+            raise IOError
+
+        self.data_path = data_path
+        self.client_list = self.load_client_list_from_file()
+        self.project_list = self.load_project_list_from_file()
