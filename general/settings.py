@@ -71,45 +71,56 @@ class Settings(object):
 
     def remove_default(self, language=None):
         """Remove the default."""
-        if type(language) is str:
-            if (language in self.defaults.keys() and
-                    language in self.languages):
-                # remove it from self.languages
-                self.languages.pop(self.languages.index(str(language)))
+        lang_exists = language in self.defaults.keys() and language in self.languages
 
-                # delete the file
-                self.defaults[language].delete_default_file(self.data_path)
+        if lang_exists:
+            # remove it from self.languages
+            self.languages.pop(self.languages.index(str(language)))
 
-                # remove the self.defaults dict entry
-                del self.defaults[language]
+            # delete the file
+            self.defaults[language].delete_default_file(self.data_path)
 
-    def get_default(self, language=None):
-        """Return Default object, if it exists."""
-        if type(language) is str:
-            if language in self.defaults.keys():
-                # return the default langauge pack, if it exists
-                return self.defaults[language]
-            else:
-                # otherwise return a default language en pack
-                return Default(
-                    data_path=self.data_path,
-                    language='en'
-                )
+            # remove the self.defaults dict entry
+            del self.defaults[language]
+            return True
+        else:
+            return False
+
+    def rename_default(self, language=None, new_name=None):
+        """Try to rename the selected language."""
+        one_not_set = language is None or new_name is None
+        lang_exists = language in self.defaults.keys() and language in self.languages
+        new_exists = new_name in self.defaults.keys()
+
+        if one_not_set or not lang_exists or new_exists:
+            return False
+
+        # rename the language defaults
+        self.defaults[new_name] = self.defaults[language]
+        del self.defaults[language]
+
+        # rename the self.languages
+        self.languages.pop(self.languages.index(language))
+        self.languages.append(new_name)
+
+        return True
 
     def new_default(self, language=None):
         """Make a new default."""
-        if type(language) is str:
-            if (language not in self.defaults.keys() and
-                    language not in self.languages):
+        lang_exists = language in self.defaults.keys() and language in self.languages
 
-                # appaned language to self.languages
-                self.languages.append(str(language))
+        if not lang_exists:
+            # appaned language to self.languages
+            self.languages.append(str(language))
 
-                # append language to defaults dict
-                self.defaults[language] = Default(
-                    data_path=self.data_path,
-                    language=language
-                )
+            # append language to defaults dict
+            self.defaults[language] = Default(
+                data_path=self.data_path,
+                language=language
+            )
+            return True
+        else:
+            return False
 
     def to_json(self, indent=2, ensure_ascii=False):
         """Convert settings data to json format."""
@@ -193,7 +204,7 @@ class Settings(object):
         # save defaults
         try:
             for lang in self.defaults.keys():
-                self.defaults[lang].save_defaults_to_file(new_data_path=self.data_path)
+                self.defaults[lang].save_defaults_to_file(self.data_path)
         except Exception:
             pass
 

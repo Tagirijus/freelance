@@ -134,6 +134,17 @@ class ProjectListBox(npyscreen.BoxTitle):
 class MainForm(npyscreen.FormBaseNewWithMenus):
     """Main form."""
 
+    def switch_to_help(self):
+        """Switch to help form."""
+        self.parentApp.load_helptext('help_main.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
+
+    def switch_to_settings(self):
+        """Switch to the settigns form."""
+        self.parentApp.setNextForm('Settings')
+        self.parentApp.switchFormNow()
+
     def exit(self):
         """Exit the programm."""
         self.parentApp.setNextForm(None)
@@ -190,14 +201,3 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
             self.projects_box.entry_widget.update_values()
         # clear filter to not show doubled entries ... npyscreen bug?
         self.projects_box.entry_widget.clear_filter()
-
-    def switch_to_help(self):
-        """Switch to help form."""
-        self.parentApp.load_helptext('help_main.txt')
-        self.parentApp.setNextForm('Help')
-        self.parentApp.switchFormNow()
-
-    def switch_to_settings(self):
-        """Switch to the settigns form."""
-        self.parentApp.setNextForm('Settings')
-        self.parentApp.switchFormNow()

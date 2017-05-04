@@ -4,7 +4,6 @@ import curses
 from general.default import Default
 import npyscreen
 from npy_gui.npy_functions import can_be_dir
-import time
 
 
 class DefaultsListAction(npyscreen.MultiLineAction):
@@ -26,22 +25,61 @@ class DefaultsListAction(npyscreen.MultiLineAction):
 
     def add_lang(self, keypress):
         """Add a new language and edit it (switch to form)."""
-        npyscreen.notify('Add (default)!')
-        time.sleep(1)
+        self.parent.parentApp.tmpDefault = Default()
+        self.parent.parentApp.tmpDefault_new = True
+
+        # switch to the default form
+        self.parent.parentApp.setNextForm('Defaults')
+        self.parent.parentApp.switchFormNow()
 
     def delete_lang(self, keypress):
         """Ask and delete language if yes."""
+        try:
+            what = self.values[self.cursor_line]
+            is_en = what == 'en'
+        except Exception:
+            is_en = True
+
+        # cancel if it's "en", which cannot be deleted
+        if is_en:
+            npyscreen.notify_confirm(
+                '"en" cannot be deleted, sorry.',
+                form_color='WARNING'
+            )
+            return False
+
+        # it's seomthing else, go on
         really = npyscreen.notify_yes_no(
-            'Really delete this default pack?',
+            'Really delete the \'' + what + '\' pack?',
             title='Deleting default pack!',
             form_color='DANGER'
         )
         if really:
-            npyscreen.notify('Deleted (default)!')
-            time.sleep(1)
+            # yes, delete it
+            deleted = self.parent.parentApp.S.remove_default(what)
+            if deleted:
+                # adjust the lists of this form and refresh
+                sel_value = self.parent.def_language.value[0]
+                len_values = len(self.parent.parentApp.S.defaults)
+
+                if sel_value >= len_values:
+                    try:
+                        new_val = self.def_language.values.index('en')
+                        self.parent.def_language.value[0] = new_val
+                    except Exception:
+                        self.parent.def_language.value[0] = 0
+                self.parent.display()
+                return True
+            else:
+                # could not delete it .. don't know why
+                npyscreen.notify_confirm(
+                    'Could not delete it, sorry.',
+                    form_color='WARNING'
+                )
+                return False
         else:
-            npyscreen.notify('Not deleted (default)!')
-            time.sleep(1)
+            # no, don't
+            return False
 
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
@@ -49,10 +87,12 @@ class DefaultsListAction(npyscreen.MultiLineAction):
         if act_on_this in self.parent.parentApp.S.defaults.keys():
             self.parent.parentApp.tmpDefault = self.parent.parentApp.S.defaults[
                 act_on_this
-            ]
+            ].copy()
+            self.parent.parentApp.tmpDefault_new = False
         # or chose a new one, if something went wrong
         else:
             self.parent.parentApp.tmpDefault = Default()
+            self.parent.parentApp.tmpDefault = True
 
         # switch to the default form
         self.parent.parentApp.setNextForm('Defaults')
@@ -78,6 +118,12 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def switch_to_help(self):
+        """Switch to the help screen."""
+        self.parentApp.load_helptext('help_settings.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
+
     def exit(self):
         """Exit the programm."""
         self.parentApp.setNextForm(None)
@@ -101,7 +147,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Default language:',
             begin_entry_at=20,
             max_height=4,
-            scroll_exit=True
+            scroll_exit=True,
+            value=[0]
         )
         self.inactive_dir = self.add(
             npyscreen.TitleText,
@@ -124,17 +171,11 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             scroll_exit=True
         )
 
-    def switch_to_help(self):
-        """Switch to the help screen."""
-        self.parentApp.load_helptext('help_settings.txt')
-        self.parentApp.setNextForm('Help')
-        self.parentApp.switchFormNow()
-
     def beforeEditing(self):
         """Get values from settings object."""
         self.data_path.value = self.parentApp.S.data_path
         self.def_language.values = self.parentApp.S.languages
-        self.def_language.value = self.def_language.values.index(
+        self.def_language.value[0] = self.def_language.values.index(
             self.parentApp.S.def_language
         )
         self.inactive_dir.value = self.parentApp.S.inactive_dir
@@ -182,7 +223,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.inactive_dir = inactive_dir
             self.parentApp.S.keep_offer_preset_date = keep_offer_preset_date
 
-            # stor it and reload list and presets
+            # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()
             self.parentApp.L.reload(data_path=self.parentApp.S.data_path)
             self.parentApp.P.reload(data_path=self.parentApp.S.data_path)

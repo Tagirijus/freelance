@@ -1,0 +1,32 @@
+Language:
+Enter short name for the language pack. It should not exist, though!
+
+
+Offer title:
+The pattern for the default offer title. Possible replace patterns are:
+
+- {YEAR}: replaces with the year of the offer
+- {MONTH}: replaces with the month of the offer
+- {DAY}: replaces with the day of the offer
+- {PROJECT}: replaces with the project title of the connected project
+- {COUNT}: replace with the count of offers for this project
+
+
+Offer template:
+Path to the offer template file. Should be a valid open office file.
+
+
+Offer filename:
+The pattern for the default offer filename. Possible replace patterns are like the ones for the "Offer title".
+
+
+Date format:
+The format how the date should be shown. Possible pattern variables are:
+
+- %Y: stands for the year
+- %m: stands for the month
+- %d: stands for the day
+
+
+Commodity:
+Simple string representing the commodity for the offer (or later invoice as well).

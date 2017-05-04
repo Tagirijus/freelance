@@ -44,9 +44,13 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
 
         # set global temp variables
         self.tmpDefault = Default()
+        self.tmpDefault_new = True
         self.tmpClient = Client()
+        self.tmpClient_new = True
         self.tmpProject = Project()
+        self.tmpProject_new = True
         self.tmpOffer = Offer()
+        self.tmpOffer_new = True
 
         # create the forms
         self.addForm('MAIN',

@@ -1,0 +1,13 @@
+Default entries are strings, float and booleans like this:
+
+
+Strings:
+	Title, comment and amount format.
+
+
+Float:
+	Amount, Time, h-rate (hourly rate), multi (multiplicator)
+
+
+Boolean:
+	is_time

@@ -1,0 +1,29 @@
+Client company, Client salut. (salutation), Client name, Client fam. name (family name), Client street, Client post code, Client city and Client tax ID are default string variables for new created clients.
+
+
+Client language:
+Default language for a new created client - choose from the set up default language "packs".
+
+
+Project title:
+Replace strings are possible:
+
+- {YEAR}: replaces with the actual year
+- {MONTH}: replaces with the actual month
+- {DAY}: replaces with the actual day
+- {CLIENT_...}: replaces with the connected clients ..., possible entries:
+	CLIENT_COMPANY, _SALUT, _NAME,
+	_FAMILY, _FULLNAME, _STREET,
+	_POST_CODE,	_CITY, _TAX_ID
+
+
+Project h / d (hours per day):
+Must be an integer, declaring how much hours per day you can work for the project.
+
+
+Project days:
+Choose from days, you can work on for the project.
+
+
+Project min. days:
+Must be an integer, declaring how much days you need at least for the project.

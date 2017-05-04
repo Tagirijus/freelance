@@ -11,11 +11,11 @@ class Default(object):
         self,
         data_path=None,
         language=None,
+        offer_title=None,
         offer_template=None,
         offer_filename=None,
         date_fmt=None,
         commodity=None,
-        client_client_id=None,
         client_company=None,
         client_salutation=None,
         client_name=None,
@@ -25,7 +25,6 @@ class Default(object):
         client_city=None,
         client_tax_id=None,
         client_language=None,
-        project_client_id=None,
         project_title=None,
         project_hours_per_day=None,
         project_work_days=None,
@@ -49,14 +48,14 @@ class Default(object):
         connectentry_multiplicator=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
-        self.language = 'en' if language is None else language
+        self.language = 'SET_ME' if language is None else language
+        self.offer_title = '' if offer_title is None else offer_title
         self.offer_template = '' if offer_template is None else offer_template
         self.offer_filename = '' if offer_filename is None else offer_filename
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
 
         # client default values
-        self.client_client_id = '' if client_client_id is None else client_client_id
         self.client_company = '' if client_company is None else client_company
         self.client_salutation = '' if client_salutation is None else client_salutation
         self.client_name = '' if client_name is None else client_name
@@ -122,12 +121,12 @@ class Default(object):
 
         # fetch all setting variables
         out['language'] = self.language
+        out['offer_title'] = self.offer_title
         out['offer_template'] = self.offer_template
         out['offer_filename'] = self.offer_filename
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
-        out['client_client_id'] = self.client_client_id
         out['client_company'] = self.client_company
         out['client_salutation'] = self.client_salutation
         out['client_name'] = self.client_name
@@ -182,6 +181,9 @@ class Default(object):
         if 'language' in js.keys():
             self.language = js['language']
 
+        if 'offer_title' in js.keys():
+            self.offer_title = js['offer_title']
+
         if 'offer_template' in js.keys():
             self.offer_template = js['offer_template']
 
@@ -193,9 +195,6 @@ class Default(object):
 
         if 'commodity' in js.keys():
             self.commodity = js['commodity']
-
-        if 'client_client_id' in js.keys():
-            self.client_client_id = js['client_client_id']
 
         if 'client_company' in js.keys():
             self.client_company = js['client_company']
@@ -231,7 +230,7 @@ class Default(object):
             self.project_hours_per_day = js['project_hours_per_day']
 
         if 'project_work_days' in js.keys():
-            self.project_project_work_days = js['project_work_days']
+            self.project_work_days = js['project_work_days']
 
         if 'project_minimum_days' in js.keys():
             self.project_minimum_days = js['project_minimum_days']
@@ -313,3 +312,44 @@ class Default(object):
 
             # and feed own variables with it
             self.feed_json(loaded)
+
+    def copy(self):
+        """Return copy of own object."""
+        return Default(
+            language=self.language,
+            offer_title=self.offer_title,
+            offer_template=self.offer_template,
+            offer_filename=self.offer_filename,
+            date_fmt=self.date_fmt,
+            commodity=self.commodity,
+            client_company=self.client_company,
+            client_salutation=self.client_salutation,
+            client_name=self.client_name,
+            client_family_name=self.client_family_name,
+            client_street=self.client_street,
+            client_post_code=self.client_post_code,
+            client_city=self.client_city,
+            client_tax_id=self.client_tax_id,
+            client_language=self.client_language,
+            project_title=self.project_title,
+            project_hours_per_day=self.project_hours_per_day,
+            project_work_days=self.project_work_days,
+            project_minimum_days=self.project_minimum_days,
+            baseentry_title=self.baseentry_title,
+            baseentry_comment=self.baseentry_comment,
+            baseentry_amount=self.baseentry_amount,
+            baseentry_amount_format=self.baseentry_amount_format,
+            baseentry_time=self.baseentry_time,
+            baseentry_price=self.baseentry_price,
+            multiplyentry_title=self.multiplyentry_title,
+            multiplyentry_comment=self.multiplyentry_comment,
+            multiplyentry_amount=self.multiplyentry_amount,
+            multiplyentry_amount_format=self.multiplyentry_amount_format,
+            multiplyentry_hour_rate=self.multiplyentry_hour_rate,
+            connectentry_title=self.connectentry_title,
+            connectentry_comment=self.connectentry_comment,
+            connectentry_amount=self.connectentry_amount,
+            connectentry_amount_format=self.connectentry_amount_format,
+            connectentry_is_time=self.connectentry_is_time,
+            connectentry_multiplicator=self.connectentry_multiplicator
+        )
