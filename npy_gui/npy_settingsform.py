@@ -60,8 +60,13 @@ class DefaultsListAction(npyscreen.MultiLineAction):
                 language=what,
                 client_list=self.parent.parentApp.L.client_list
             )
+
             if deleted:
-                # adjust the lists of this form and refresh
+                # save the stuff into the files
+                self.parent.parentApp.S.save_settings_to_file()
+                self.parent.parentApp.L.save_client_list_to_file()
+
+                # adjust the widget list of this form and refresh
                 sel_value = self.parent.def_language.value[0]
                 len_values = len(self.parent.parentApp.S.defaults)
 
