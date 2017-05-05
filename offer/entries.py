@@ -63,23 +63,26 @@ class BaseEntry(object):
         In case the offer is for music production for example, it would
         be good if the quantity of the offer posting would not be listed
         as a decimal rather than a readable time format. So instead of
-        "1,5 minutes" -> "1:30 min" or similar. With the following format
+        "1,5 min" -> "1:30 min" or similar. With the following format
         options you can achieve this - also with leading zeros:
 
-        {d}:    amount in decimal
-        {H}:    amount converted to hours (will be leading number)
-        {M}:    amount to minutes (if no {H}, it will be leading number)
-        {S}:    amount seconds (if no {H} or {M} it will be leading number)
+        {d}: amount in decimal
+        {H}: amount converted to minutes, show hours
+        {M}: amount converted to minutes, show minutes
+        {S}: amount converted to minutes, show seconds
 
-        Means that 1.5 with fmt == "{H}:{M}" would output 1:30, while
-        fmt == "{M}:{S}" would output 1:30 as well, because the highest
-        possible number formatting will get its value from the integer part
-        of the decimal and the other from the fractional part.
-        1.75 with fmt == "{H}:{M}:{S}" would output 1:45:00 for example.
+        Means that 1.5 with fmt == "{H}:{M}" would output 0:01, while
+        fmt == "{M}:{S}" would output 1:30. 61.75 with
+        fmt == "{H}:{M}:{S}" would output 1:01:45 for example.
         """
-        # get self._amount_format if no argument is given
+        # get self.amount_format if no argument is given
         if fmt is None:
             fmt = self.amount_format
+
+        # is this also is empty, get '{d}' as default output
+        # (so that it shows something at least)
+        if fmt == '':
+            fmt = '{d}'
 
         # init formating output variable
         format_me = {}
@@ -87,30 +90,39 @@ class BaseEntry(object):
         # get simple decimal
         format_me['d'] = self.get_amount()
 
-        # {H} will be leading number
+        # {H} exists
         if '{H}' in fmt:
             # get values from timedelta
-            tdelta = time_module.timedelta(hours=float(self.get_amount()))
-            format_me['H'], rem = divmod(tdelta.seconds, 3600)
+            tdelta = time_module.timedelta(minutes=float(self.get_amount()))
+            format_me['H'], rem = divmod(tdelta.total_seconds(), 3600)
             format_me['M'], format_me['S'] = divmod(rem, 60)
+
+            # round the stuff
+            format_me['H'] = round(format_me['H'])
+            format_me['M'] = round(format_me['M'])
+            format_me['S'] = round(format_me['S'])
 
             # correct leading zeros
             fmt = fmt.replace('{M}', '{M:02}').replace('{S}', '{S:02}')
 
-        # {M} will be leading number
+        # {M} exists, but not {H}
         elif '{H}' not in fmt and '{M}' in fmt:
             # get values from timedelta
             tdelta = time_module.timedelta(minutes=float(self.get_amount()))
-            format_me['M'], format_me['S'] = divmod(tdelta.seconds, 60)
+            format_me['M'], format_me['S'] = divmod(tdelta.total_seconds(), 60)
+
+            # round the stuff
+            format_me['M'] = round(format_me['M'])
+            format_me['S'] = round(format_me['S'])
 
             # correct leading zeros
             fmt = fmt.replace('{S}', '{S:02}')
 
-        # {S} will be leading number
+        # {S} exists, but not {H} nor {M}
         elif '{H}' not in fmt and '{M}' not in fmt and '{S}' in fmt:
             # get values from timedelta
-            tdelta = time_module.timedelta(seconds=float(self.get_amount()))
-            format_me['S'], rem = divmod(tdelta.seconds, 1)
+            tdelta = time_module.timedelta(minutes=float(self.get_amount()))
+            format_me['S'] = round(tdelta.total_seconds())
 
         # output the stuff
         try:

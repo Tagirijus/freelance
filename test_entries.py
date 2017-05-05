@@ -282,3 +282,27 @@ def test_json_conversion_connectentry():
     assert b.get_is_time() == a.get_is_time()
     assert b.get_multiplicator() == a.get_multiplicator()
     assert b.get_connected() == set()   # except the set, since it's preset_loading
+
+
+def test_get_amount_str():
+    """Test the get_amount_str method."""
+    # init object
+    a = BaseEntry(
+        title='Total individual',
+        comment='Individual comment!',
+        amount=61.75,
+        amount_format=''
+    )
+
+    # test differnet amount formats
+    a.amount_format = '{H}:{M}:{S}'
+    assert a.get_amount_str() == '1:01:45'
+
+    a.amount_format = '{H}:{M}'
+    assert a.get_amount_str() == '1:01'
+
+    a.amount_format = '{M}:{S}'
+    assert a.get_amount_str() == '61:45'
+
+    a.amount_format = '{S}'
+    assert a.get_amount_str() == '3705'

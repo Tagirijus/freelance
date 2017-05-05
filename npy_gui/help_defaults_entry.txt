@@ -4,6 +4,19 @@ Default entries are strings, float and booleans like this:
 Strings:
 	Title, comment and amount format.
 
+Amount format has replacement values like this:
+
+- {d}: amount in decimal
+- {H}: amount converted to minutes, show hours
+- {M}: amount converted to minutes, show minutes
+- {S}: amount converted to minutes, show seconds
+
+Example for a amount of 91.75:
+"{d} pieces" = "91.75 pieces"
+"{H}:{M} hours" = "1:31 hours"
+"{M}:{S} minutes" = "91:45 minutes"
+"{H}:{M}:{S} hours" = "1:31:45 hours"
+
 
 Float:
 	Amount, Time, h-rate (hourly rate), multi (multiplicator)
