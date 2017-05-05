@@ -86,7 +86,7 @@ class DefaultsForm(npyscreen.ActionFormWithMenus):
         self.parentApp.switchFormNow()
 
 
-class DefaultsGeneralForm(npyscreen.ActionFormWithMenus):
+class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the general defaults."""
 
     def __init__(self, *args, **kwargs):
@@ -119,33 +119,33 @@ class DefaultsGeneralForm(npyscreen.ActionFormWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        self.language = self.add(
+        self.language = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Language:',
             begin_entry_at=20
         )
-        self.offer_title = self.add(
+        self.offer_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer title:',
             begin_entry_at=20
         )
-        self.offer_template = self.add(
+        self.offer_template = self.add_widget_intelligent(
             npyscreen.TitleFilenameCombo,
             name='Offer template:',
             begin_entry_at=20,
             must_exist=True
         )
-        self.offer_filename = self.add(
+        self.offer_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer filename:',
             begin_entry_at=20
         )
-        self.date_fmt = self.add(
+        self.date_fmt = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Date format:',
             begin_entry_at=20
         )
-        self.commodity = self.add(
+        self.commodity = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Commodity:',
             begin_entry_at=20
@@ -249,7 +249,7 @@ class DefaultsGeneralForm(npyscreen.ActionFormWithMenus):
         self.parentApp.switchFormNow()
 
 
-class DefaultsClientProjectForm(npyscreen.ActionFormWithMenus):
+class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the client and project defaults."""
 
     def __init__(self, *args, **kwargs):
@@ -282,47 +282,47 @@ class DefaultsClientProjectForm(npyscreen.ActionFormWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        self.client_company = self.add(
+        self.client_company = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client company:',
             begin_entry_at=20
         )
-        self.client_salutation = self.add(
+        self.client_salutation = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client salut.:',
             begin_entry_at=20
         )
-        self.client_name = self.add(
+        self.client_name = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client name:',
             begin_entry_at=20
         )
-        self.client_family_name = self.add(
+        self.client_family_name = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client fam. name:',
             begin_entry_at=20
         )
-        self.client_street = self.add(
+        self.client_street = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client street:',
             begin_entry_at=20
         )
-        self.client_post_code = self.add(
+        self.client_post_code = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client post code:',
             begin_entry_at=20
         )
-        self.client_city = self.add(
+        self.client_city = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client city:',
             begin_entry_at=20
         )
-        self.client_tax_id = self.add(
+        self.client_tax_id = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client tax ID:',
             begin_entry_at=20
         )
-        self.client_language = self.add(
+        self.client_language = self.add_widget_intelligent(
             npyscreen.TitleSelectOne,
             name='Client language:',
             begin_entry_at=20,
@@ -330,17 +330,17 @@ class DefaultsClientProjectForm(npyscreen.ActionFormWithMenus):
             scroll_exit=True,
             value=[0]
         )
-        self.project_title = self.add(
+        self.project_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project title:',
             begin_entry_at=20
         )
-        self.project_hours_per_day = self.add(
+        self.project_hours_per_day = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project h / d:',
             begin_entry_at=20
         )
-        self.project_work_days = self.add(
+        self.project_work_days = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
             name='Project days:',
             begin_entry_at=20,
@@ -356,7 +356,7 @@ class DefaultsClientProjectForm(npyscreen.ActionFormWithMenus):
                 'Sunday'
             ]
         )
-        self.project_minimum_days = self.add(
+        self.project_minimum_days = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project min days:',
             begin_entry_at=20
@@ -459,7 +459,7 @@ class DefaultsClientProjectForm(npyscreen.ActionFormWithMenus):
         self.parentApp.switchFormNow()
 
 
-class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
+class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the entry defaults."""
 
     def __init__(self, *args, **kwargs):
@@ -492,93 +492,101 @@ class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        self.baseentry_title = self.add(
+        self.baseentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base title:',
             begin_entry_at=20
         )
-        self.baseentry_comment = self.add(
+        self.baseentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base comment:',
             begin_entry_at=20
         )
-        self.baseentry_amount = self.add(
+        self.baseentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base amount:',
             begin_entry_at=20
         )
-        self.baseentry_amount_format = self.add(
+        self.baseentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base amount fmt:',
             begin_entry_at=20
         )
-        self.baseentry_time = self.add(
+        self.baseentry_time = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base time:',
             begin_entry_at=20
         )
-        self.baseentry_price = self.add(
+        self.baseentry_price = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base price:',
             begin_entry_at=20
         )
-        self.multiplyentry_title = self.add(
+        self.add_widget_intelligent(
+            npyscreen.FixedText,
+            editable=False
+        )
+        self.multiplyentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi title:',
             begin_entry_at=20
         )
-        self.multiplyentry_comment = self.add(
+        self.multiplyentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi comment:',
             begin_entry_at=20
         )
-        self.multiplyentry_amount = self.add(
+        self.multiplyentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi amount:',
             begin_entry_at=20
         )
-        self.multiplyentry_amount_format = self.add(
+        self.multiplyentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi amount fmt:',
             begin_entry_at=20
         )
-        self.multiplyentry_hour_rate = self.add(
+        self.multiplyentry_hour_rate = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi h-rate:',
             begin_entry_at=20
         )
-        self.connectentry_title = self.add(
+        self.add_widget_intelligent(
+            npyscreen.FixedText,
+            editable=False
+        )
+        self.connectentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect title:',
             begin_entry_at=20
         )
-        self.connectentry_comment = self.add(
+        self.connectentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect comment:',
             begin_entry_at=20
         )
-        self.connectentry_amount = self.add(
+        self.connectentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect amount:',
             begin_entry_at=20
         )
-        self.connectentry_amount_format = self.add(
+        self.connectentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Con. amount fmt:',
             begin_entry_at=20
         )
-        self.connectentry_is_time = self.add(
+        self.connectentry_multiplicator = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Connect multi:',
+            begin_entry_at=20
+        )
+        self.connectentry_is_time = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
             name='Connect is_time:',
             begin_entry_at=20,
             max_height=2,
             scroll_exit=True,
             values=['True']
-        )
-        self.connectentry_multiplicator = self.add(
-            npyscreen.TitleText,
-            name='Connect multi:',
-            begin_entry_at=20
         )
 
     def beforeEditing(self):
@@ -628,11 +636,11 @@ class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
         self.connectentry_amount_format.value = (
             self.parentApp.tmpDefault.connectentry_amount_format
         )
-        self.connectentry_is_time.value = (
-            [0] if self.parentApp.tmpDefault.connectentry_is_time else []
-        )
         self.connectentry_multiplicator.value = str(
             self.parentApp.tmpDefault.connectentry_multiplicator
+        )
+        self.connectentry_is_time.value = (
+            [0] if self.parentApp.tmpDefault.connectentry_is_time else []
         )
 
     def values_to_tmp(self):
@@ -689,11 +697,6 @@ class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
 
         connectentry_amount_format = self.connectentry_amount_format.value
 
-        # get boolean out of selection
-        connectentry_is_time = (
-            True if self.connectentry_is_time.value == [0] else False
-        )
-
         # try to convert input to float
         try:
             connectentry_multiplicator = float(self.connectentry_multiplicator.value)
@@ -701,6 +704,11 @@ class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
             connectentry_multiplicator = (
                 self.parentApp.tmpDefault.connectentry_multiplicator
             )
+
+        # get boolean out of selection
+        connectentry_is_time = (
+            True if self.connectentry_is_time.value == [0] else False
+        )
 
         # assign back to the S variable
         self.parentApp.tmpDefault.baseentry_title = (
@@ -748,11 +756,11 @@ class DefaultsEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpDefault.connectentry_amount_format = (
             connectentry_amount_format
         )
-        self.parentApp.tmpDefault.connectentry_is_time = (
-            connectentry_is_time
-        )
         self.parentApp.tmpDefault.connectentry_multiplicator = (
             connectentry_multiplicator
+        )
+        self.parentApp.tmpDefault.connectentry_is_time = (
+            connectentry_is_time
         )
 
     def on_ok(self, keypress=None):
