@@ -286,14 +286,18 @@ class Default(object):
         if 'connectentry_multiplicator' in js.keys():
             self.connectentry_multiplicator = js['connectentry_multiplicator']
 
-    def gen_abs_path_to_default_file(self, data_path):
+    def gen_abs_path_to_default_file(self, data_path, lang=None):
         """Generate the absolut path to the settings file."""
-        return data_path + '/defaults_' + self.language + '.settings'
+        lang_set = type(lang) is str
+        if not lang_set:
+            return data_path + '/defaults_' + self.language + '.settings'
+        else:
+            return data_path + '/defaults_' + lang + '.settings'
 
-    def delete_default_file(self, data_path):
+    def delete_default_file(self, data_path, lang=None):
         """Delete the default file in data_path."""
-        if os.path.isfile(self.gen_abs_path_to_default_file(data_path)):
-            os.remove(self.gen_abs_path_to_default_file(data_path))
+        if os.path.isfile(self.gen_abs_path_to_default_file(data_path, lang)):
+            os.remove(self.gen_abs_path_to_default_file(data_path, lang))
 
     def save_defaults_to_file(self, data_path):
         """Save the default to file in data_path."""

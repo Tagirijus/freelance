@@ -69,39 +69,57 @@ class Settings(object):
                 return False
         return False
 
-    def remove_default(self, language=None):
+    def remove_default(self, language=None, client_list=None):
         """Remove the default."""
+        one_not_set = language is None or client_list is None
         lang_exists = language in self.defaults.keys() and language in self.languages
 
-        if lang_exists:
-            # remove it from self.languages
-            self.languages.pop(self.languages.index(str(language)))
-
-            # delete the file
-            self.defaults[language].delete_default_file(self.data_path)
-
-            # remove the self.defaults dict entry
-            del self.defaults[language]
-            return True
-        else:
+        # cancel if one argument is not set or language does not exist
+        if one_not_set or not lang_exists:
             return False
 
-    def rename_default(self, language=None, new_name=None):
-        """Try to rename the selected language."""
-        one_not_set = language is None or new_name is None
-        lang_exists = language in self.defaults.keys() and language in self.languages
-        new_exists = new_name in self.defaults.keys()
+        # remove the language from clients, which have it
+        for client in client_list:
+            # if the client has this language ...
+            if client.language == language:
+                # ... set it to the default language
+                client.language = 'en'
 
-        if one_not_set or not lang_exists or new_exists:
-            return False
+        # remove it from self.languages
+        self.languages.pop(self.languages.index(str(language)))
 
-        # rename the language defaults
-        self.defaults[new_name] = self.defaults[language]
+        # delete the file
+        self.defaults[language].delete_default_file(self.data_path)
+
+        # remove the self.defaults dict entry
         del self.defaults[language]
+        return True
 
-        # rename the self.languages
-        self.languages.pop(self.languages.index(language))
-        self.languages.append(new_name)
+    def rename_default(self, old_lang=None, new_lang=None, client_list=None):
+        """Try to rename the selected old_lang."""
+        one_not_set = old_lang is None or new_lang is None or client_list is None
+        old_exists = old_lang in self.defaults.keys() and old_lang in self.languages
+        new_exists = new_lang in self.defaults.keys()
+
+        # cancel if one argument is not set, the old_lang does not exist
+        # or the new name already exists
+        if one_not_set or not old_exists or new_exists:
+            return False
+
+        # cycle through the clients and change their language as well
+        for client in client_list:
+            if client.language == old_lang:
+                client.language = new_lang
+
+        # create new default with new name
+        self.defaults[new_lang] = self.defaults[old_lang].copy()
+        self.defaults[new_lang].language = new_lang
+        self.languages.append(new_lang)
+
+        # delete old default: its file, its dict entry and from self.languages
+        self.defaults[old_lang].delete_default_file(self.data_path, old_lang)
+        del self.defaults[old_lang]
+        self.languages.pop(self.languages.index(old_lang))
 
         return True
 

@@ -56,7 +56,10 @@ class DefaultsListAction(npyscreen.MultiLineAction):
         )
         if really:
             # yes, delete it
-            deleted = self.parent.parentApp.S.remove_default(what)
+            deleted = self.parent.parentApp.S.remove_default(
+                language=what,
+                client_list=self.parent.parentApp.L.client_list
+            )
             if deleted:
                 # adjust the lists of this form and refresh
                 sel_value = self.parent.def_language.value[0]

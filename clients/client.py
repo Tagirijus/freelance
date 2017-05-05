@@ -33,7 +33,7 @@ class Client(object):
         self.post_code = '' if post_code is None else str(post_code)
         self.city = '' if city is None else str(city)
         self.tax_id = '' if tax_id is None else str(tax_id)
-        self.language = '' if language is None else str(language)
+        self.language = 'en' if language is None else str(language)
 
     def fullname(self):
         """Return name + familyname."""

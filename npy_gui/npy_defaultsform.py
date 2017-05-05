@@ -68,22 +68,15 @@ class DefaultsForm(npyscreen.ActionFormWithMenus):
             ]
         )
 
-    def on_ok(self, keypress=None):
-        """Check and set values."""
-        # get tmpDefault and save it
-        lang = self.parentApp.tmpDefault.language
-        self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
-        self.parentApp.S.save_settings_to_file()
-
-        # switch back
-        self.parentApp.setNextForm('Settings')
-        self.parentApp.switchFormNow()
-
     def on_cancel(self, keypress=None):
         """Go back without changing a thing."""
         # switch back
         self.parentApp.setNextForm('Settings')
         self.parentApp.switchFormNow()
+
+    def on_ok(self, keypress=None):
+        """Same as on_cancel."""
+        self.on_cancel(keypress=keypress)
 
 
 class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
@@ -164,15 +157,20 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Store values to temp object."""
         # get values in temp variables
         lang_old = self.parentApp.tmpDefault.language
+
         # prevent user from changing 'en' to another name
         old_is_en = lang_old == 'en'
         language = 'en' if old_is_en else self.language.value
-        if old_is_en:
+
+        # check if user really tried to change en and send message
+        lang_en_tried_to_change = old_is_en and self.language.value != 'en'
+        if lang_en_tried_to_change:
             npyscreen.notify_confirm(
                 'Changed language name back to "en".\n' +
                 'Please do not change it!',
                 form_color='WARNING'
             )
+
         offer_title = self.offer_title.value
         offer_template = self.offer_template.value
         offer_filename = self.offer_filename.value
@@ -214,11 +212,14 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
         elif case_rename_actual and not lang_exists:
             # rename the selected one
-            renamed = self.parentApp.S.rename_default(lang_old, language)
+            renamed = self.parentApp.S.rename_default(
+                old_lang=lang_old,
+                new_lang=language,
+                client_list=self.parentApp.L.client_list
+            )
 
             if renamed:
-                # worked, so change all the other values as well
-                self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+                # worked, finish
                 return False
             else:
                 # did not work, go on editing
@@ -233,6 +234,12 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
         # everything allright? then switch form!
         if not allright:
+            # get object and save files
+            lang = self.parentApp.tmpDefault.language
+            self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
+            self.parentApp.S.save_settings_to_file()
+            self.parentApp.L.save_client_list_to_file()
+
             # switch back
             self.parentApp.setNextForm('Defaults')
             self.parentApp.switchFormNow()
@@ -447,6 +454,11 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
     def on_ok(self, keypress=None):
         """Check values and set them."""
         self.values_to_tmp()
+
+        # get object and save files
+        lang = self.parentApp.tmpDefault.language
+        self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
+        self.parentApp.S.save_settings_to_file()
 
         # switch back
         self.parentApp.setNextForm('Defaults')
@@ -766,6 +778,11 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
     def on_ok(self, keypress=None):
         """Check values and set them."""
         self.values_to_tmp()
+
+        # get object and save files
+        lang = self.parentApp.tmpDefault.language
+        self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
+        self.parentApp.S.save_settings_to_file()
 
         # switch back
         self.parentApp.setNextForm('Defaults')
