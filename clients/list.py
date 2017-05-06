@@ -79,18 +79,95 @@ class List(object):
         self.project_list = (self.load_project_list_from_file() if project_list is None
                              else project_list)
 
+    def client_exists(self, client=None):
+        """Check if client exists according to the ID."""
+        if type(client) is Client:
+            return client.client_id in [c.client_id for c in self.client_list]
+        else:
+            return False
+
+    def get_client_index(self, client=None):
+        """Get the index of the client."""
+        if type(client) is Client:
+            for i, c in enumerate(self.client_list):
+                if client.client_id == c.client_id:
+                    return i
+
+        return False
+
     def add_client(self, client=None):
         """Add a client, if its ID does not already exist."""
         is_client = type(client) is Client
         id_exists = client.client_id in [c.client_id for c in self.client_list]
+        id_is_empty = client.client_id == ''
 
-        # cancel if it's no client or the client_id already exists
-        if not is_client or id_exists:
+        # cancel if it's no client or the client_id already exists or empty
+        if not is_client or id_exists or id_is_empty:
             return False
 
         # append the client and save it immediately
         self.client_list.append(client)
         self.save_client_to_file(client=client)
+
+        return True
+
+    def update_client(self, old_client=None, new_client=None):
+        """Update old client with new client."""
+        old_is_client = type(old_client) is Client
+        new_is_client = type(new_client) is Client
+
+        # cancel if these are no clients
+        if not old_is_client and not new_is_client:
+            return False
+
+        # try to change the id (and its files) first
+        old_index = self.get_client_index(old_client)
+        id_available = self.set_client_id(
+            client=old_client,
+            client_id=new_client.client_id
+        )
+
+        # only go on, if the ID is possible
+        if id_available:
+            self.client_list[old_index] = new_client
+            return True
+        else:
+            return False
+
+    def set_client_id(self, client=None, client_id=None):
+        """Try to set new client ID for client and its projects."""
+        is_client = type(client) is Client
+        id_exists = client_id in [c.client_id for c in self.client_list]
+        id_is_empty = client_id == ''
+        id_is_own = client.client_id == client_id
+
+
+        # cancel with true, if there's no need to change the ID
+        if id_is_own:
+            return True
+
+        # cancel if it's no client or the client_id does already exist or is empty
+        if not is_client or id_exists or id_is_empty:
+            return False
+
+        # change every client_id of the projects of the original client
+        for p in self.get_client_projects(client=client):
+            self.delete_project_file(project=p)
+            p.client_id = client_id
+            self.save_project_to_file(project=p)
+
+        # rename the file
+        self.rename_client_file(
+            old_client_id=client.client_id,
+            new_client_id=client_id
+        )
+
+        # change the client_id of the original client to the new id
+        self.client_list[self.get_client_index(client)].client_id = client_id
+
+        # get new client and save it
+        new_client = self.client_list[self.get_client_index(client)]
+        self.save_client_to_file(client=new_client)
 
         return True
 
@@ -111,7 +188,7 @@ class List(object):
                 self.delete_project_file(project=p)
 
             # then delete the client itself
-            self.client_list.pop(self.client_list.index(client))
+            self.client_list.pop(self.get_client_index(client))
             self.delete_client_file(client=client)
             return True
         except Exception:
@@ -146,41 +223,17 @@ class List(object):
 
         # generate filenames
         filename_old = path + '/' + client.client_id + '.flclient'
+        filename_old_bu = path + '/' + client.client_id + '.flclient_bu'
         filename_new = path_deact + '/' + client.client_id + '.flclient'
         filename_new_bu = path_deact + '/' + client.client_id + '.flclient_bu'
-
-        # if it already exists, save a backup
-        if os.path.isfile(filename_new):
-            shutil.copy2(filename_new, filename_new_bu)
 
         # move the old file to the inactive directory and pop variable from list
         try:
             shutil.move(filename_old, filename_new)
-            self.client_list.pop(self.client_list.index(client))
+            shutil.move(filename_old_bu, filename_new_bu)
+            self.client_list.pop(self.get_client_index(client))
         except Exception:
             return False
-
-        return True
-
-    def set_client_id(self, client=None, client_id=None):
-        """Try to set new client ID for client and its projects."""
-        is_client = type(client) is Client
-        id_exists = client_id in [c.client_id for c in self.client_list]
-
-        # cancel if it's no client or the client_id does already exist
-        if not is_client or id_exists:
-            return False
-
-        # change every client_id of the projects of the original client
-        for p in self.get_client_projects(client=client):
-            self.delete_project_file(project=p)
-            p.client_id = client_id
-            self.save_project_to_file(project=p)
-
-        # change the client_id of the original client_id
-        self.delete_client_file(client=client)
-        self.client_list[self.client_list.index(client)].client_id = client_id
-        self.save_client_to_file(client=client)
 
         return True
 
@@ -407,6 +460,30 @@ class List(object):
         else:
             return False
 
+    def rename_client_file(self, old_client_id=None, new_client_id=None):
+        """Rename client file (its ID) to new clients ID."""
+        one_not_set = old_client_id is None or new_client_id is None
+
+        # cancel if arguments are not clients
+        if one_not_set:
+            return False
+
+        # generate filenames
+        path = self.data_path + self.client_dir
+        filename = path + '/' + us(old_client_id) + '.flclient'
+        filename_bu = path + '/' + us(old_client_id) + '.flclient_bu'
+        filename_new = path + '/' + us(new_client_id) + '.flclient'
+        filename_new_bu = path + '/' + us(new_client_id) + '.flclient_bu'
+
+        # check if the files exist and rename them
+        if os.path.isfile(filename):
+            os.rename(filename, filename_new)
+
+        if os.path.isfile(filename_bu):
+            os.rename(filename_bu, filename_new_bu)
+
+        return True
+
     def save_client_to_file(self, client=None):
         """Save single client to file."""
         if type(client) is not Client:
@@ -531,3 +608,9 @@ class List(object):
         self.data_path = data_path
         self.client_list = self.load_client_list_from_file()
         self.project_list = self.load_project_list_from_file()
+
+    def debug(self, text):
+        """Write debug text into DEBUG.txt."""
+        f = open('DEBUG.txt', 'w')
+        f.write(str(text))
+        f.close()

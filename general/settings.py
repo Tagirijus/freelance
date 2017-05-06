@@ -100,10 +100,11 @@ class Settings(object):
         one_not_set = old_lang is None or new_lang is None or client_list is None
         old_exists = old_lang in self.defaults.keys() and old_lang in self.languages
         new_exists = new_lang in self.defaults.keys()
+        new_is_empty = new_lang == ''
 
         # cancel if one argument is not set, the old_lang does not exist
-        # or the new name already exists
-        if one_not_set or not old_exists or new_exists:
+        # or the new name already exists, or new name is empty
+        if one_not_set or not old_exists or new_exists or new_is_empty:
             return False
 
         # cycle through the clients and change their language as well

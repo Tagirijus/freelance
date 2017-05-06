@@ -7,6 +7,7 @@ from general.default import Default
 from general.preset import Preset
 from general.settings import Settings
 import npyscreen
+from npy_gui.npy_clientform import ClientForm
 from npy_gui.npy_defaultsform import DefaultsForm
 from npy_gui.npy_defaultsform import DefaultsGeneralForm
 from npy_gui.npy_defaultsform import DefaultsClientProjectForm
@@ -53,31 +54,43 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpOffer_new = True
 
         # create the forms
-        self.addForm('MAIN',
+        self.addForm(
+            'MAIN',
             MainForm,
             name='Freelance'
         )
-        self.addForm('Help',
+        self.addForm(
+            'Help',
             HelpForm,
             name='Freelance - Help'
         )
-        self.addForm('Settings',
+        self.addForm(
+            'Settings',
             SettingsForm,
             name='Freelance > Settings'
         )
-        self.addForm('Defaults',
+        self.addForm(
+            'Defaults',
             DefaultsForm,
             name='Freelance > Settings > Defaults'
         )
-        self.addForm('Defaults_general',
+        self.addForm(
+            'Defaults_general',
             DefaultsGeneralForm,
             name='Freelance > Settings > Defaults > General'
         )
-        self.addForm('Defaults_clientproject',
+        self.addForm(
+            'Defaults_clientproject',
             DefaultsClientProjectForm,
             name='Freelance > Settings > Defaults > Client / Project'
         )
-        self.addForm('Defaults_entry',
+        self.addForm(
+            'Defaults_entry',
             DefaultsEntryForm,
             name='Freelance > Settings > Defaults > Entry'
+        )
+        self.addForm(
+            'Client',
+            ClientForm,
+            name='Freelance > Client'
         )

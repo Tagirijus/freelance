@@ -1,4 +1,5 @@
 /.cache
+/DEBUG.txt
 /todo.txt
 /data_path.flsettings
 /*.sublime-project

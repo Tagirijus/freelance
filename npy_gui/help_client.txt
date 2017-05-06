@@ -1,0 +1,10 @@
+Client ID:
+Has to be unique!
+
+
+Company - Tax ID:
+Simple text fields.
+
+
+Language:
+Choose a language for this client (according to the set up default packs in the settings).

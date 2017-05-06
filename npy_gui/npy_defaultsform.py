@@ -1,4 +1,4 @@
-"""Form for the Defaults."""
+"""Form for the defaults."""
 
 import npyscreen
 
@@ -200,15 +200,15 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             new_created = self.parentApp.S.new_default(language)
             if new_created:
                 self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
-                return False
+                return True
             else:
                 # did not work, go on editing
-                return True
+                return False
 
         elif case_modify_actual:
             # simply modify the selected one - no name change
             self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
-            return False
+            return True
 
         elif case_rename_actual and not lang_exists:
             # rename the selected one
@@ -220,20 +220,20 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
             if renamed:
                 # worked, finish
-                return False
+                return True
             else:
                 # did not work, go on editing
-                return True
+                return False
         else:
             # fallback: no case applies (should not happen)
-            return True
+            return False
 
     def on_ok(self, keypress=None):
         """Check values and set them."""
         allright = self.values_to_tmp()
 
         # everything allright? then switch form!
-        if not allright:
+        if allright:
             # get object and save files
             lang = self.parentApp.tmpDefault.language
             self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
@@ -245,7 +245,8 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Language name already exists. Choose another one!',
+                'Language name not possible. It already exists,\n' +
+                'is empty or something else. Choose another one!',
                 form_color='WARNING'
             )
 
