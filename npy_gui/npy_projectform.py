@@ -107,6 +107,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             scroll_exit=True,
             value=[0]
         )
+        self.client_id_list = []
         self.offer_list = self.add(
             OfferListBox,
             name='Offers'
@@ -121,6 +122,9 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
 
         # handle client id
         self.client_id.values = [
+            c.client_id + ': ' + c.fullname() for c in self.parentApp.L.client_list
+        ]
+        self.client_id_list = [
             c.client_id for c in self.parentApp.L.client_list
         ]
         try:
@@ -149,7 +153,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
         except Exception:
             minimum_days = self.parentApp.tmpProject.minimum_days
 
-        client_id = self.client_id.values[
+        client_id = self.client_id_list[
             self.client_id.value[0]
         ]
 

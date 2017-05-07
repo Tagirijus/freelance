@@ -1,0 +1,4 @@
+This form lists all inactive clients and projects. Select a client or a project and then:
+
+-> ENTER: tries to activate the client / project
+-> DEL: removes the client / project file irrevocable

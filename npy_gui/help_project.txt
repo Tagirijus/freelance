@@ -1,0 +1,25 @@
+Title:
+Name of the project.
+
+
+Hours / day:
+How many hours can you work per day for this specific project?
+
+
+Work days:
+On which days can you work for this specific project?
+
+
+Minimum days:
+How many days do you need at least for the project? Use example is that you won't work on that days, but it's some kind of buffer.
+
+
+Client:
+Choose the client.
+
+
+Offers:
+When in the field following keys are possible:
+
+-> INSERT: add a new offer to the project
+-> DEL: remove the selected offer from the project
