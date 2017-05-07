@@ -848,5 +848,6 @@ class List(object):
             title=title,
             hours_per_day=settings.defaults[lang].project_hours_per_day,
             work_days=settings.defaults[lang].project_work_days,
+            wage=settings.defaults[lang].project_wage,
             minimum_days=settings.defaults[lang].project_minimum_days
         )

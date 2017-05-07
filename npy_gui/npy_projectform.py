@@ -1,6 +1,7 @@
 """Form for the projects."""
 
 import curses
+from decimal import Decimal
 import npyscreen
 
 
@@ -73,6 +74,11 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             name='Title:',
             begin_entry_at=20
         )
+        self.wage = self.add(
+            npyscreen.TitleText,
+            name='Wage:',
+            begin_entry_at=20
+        )
         self.hours_per_day = self.add(
             npyscreen.TitleText,
             name='Hours / day:',
@@ -116,6 +122,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
     def beforeEditing(self):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpProject.title
+        self.wage.value = str(float(self.parentApp.tmpProject.wage))
         self.hours_per_day.value = str(self.parentApp.tmpProject.hours_per_day)
         self.work_days.value = self.parentApp.tmpProject.work_days
         self.minimum_days.value = str(self.parentApp.tmpProject.minimum_days)
@@ -142,6 +149,11 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
         title = self.title.value
 
         try:
+            wage = Decimal(self.wage.value)
+        except Exception:
+            wage = self.parentApp.tmpProject.wage
+
+        try:
             hours_per_day = int(self.hours_per_day.value)
         except Exception:
             hours_per_day = self.parentApp.tmpProject.hours_per_day
@@ -162,6 +174,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
         # get values into tmp object
         old_project = self.parentApp.tmpProject.copy()
         self.parentApp.tmpProject.title = title
+        self.parentApp.tmpProject.wage = wage
         self.parentApp.tmpProject.hours_per_day = hours_per_day
         self.parentApp.tmpProject.work_days = work_days
         self.parentApp.tmpProject.minimum_days = minimum_days

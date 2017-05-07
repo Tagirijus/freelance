@@ -1,5 +1,6 @@
 """The class holding all the default texts."""
 
+from decimal import Decimal
 import json
 import os
 
@@ -29,6 +30,7 @@ class Default(object):
         project_hours_per_day=None,
         project_work_days=None,
         project_minimum_days=None,
+        project_wage=None,
         baseentry_title=None,
         baseentry_comment=None,
         baseentry_amount=None,
@@ -75,6 +77,8 @@ class Default(object):
                                   project_work_days)
         self.project_minimum_days = (2 if project_minimum_days is None else
                                      project_minimum_days)
+        self.project_wage = (Decimal('50.00') if project_wage is None else
+                             Decimal(project_wage))
 
         # baseentry default values
         self.baseentry_title = '' if baseentry_title is None else baseentry_title
@@ -141,6 +145,7 @@ class Default(object):
         out['project_hours_per_day'] = self.project_hours_per_day
         out['project_work_days'] = self.project_work_days
         out['project_minimum_days'] = self.project_minimum_days
+        out['project_wage'] = float(self.project_wage)
 
         out['baseentry_title'] = self.baseentry_title
         out['baseentry_comment'] = self.baseentry_comment
@@ -234,6 +239,9 @@ class Default(object):
 
         if 'project_minimum_days' in js.keys():
             self.project_minimum_days = js['project_minimum_days']
+
+        if 'project_wage' in js.keys():
+            self.project_wage = js['project_wage']
 
         if 'baseentry_title' in js.keys():
             self.baseentry_title = js['baseentry_title']
@@ -339,6 +347,7 @@ class Default(object):
             project_hours_per_day=self.project_hours_per_day,
             project_work_days=self.project_work_days,
             project_minimum_days=self.project_minimum_days,
+            project_wage=self.project_wage,
             baseentry_title=self.baseentry_title,
             baseentry_comment=self.baseentry_comment,
             baseentry_amount=self.baseentry_amount,

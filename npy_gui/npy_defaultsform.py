@@ -1,5 +1,6 @@
 """Form for the defaults."""
 
+from decimal import Decimal
 import npyscreen
 
 
@@ -68,15 +69,17 @@ class DefaultsForm(npyscreen.ActionFormWithMenus):
             ]
         )
 
+    def on_ok(self, keypress=None):
+        """Save and go back."""
+        self.parentApp.S.save_settings_to_file()
+        self.parentApp.setNextForm('Settings')
+        self.parentApp.switchFormNow()
+
     def on_cancel(self, keypress=None):
         """Go back without changing a thing."""
         # switch back
         self.parentApp.setNextForm('Settings')
         self.parentApp.switchFormNow()
-
-    def on_ok(self, keypress=None):
-        """Same as on_cancel."""
-        self.on_cancel(keypress=keypress)
 
 
 class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
@@ -138,6 +141,11 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Date format:',
             begin_entry_at=20
         )
+        self.project_wage = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Wage:',
+            begin_entry_at=20
+        )
         self.commodity = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Commodity:',
@@ -151,6 +159,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.offer_template.value = self.parentApp.tmpDefault.offer_template
         self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
         self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
+        self.project_wage.value = str(float(self.parentApp.tmpDefault.project_wage))
         self.commodity.value = self.parentApp.tmpDefault.commodity
 
     def values_to_tmp(self):
@@ -175,6 +184,12 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         offer_template = self.offer_template.value
         offer_filename = self.offer_filename.value
         date_fmt = self.date_fmt.value
+
+        try:
+            wage = Decimal(self.project_wage.value)
+        except Exception:
+            wage = self.parentApp.tmpDefault.project_wage
+
         commodity = self.commodity.value
 
         # check things
@@ -192,6 +207,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.offer_template = offer_template
         self.parentApp.tmpDefault.offer_filename = offer_filename
         self.parentApp.tmpDefault.date_fmt = date_fmt
+        self.parentApp.tmpDefault.project_wage = wage
         self.parentApp.tmpDefault.commodity = commodity
 
         # check case

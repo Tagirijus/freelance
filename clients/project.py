@@ -4,6 +4,7 @@ The class holding informatin about the project and the project_list.
 The classes do not have privat values and setter and getter methods!
 """
 
+from decimal import Decimal
 import json
 from offer.offer import Offer
 
@@ -18,6 +19,7 @@ class Project(object):
         hours_per_day=None,
         work_days=None,
         minimum_days=None,
+        wage=None,
         offer_list=None
     ):
         """Initialize the class."""
@@ -26,6 +28,7 @@ class Project(object):
         self.hours_per_day = 4 if hours_per_day is None else hours_per_day
         self.work_days = [0, 1, 2, 3, 4] if work_days is None else work_days
         self.minimum_days = 2 if minimum_days is None else minimum_days
+        self.wage = Decimal('50.00') if wage is None else Decimal(wage)
         self.offer_list = [] if offer_list is None else offer_list
 
     def append_offer(self, offer=None):
@@ -78,6 +81,7 @@ class Project(object):
         out['title'] = self.title
         out['hours_per_day'] = self.hours_per_day
         out['work_days'] = self.work_days
+        out['wage'] = float(self.wage)
         out['minimum_days'] = self.minimum_days
 
         # fetch the jsons from the entries
@@ -139,6 +143,11 @@ class Project(object):
         else:
             minimum_days = None
 
+        if 'wage' in js.keys():
+            wage = js['wage']
+        else:
+            wage = None
+
         if 'offer_list' in js.keys():
             offer_list = js['offer_list']
         else:
@@ -151,6 +160,7 @@ class Project(object):
             hours_per_day=hours_per_day,
             work_days=work_days,
             minimum_days=minimum_days,
+            wage=wage,
             offer_list=offer_list
         )
 

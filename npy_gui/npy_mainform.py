@@ -44,6 +44,9 @@ class ClientList(npyscreen.MultiLineAction):
             self.parent.parentApp.tmpProject_client = (
                 self.values[self.cursor_line]
             )
+        else:
+            self.parent.projects_box.entry_widget.update_values()
+            self.parent.parentApp.tmpProject_client = Client()
 
     def h_cursor_line_up(self, ch):
         """Overwrite the method for key pressed up."""

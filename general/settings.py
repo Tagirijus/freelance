@@ -224,8 +224,8 @@ class Settings(object):
         try:
             for lang in self.defaults.keys():
                 self.defaults[lang].save_defaults_to_file(self.data_path)
-        except Exception:
-            pass
+        except Exception as e:
+            raise e
 
     def load_settings_from_file(self):
         """Load the settings from file in data_path."""
