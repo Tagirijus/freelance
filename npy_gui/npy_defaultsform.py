@@ -28,7 +28,7 @@ class DefaultChooseList(npyscreen.MultiLineAction):
             self.parent.parentApp.switchFormNow()
 
 
-class DefaultsForm(npyscreen.ActionFormWithMenus):
+class DefaultsForm(npyscreen.ActionPopup):
     """Form for editing the defaults."""
 
     def __init__(self, *args, **kwargs):
@@ -41,24 +41,10 @@ class DefaultsForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
-    def switch_to_help(self):
-        """Switch to the help screen."""
-        self.parentApp.load_helptext('help_defaults.txt')
-        self.parentApp.setNextForm('Help')
-        self.parentApp.switchFormNow()
-
-    def exit(self):
-        """Exit the programm."""
-        self.parentApp.setNextForm(None)
-        self.parentApp.switchFormNow()
+        self.color='STANDOUT'
 
     def create(self):
         """Create the form."""
-        # create the menu
-        self.m = self.new_menu(name='Menu')
-        self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
-        self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
-
         # create the input widgets
         self.choose_list = self.add(
             DefaultChooseList,
@@ -76,10 +62,8 @@ class DefaultsForm(npyscreen.ActionFormWithMenus):
         self.parentApp.switchFormNow()
 
     def on_cancel(self, keypress=None):
-        """Go back without changing a thing."""
-        # switch back
-        self.parentApp.setNextForm('Settings')
-        self.parentApp.switchFormNow()
+        """Do the same as in on_ok."""
+        self.on_ok(keypress)
 
 
 class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):

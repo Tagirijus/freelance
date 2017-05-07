@@ -43,27 +43,6 @@ class Project(object):
         except Exception:
             pass
 
-    def move_offer(self, offer_index=None, direction=None):
-        """Move an offer with offer_index in entry_list up/down."""
-        one_not_set = offer_index is None or direction is None
-        out_of_range = offer_index >= len(self.offer_list)
-
-        # cancel, if one argument is not set or offer_index is out of range
-        if one_not_set or out_of_range:
-            return
-
-        # calculate new index: move up (direction == 1) or down (direction == -1)
-        new_index = offer_index + direction
-
-        # put at beginning, if it's at the end and it's moved up
-        new_index = 0 if new_index >= len(self.offer_list) else new_index
-
-        # put at the end, if it's at the beginning and moved down
-        new_index = len(self.offer_list) - 1 if new_index < 0 else new_index
-
-        # move it!
-        self.offer_list.insert(new_index, self.offer_list.pop(offer_index))
-
     def project_id(self, title=None):
         """Generate id with [client_id]_[title]."""
         if title is None:

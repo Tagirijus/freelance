@@ -2,6 +2,8 @@
 
 from clients.client import Client
 import curses
+from general.functions import NewClient
+from general.functions import NewProject
 import npyscreen
 from clients.project import Project
 
@@ -41,12 +43,19 @@ class ClientList(npyscreen.MultiLineAction):
             self.parent.projects_box.entry_widget.update_values(
                 client=self.values[self.cursor_line]
             )
+            self.parent.projects_box.name = 'Projects for {}, {}'.format(
+                self.values[self.cursor_line].client_id,
+                self.values[self.cursor_line].fullname()
+            )
             self.parent.parentApp.tmpProject_client = (
                 self.values[self.cursor_line]
             )
+            self.parent.projects_box.display()
         else:
             self.parent.projects_box.entry_widget.update_values()
+            self.parent.projects_box.name = 'Projects'
             self.parent.parentApp.tmpProject_client = Client()
+            self.parent.projects_box.display()
 
     def h_cursor_line_up(self, ch):
         """Overwrite the method for key pressed up."""
@@ -64,11 +73,11 @@ class ClientList(npyscreen.MultiLineAction):
         # append function for updating project list
         self.refresh_project_list()
 
-    def add_client(self, keypress):
+    def add_client(self, keypress=None):
         """Add a new client."""
         # get default values according to def language from the settings
         try:
-            self.parent.parentApp.tmpClient = self.parent.parentApp.L.NewClient(
+            self.parent.parentApp.tmpClient = NewClient(
                 settings=self.parent.parentApp.S
             )
         except Exception:
@@ -82,10 +91,12 @@ class ClientList(npyscreen.MultiLineAction):
         self.parent.parentApp.setNextForm('Client')
         self.parent.parentApp.switchFormNow()
 
-    def deactivate_client(self, keypress):
+    def deactivate_client(self, keypress=None):
         """Ask to deactivate the client and do it if yes."""
+        client = self.parent.parentApp.tmpProject_client
+        client_str = '"{}: {}"'.format(client.client_id, client.fullname())
         really = npyscreen.notify_yes_no(
-            'Really deactivate the client and all its projects?',
+            'Really deactivate the client {} and all its projects?'.format(client_str),
             form_color='WARNING'
         )
 
@@ -108,13 +119,13 @@ class ClientList(npyscreen.MultiLineAction):
                 self.update_values()
                 self.refresh_project_list()
 
-    def actionHighlighted(self, act_on_this, keypress):
+    def actionHighlighted(self, act_on_this, keypress=None):
         """Do something, because a key was pressed."""
         try:
             # get the actual client into temp client
             self.parent.parentApp.tmpClient = act_on_this.copy()
             self.parent.parentApp.tmpClient_new = False
-            title_name = act_on_this.client_id + ', ' + act_on_this.fullname()
+            title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.fullname())
             self.parent.parentApp.getForm(
                 'Client'
             ).name = 'Freelance > Client ({})'.format(title_name)
@@ -169,7 +180,7 @@ class ProjectList(npyscreen.MultiLineAction):
         """Display values."""
         return '{}'.format(vl.title)
 
-    def add_project(self, keypress):
+    def add_project(self, keypress=None):
         """Add a new project."""
         # get selected client id
         client_list = self.parent.clients_box.entry_widget
@@ -194,7 +205,7 @@ class ProjectList(npyscreen.MultiLineAction):
 
         # get default values according to language from the client and settings defaults
         try:
-            self.parent.parentApp.tmpProject = self.parent.parentApp.L.NewProject(
+            self.parent.parentApp.tmpProject = NewProject(
                 settings=self.parent.parentApp.S,
                 client=client
             )
@@ -213,10 +224,12 @@ class ProjectList(npyscreen.MultiLineAction):
         self.parent.parentApp.setNextForm('Project')
         self.parent.parentApp.switchFormNow()
 
-    def deactivate_project(self, keypress):
+    def deactivate_project(self, keypress=None):
         """Ask to deactivate the project and do it if yes."""
+        project = self.values[self.cursor_line]
+        project_str = '"{}: {}"'.format(project.client_id, project.title)
         really = npyscreen.notify_yes_no(
-            'Really deactivate the project?',
+            'Really deactivate the project {}?'.format(project_str),
             form_color='WARNING'
         )
 
@@ -250,13 +263,13 @@ class ProjectList(npyscreen.MultiLineAction):
                 # refresh list
                 self.update_values(client=client)
 
-    def actionHighlighted(self, act_on_this, keypress):
+    def actionHighlighted(self, act_on_this, keypress=None):
         """Do something, because a key was pressed."""
         try:
             # get the actual project into temp project
             self.parent.parentApp.tmpProject = act_on_this.copy()
             self.parent.parentApp.tmpProject_new = False
-            title_name = act_on_this.client_id + ', ' + act_on_this.title
+            title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.title)
             self.parent.parentApp.getForm(
                 'Project'
             ).name = 'Freelance > Project ({})'.format(title_name)
@@ -280,6 +293,22 @@ class ProjectListBox(npyscreen.BoxTitle):
 
 class MainForm(npyscreen.FormBaseNewWithMenus):
     """Main form."""
+
+    def add_client(self):
+        """Add a client."""
+        self.clients_box.entry_widget.add_client()
+
+    def deact_client(self):
+        """Deactivate a client."""
+        self.clients_box.entry_widget.deactivate_client()
+
+    def add_project(self):
+        """Add a project."""
+        self.projects_box.entry_widget.add_project()
+
+    def deact_project(self):
+        """Deactivate a project."""
+        self.projects_box.entry_widget.deactivate_project()
 
     def switch_to_inact(self):
         """Switch to help form."""
@@ -306,6 +335,12 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         """Initialize the form with its widgets."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add client', onSelect=self.add_client, shortcut='c')
+        self.m.addItem(text='Deactivate client', onSelect=self.deact_client, shortcut='C')
+        self.m.addItem(text='Add project', onSelect=self.add_project, shortcut='p')
+        self.m.addItem(
+            text='Deactivate project', onSelect=self.deact_project, shortcut='P'
+        )
         self.m.addItem(text='Show inactive', onSelect=self.switch_to_inact, shortcut='i')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Settings', onSelect=self.switch_to_settings, shortcut='s')

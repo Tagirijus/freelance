@@ -6,10 +6,9 @@ for the project_title, while it keeps beeing unique according to the
 project_id.
 """
 
-from datetime import datetime
 from clients.client import Client
 from clients.project import Project
-from general.settings import Settings
+from general.functions import us
 import json
 from offer.offer import Offer
 from offer.entries import BaseEntry
@@ -30,11 +29,6 @@ def get_inactive_list(settings=None):
             client_dir=client_dir,
             project_dir=project_dir
         )
-
-
-def us(string=''):
-    """Return string with underscores instead of whitespace."""
-    return string.replace(' ', '_')
 
 
 class List(object):
@@ -788,66 +782,3 @@ class List(object):
         f = open('DEBUG.txt', 'w')
         f.write(str(text))
         f.close()
-
-    def NewClient(self, settings=None):
-        """Return new client object according to settings defaults."""
-        # return empty client, if there is no correct settings object given
-        if type(settings) is not Settings:
-            return Client()
-
-        # get language form settings file
-        lang = settings.def_language
-
-        # return client with default values according to chosen language
-        return Client(
-            company=settings.defaults[lang].client_company,
-            salutation=settings.defaults[lang].client_salutation,
-            name=settings.defaults[lang].client_name,
-            family_name=settings.defaults[lang].client_family_name,
-            street=settings.defaults[lang].client_street,
-            post_code=settings.defaults[lang].client_post_code,
-            city=settings.defaults[lang].client_city,
-            tax_id=settings.defaults[lang].client_tax_id,
-            language=settings.defaults[lang].client_language
-        )
-
-    def NewProject(self, settings=None, client=None):
-        """Return new project object according to given settings and client."""
-        is_settings = type(settings) is Settings
-        is_client = type(client) is Client
-
-        # return empty project if no valid settings or client  object is given
-        if not is_settings or not is_client:
-            return Project()
-
-        # get language from client
-        lang = client.language
-
-        # generate default title (according to replacements)
-        title_replacer = {}
-        title_replacer['YEAR'] = datetime.now().strftime('%Y')
-        title_replacer['MONTH'] = datetime.now().strftime('%m')
-        title_replacer['DAY'] = datetime.now().strftime('%d')
-        title_replacer['CLIENT_COMPANY'] = client.company
-        title_replacer['CLIENT_SALUT'] = client.salutation
-        title_replacer['CLIENT_NAME'] = client.name
-        title_replacer['CLIENT_FAMILY'] = client.family_name
-        title_replacer['CLIENT_FULLNAME'] = client.fullname()
-        title_replacer['CLIENT_STREET'] = client.street
-        title_replacer['CLIENT_POST_CODE'] = client.post_code
-        title_replacer['CLIENT_CITY'] = client.city
-        title_replacer['CLIENT_TAX_ID'] = client.tax_id
-        title = settings.defaults[lang].project_title.format(**title_replacer)
-
-        self.debug(
-            client.client_id
-        )
-
-        return Project(
-            client_id=client.client_id,
-            title=title,
-            hours_per_day=settings.defaults[lang].project_hours_per_day,
-            work_days=settings.defaults[lang].project_work_days,
-            wage=settings.defaults[lang].project_wage,
-            minimum_days=settings.defaults[lang].project_minimum_days
-        )

@@ -20,4 +20,3 @@ class HelpForm(npyscreen.Form):
     def afterEditing(self):
         """Return to main page."""
         self.parentApp.switchFormPrevious()
-        self.parentApp.switchFormNow()
