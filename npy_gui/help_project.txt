@@ -7,6 +7,9 @@ When in the field following keys are possible:
 
 -> INSERT: add a new offer to the project
 -> DEL: remove the selected offer from the project
+-> c: copy offer
+-> +: move offer down
+-> -: move offer up
 
 
 Wage:

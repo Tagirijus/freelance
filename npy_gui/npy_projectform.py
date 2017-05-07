@@ -3,6 +3,7 @@
 import curses
 from decimal import Decimal
 from general.functions import NewOffer
+from general.functions import move_list_entry
 import npyscreen
 
 
@@ -17,12 +18,52 @@ class OfferList(npyscreen.MultiLineAction):
         self.add_handlers({
             curses.KEY_IC: self.add_offer,
             curses.KEY_DC: self.delete_offer,
-            'c': self.copy_offer
+            'c': self.copy_offer,
+            '+': self.move_up,
+            '-': self.move_down
         })
 
         # set up additional multiline options
         self.slow_scroll = True
         self.scroll_exit = True
+
+    def move_up(self, keypress=None):
+        """Move selected offer up in the list."""
+        lis = self.parent.parentApp.tmpProject.offer_list
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
+
+    def move_down(self, keypress=None):
+        """Move selected offer down in the list."""
+        lis = self.parent.parentApp.tmpProject.offer_list
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=-1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
 
     def update_values(self):
         """Update list and refresh."""
@@ -165,7 +206,15 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         allright = self.values_to_tmp(save=True)
 
         # check if it's allright
-        if not allright:
+        if allright:
+            # save the file
+            i = self.parentApp.L.get_project_index(
+                project=self.parentApp.tmpProject
+            )
+            self.parentApp.L.save_project_to_file(
+                project=self.parentApp.L.project_list[i]
+            )
+        else:
             npyscreen.notify_confirm(
                 'Project ID not possible. Already exists ' +
                 'or empty. Choose another one, please!',
@@ -274,7 +323,7 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         """Store values to temp variable."""
         # get variables in temp
         title = self.title.value
-        offer_list = self.offers_box.values
+        offer_list = self.offers_box.entry_widget.values
 
         try:
             wage = Decimal(self.wage.value)

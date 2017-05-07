@@ -70,6 +70,9 @@ def move_list_entry(lis=None, index=None, direction=None):
     # move it!
     lis.insert(new_index, lis.pop(index))
 
+    # return new index
+    return new_index
+
 
 def NewClient(settings=None):
     """Return new client object according to settings defaults."""

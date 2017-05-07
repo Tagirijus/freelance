@@ -2,6 +2,10 @@ Entries:
 
 -> INS: add entry
 -> DEL: delete entry
+-> c: copy entry
+-> +: move entry down
+-> -: move entry up
+
 
 
 Title:

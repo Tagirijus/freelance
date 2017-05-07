@@ -2,6 +2,7 @@
 
 import curses
 import npyscreen
+from general.functions import move_list_entry
 from general.functions import NewBaseEntry
 from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
@@ -125,12 +126,53 @@ class EntryList(npyscreen.MultiLineAction):
         # set up key shortcuts
         self.add_handlers({
             curses.KEY_IC: self.add_entry,
-            curses.KEY_DC: self.delete_entry
+            curses.KEY_DC: self.delete_entry,
+            'c': self.copy_entry,
+            '+': self.move_up,
+            '-': self.move_down
         })
 
         # set up additional multiline options
         self.slow_scroll = True
         self.scroll_exit = True
+
+    def move_up(self, keypress=None):
+        """Move selected entry up in the list."""
+        lis = self.parent.parentApp.tmpOffer.entry_list
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
+
+    def move_down(self, keypress=None):
+        """Move selected entry down in the list."""
+        lis = self.parent.parentApp.tmpOffer.entry_list
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=-1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
 
     def update_values(self):
         """Update list and refresh."""
@@ -150,8 +192,8 @@ class EntryList(npyscreen.MultiLineAction):
         lang = client.language
 
         # values
-        title = vl.title[:40]
-        amount = vl.get_amount_str()[:10]
+        title = vl.title[:34]
+        amount = vl.get_amount_str()[:19]
         time = str(vl.get_time_zero(
             entry_list=self.parent.parentApp.tmpOffer.entry_list
         ))
@@ -162,12 +204,25 @@ class EntryList(npyscreen.MultiLineAction):
         price_com = self.parent.parentApp.S.defaults[lang].commodity
         price = '{} {}'.format(price_amt, price_com)
 
-        return '{:35} {:15} {:10} {:>10}'.format(
+        return '{:35} {:20} {:10} {:>10}'.format(
             title,
             amount,
             time,
             price
         )
+
+    def copy_entry(self, keypress=None):
+        """Copy the selected entry."""
+        # get entry of the selected object
+        new_entry = self.values[self.cursor_line].copy()
+
+        # add the entry to the entry_list
+        self.parent.parentApp.tmpOffer.append(
+            entry=new_entry
+        )
+
+        # refresh
+        self.update_values()
 
     def add_entry(self, keypress=None):
         """Add a new entry to the offer."""
@@ -206,6 +261,7 @@ class EntryList(npyscreen.MultiLineAction):
             # get the actual offer into temp offer
             self.parent.parentApp.tmpEntry = act_on_this.copy()
             self.parent.parentApp.tmpEntry_new = False
+            self.parent.parentApp.tmpEntry_index = self.cursor_line
             entry = self.parent.parentApp.tmpEntry
 
             # get the type
@@ -271,6 +327,10 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         """Add an entry."""
         self.entries_box.entry_widget.add_entry()
 
+    def copy_entry(self):
+        """Copy the selected entry."""
+        self.entries_box.entry_widget.copy_entry()
+
     def del_entry(self):
         """Delete an offer."""
         self.entries_box.entry_widget.delete_entry()
@@ -310,6 +370,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         # create the menu
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Add entry', onSelect=self.add_entry, shortcut='a')
+        self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
         self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
