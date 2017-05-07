@@ -166,7 +166,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         lang_en_tried_to_change = old_is_en and self.language.value != 'en'
         if lang_en_tried_to_change:
             npyscreen.notify_confirm(
-                'Changed language name back to "en".\n' +
+                'Changed language name back to "en". ' +
                 'Please do not change it!',
                 form_color='WARNING'
             )
@@ -245,7 +245,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Language name not possible. It already exists,\n' +
+                'Language name not possible. It already exists, ' +
                 'is empty or something else. Choose another one!',
                 form_color='WARNING'
             )

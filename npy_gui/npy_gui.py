@@ -13,6 +13,7 @@ from npy_gui.npy_defaultsform import DefaultsGeneralForm
 from npy_gui.npy_defaultsform import DefaultsClientProjectForm
 from npy_gui.npy_defaultsform import DefaultsEntryForm
 from npy_gui.npy_helpform import HelpForm
+from npy_gui.npy_inactiveform import InactiveForm
 from npy_gui.npy_mainform import MainForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
@@ -100,4 +101,9 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Project',
             ProjectForm,
             name='Freelance > Project'
+        )
+        self.addForm(
+            'Inactive',
+            InactiveForm,
+            name='Freelance > Inactive clients and projects'
         )

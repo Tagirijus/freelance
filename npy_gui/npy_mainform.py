@@ -166,7 +166,6 @@ class ProjectList(npyscreen.MultiLineAction):
                 self.parent.parentApp.L.get_client_projects(client=client),
                 key=lambda x: x.title
             )
-            #self.values = self.parent.parentApp.L.get_client_projects(client=client)
         else:
             self.values = []
         self.parent.projects_box.entry_widget.clear_filter()
@@ -293,6 +292,11 @@ class ProjectListBox(npyscreen.BoxTitle):
 class MainForm(npyscreen.FormBaseNewWithMenus):
     """Main form."""
 
+    def switch_to_inact(self):
+        """Switch to help form."""
+        self.parentApp.setNextForm('Inactive')
+        self.parentApp.switchFormNow()
+
     def switch_to_help(self):
         """Switch to help form."""
         self.parentApp.load_helptext('help_main.txt')
@@ -313,7 +317,7 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         """Initialize the form with its widgets."""
         # create the menu
         self.m = self.new_menu(name='Menu')
-        self.m.addItem(text='Create offer', shortcut='o')
+        self.m.addItem(text='Show inactive', onSelect=self.switch_to_inact, shortcut='i')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Settings', onSelect=self.switch_to_settings, shortcut='s')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')

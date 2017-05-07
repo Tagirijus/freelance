@@ -31,23 +31,6 @@ def get_inactive_list(settings=None):
         )
 
 
-def activate_project(
-    active_list=None,
-    inactive_list=None,
-    inactive_project=None
-):
-    """Activate the project."""
-    are_lists = type(active_list) is List and type(inactive_list) is List
-    is_project = type(inactive_project) is Project
-
-    if not are_lists and not is_project:
-        return False
-
-    active_list.add_project(project=inactive_project.copy())
-    inactive_list.remove_project(project=inactive_project)
-    return True
-
-
 def us(string=''):
     """Return string with underscores instead of whitespace."""
     return string.replace(' ', '_')
@@ -196,11 +179,6 @@ class List(object):
 
         # try to remove the client and its projects
         try:
-            # first delete attached projects
-            for p in self.get_client_projects(client=client):
-                self.project_list.pop(self.project_list.index(p))
-                self.delete_project_file(project=p)
-
             # then delete the client itself
             self.client_list.pop(self.get_client_index(client))
             self.delete_client_file(client=client)
@@ -254,6 +232,50 @@ class List(object):
             self.client_list.pop(self.get_client_index(client))
             return True
         except Exception:
+            return False
+
+    def activate_client(self, client=None, inactive_dir=None, inactive_list=None):
+        """Add client and move its file from the inactive dir."""
+        # create absolute path to deactivated_dir and working dir
+        path = self.data_path + self.client_dir
+        path_deact = path + str(inactive_dir)
+
+        # check arguments and directory
+        one_not_set = client is None or inactive_dir is None or inactive_list is None
+        is_client = type(client) is Client
+        is_dir = os.path.isdir(path_deact)
+
+        # cancel if one argument is not set or client isn't Client, or dir not exists
+        if one_not_set or not is_client or not is_dir:
+            return False
+
+        # generate filenames
+        filename_old = path_deact + '/' + us(client.client_id) + '.flclient'
+        filename_old_bu = path_deact + '/' + us(client.client_id) + '.flclient_bu'
+        filename_new = path + '/' + us(client.client_id) + '.flclient'
+        filename_new_bu = path + '/' + us(client.client_id) + '.flclient_bu'
+
+        # move the old file to the inactive directory and add variable to list
+        try:
+            # add client to the active list
+            added = self.add_client(client=client)
+
+            # cancel if it did not work
+            if not added:
+                return False
+
+            # remove client form inactive list
+            inactive_list.client_list.pop(inactive_list.get_client_index(client))
+
+            # move original file
+            shutil.move(filename_old, filename_new)
+
+            # move backup only if it exists
+            if os.path.isfile(filename_old_bu):
+                shutil.move(filename_old_bu, filename_new_bu)
+
+            return True
+        except Exception as e:
             return False
 
     def get_client_projects(self, client=None):
@@ -339,6 +361,50 @@ class List(object):
 
             # pop it from list
             self.project_list.pop(self.project_list.index(project))
+            return True
+        except Exception:
+            return False
+
+    def activate_project(self, project=None, inactive_dir=None, inactive_list=None):
+        """Add project and move its file from the inactive dir."""
+        # create absolute path to deactivated_dir and working dir
+        path = self.data_path + self.project_dir
+        path_deact = path + str(inactive_dir)
+
+        # check arguments and directory
+        one_not_set = project is None or inactive_dir is None or inactive_list is None
+        is_project = type(project) is Project
+        is_dir = os.path.isdir(path_deact)
+
+        # cancel if one argument is not set or project isn't Project, or dir not exists
+        if one_not_set or not is_project or not is_dir:
+            return False
+
+        # generate filenames
+        filename_old = path_deact + '/' + us(project.project_id()) + '.flproject'
+        filename_old_bu = path_deact + '/' + us(project.project_id()) + '.flproject_bu'
+        filename_new = path + '/' + us(project.project_id()) + '.flproject'
+        filename_new_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
+
+        # move the old file to the inactive directory and add variable to list
+        try:
+            # add project to the active list
+            added = self.add_project(project=project)
+
+            # cancel if it did not work
+            if not added:
+                return False
+
+            # remove project form inactive list
+            inactive_list.project_list.pop(inactive_list.get_project_index(project))
+
+            # move original file
+            shutil.move(filename_old, filename_new)
+
+            # move backup only if it exists
+            if os.path.isfile(filename_old_bu):
+                shutil.move(filename_old_bu, filename_new_bu)
+
             return True
         except Exception:
             return False

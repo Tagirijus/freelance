@@ -174,7 +174,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Client ID not possible. Already exists\n' +
+                'Client ID not possible. Already exists ' +
                 'or empty. Choose another one, please!',
                 form_color='WARNING'
             )

@@ -197,7 +197,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Project ID not possible. Already exists\n' +
+                'Project ID not possible. Already exists ' +
                 'or empty. Choose another one, please!',
                 form_color='WARNING'
             )
