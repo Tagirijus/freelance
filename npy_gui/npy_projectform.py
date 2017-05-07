@@ -128,7 +128,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             c.client_id for c in self.parentApp.L.client_list
         ]
         try:
-            self.client_id.value = [self.client_id.values.index(
+            self.client_id.value = [self.client_id_list.index(
                 self.parentApp.tmpProject_client.client_id
             )]
         except Exception:

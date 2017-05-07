@@ -42,7 +42,7 @@ class ClientList(npyscreen.MultiLineAction):
                 client=self.values[self.cursor_line]
             )
             self.parent.parentApp.tmpProject_client = (
-                self.parent.parentApp.L.client_list[self.cursor_line]
+                self.values[self.cursor_line]
             )
 
     def h_cursor_line_up(self, ch):
@@ -65,17 +65,8 @@ class ClientList(npyscreen.MultiLineAction):
         """Add a new client."""
         # get default values according to def language from the settings
         try:
-            lang = self.parent.parentApp.S.def_language
-            self.parent.parentApp.tmpClient = Client(
-                company=self.parent.parentApp.S.defaults[lang].client_company,
-                salutation=self.parent.parentApp.S.defaults[lang].client_salutation,
-                name=self.parent.parentApp.S.defaults[lang].client_name,
-                family_name=self.parent.parentApp.S.defaults[lang].client_family_name,
-                street=self.parent.parentApp.S.defaults[lang].client_street,
-                post_code=self.parent.parentApp.S.defaults[lang].client_post_code,
-                city=self.parent.parentApp.S.defaults[lang].client_city,
-                tax_id=self.parent.parentApp.S.defaults[lang].client_tax_id,
-                language=self.parent.parentApp.S.defaults[lang].client_language
+            self.parent.parentApp.tmpClient = self.parent.parentApp.L.NewClient(
+                settings=self.parent.parentApp.S
             )
         except Exception:
             # fallback if language does not exist (should not happen)
@@ -198,21 +189,16 @@ class ProjectList(npyscreen.MultiLineAction):
             )
             return False
 
-        # get default values according to def language from the settings
+        # get default values according to language from the client and settings defaults
         try:
-            lang = self.parent.parentApp.S.def_language
-            self.parent.parentApp.tmpProject = Project(
-                client_id=client.client_id,
-                title=self.parent.parentApp.S.defaults[lang].project_title,
-                hours_per_day=self.parent.parentApp.S.defaults[
-                    lang
-                ].project_hours_per_day,
-                work_days=self.parent.parentApp.S.defaults[lang].project_work_days,
-                minimum_days=self.parent.parentApp.S.defaults[lang].project_minimum_days
+            self.parent.parentApp.tmpProject = self.parent.parentApp.L.NewProject(
+                settings=self.parent.parentApp.S,
+                client=client
             )
         except Exception:
             # fallback if language does not exist (should not happen)
             self.parent.parentApp.tmpProject = Project()
+
         self.parent.parentApp.tmpProject_new = True
         title_name = self.parent.parentApp.tmpProject_client.fullname() + ', NEW'
         self.parent.parentApp.getForm(
