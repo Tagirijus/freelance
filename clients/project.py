@@ -82,6 +82,22 @@ class Project(object):
             sort_keys=True
         )
 
+    def load_offer_list_from_js(self, lis=None):
+        """Convert list to offer object list."""
+        offer_list = []
+        # cycle through the list of dicts
+        for offer in lis:
+            # it should have a type key
+            if 'type' in offer.keys():
+                # this type key should be "Offer"
+                if offer['type'] == 'Offer':
+                    # convert this dict to an offer objetc then!
+                    offer_list.append(Offer().from_json(
+                        js=offer
+                    ))
+
+        return offer_list
+
     @classmethod
     def from_json(cls, js=None):
         """Convert all data from json format."""
@@ -129,6 +145,7 @@ class Project(object):
 
         if 'offer_list' in js.keys():
             offer_list = js['offer_list']
+            offer_list = cls().load_offer_list_from_js(lis=offer_list)
         else:
             offer_list = None
 

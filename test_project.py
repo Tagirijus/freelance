@@ -136,3 +136,21 @@ def test_offer_data_structure():
     wage = Decimal('50.00')
     assert myproject.offer_list[1].entry_list[2].get_price(
         wage=wage) == Decimal('630.00')
+
+def test_project_copy():
+    """Copy a project."""
+    a = Project(
+        title='Project A'
+    )
+
+    a.append_offer(Offer(
+        title='Offer A'
+    ))
+
+    b = a.copy()
+
+    # both should have the same title
+    assert a.title == b.title
+
+    # both also should have one offer with the same title
+    assert a.offer_list[0].title == b.offer_list[0].title

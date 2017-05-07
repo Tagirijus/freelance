@@ -1,0 +1,1 @@
+A base entry does not calculate anything. Here you can enter everything static.

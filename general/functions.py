@@ -1,14 +1,74 @@
 """Modul holding the general functions."""
 
-from datetime import datetime
 from clients.client import Client
 from clients.project import Project
+from datetime import date
 from general.settings import Settings
+from offer.entries import BaseEntry
+from offer.entries import MultiplyEntry
+from offer.entries import ConnectEntry
+from offer.offer import Offer
+
+
+def can_be_dir(string):
+    """
+    Check if the given string could be a creatable dir or exists.
+
+    The function checks if the string already exists and is a directory.
+    It also tries to create a new folder in this folder to check, if
+    the neccessary permission is granted.
+    """
+    try:
+        # check if it already exists
+        if os.path.exists(string):
+            if os.path.isdir(string):
+                # it already exists and is a dir
+                try:
+                    # try to create a dir to check permission
+                    os.mkdir(string + '/TAGIRIJUS_FREELANCE_CHECK')
+                    os.rmdir(string + '/TAGIRIJUS_FREELANCE_CHECK')
+                    # worked!
+                    return True
+                except Exception:
+                    # no permission probably
+                    return False
+            else:
+                # it already exists, but is a file
+                return False
+
+        # it does not exist, try to create it
+        os.mkdir(string)
+        os.rmdir(string)
+        return True
+    except Exception:
+        return False
 
 
 def us(string=''):
     """Return string with underscores instead of whitespace."""
     return string.replace(' ', '_')
+
+
+def move_list_entry(lis=None, index=None, direction=None):
+    """Move an list entry with index in lis up/down."""
+    one_not_set = lis is None or index is None or direction is None
+    out_of_range = index >= len(lis)
+
+    # cancel, if one argument is not set or offer_index is out of range
+    if one_not_set or out_of_range:
+        return
+
+    # calculate new index: move up (direction == 1) or down (direction == -1)
+    new_index = index + direction
+
+    # put at beginning, if it's at the end and it's moved up
+    new_index = 0 if new_index >= len(lis) else new_index
+
+    # put at the end, if it's at the beginning and moved down
+    new_index = len(lis) - 1 if new_index < 0 else new_index
+
+    # move it!
+    lis.insert(new_index, lis.pop(index))
 
 
 def NewClient(settings=None):
@@ -48,9 +108,9 @@ def NewProject(settings=None, client=None):
 
     # generate default title (according to replacements)
     title_replacer = {}
-    title_replacer['YEAR'] = datetime.now().strftime('%Y')
-    title_replacer['MONTH'] = datetime.now().strftime('%m')
-    title_replacer['DAY'] = datetime.now().strftime('%d')
+    title_replacer['YEAR'] = date.today().strftime('%Y')
+    title_replacer['MONTH'] = date.today().strftime('%m')
+    title_replacer['DAY'] = date.today().strftime('%d')
     title_replacer['CLIENT_COMPANY'] = client.company
     title_replacer['CLIENT_SALUT'] = client.salutation
     title_replacer['CLIENT_NAME'] = client.name
@@ -72,23 +132,103 @@ def NewProject(settings=None, client=None):
     )
 
 
-def move_offer(lis=None, index=None, direction=None):
-    """Move an list entry with index in lis up/down."""
-    one_not_set = lis is None or index is None or direction is None
-    out_of_range = index >= len(lis)
+def NewOffer(settings=None, client=None, project=None):
+    """Return new offer object according to settings defaults."""
+    # return empty offer, if there is no correct settings object given
+    is_settings = type(settings) is Settings
+    is_client = type(client) is Client
+    is_project = type(project) is Project
 
-    # cancel, if one argument is not set or offer_index is out of range
-    if one_not_set or out_of_range:
-        return
+    if not is_settings or not is_project or not is_client:
+        return Offer()
 
-    # calculate new index: move up (direction == 1) or down (direction == -1)
-    new_index = index + direction
+    # get language from client
+    lang = client.language
 
-    # put at beginning, if it's at the end and it's moved up
-    new_index = 0 if new_index >= len(lis) else new_index
+    # generate default title (according to replacements)
+    title_replacer = {}
+    title_replacer['YEAR'] = date.today().strftime('%Y')
+    title_replacer['MONTH'] = date.today().strftime('%m')
+    title_replacer['DAY'] = date.today().strftime('%d')
+    title_replacer['PROJECT'] = project.title
+    title_replacer['CLIENT_COMPANY'] = client.company
+    title_replacer['CLIENT_SALUT'] = client.salutation
+    title_replacer['CLIENT_NAME'] = client.name
+    title_replacer['CLIENT_FAMILY'] = client.family_name
+    title_replacer['CLIENT_FULLNAME'] = client.fullname()
+    title_replacer['CLIENT_STREET'] = client.street
+    title_replacer['CLIENT_POST_CODE'] = client.post_code
+    title_replacer['CLIENT_CITY'] = client.city
+    title_replacer['CLIENT_TAX_ID'] = client.tax_id
+    title = settings.defaults[lang].project_title.format(**title_replacer)
 
-    # put at the end, if it's at the beginning and moved down
-    new_index = len(lis) - 1 if new_index < 0 else new_index
+    # return offer with default values according to chosen language
+    return Offer(
+        title=title,
+        date_fmt=settings.defaults[lang].date_fmt
+    )
 
-    # move it!
-    lis.insert(new_index, lis.pop(index))
+
+def NewBaseEntry(settings=None, client=None):
+    """Return BaseEntry according to settings."""
+    is_settings = type(settings) is Settings
+    is_client = type(client) is Client
+
+    if not is_settings or not is_client:
+        return BaseEntry()
+
+    # get language from client
+    lang = client.language
+
+    # return entr with default values from settings default
+    return BaseEntry(
+        title=settings.defaults[lang].baseentry_title,
+        comment=settings.defaults[lang].baseentry_comment,
+        amount=settings.defaults[lang].baseentry_amount,
+        amount_format=settings.defaults[lang].baseentry_amount_format,
+        time=settings.defaults[lang].baseentry_time,
+        price=settings.defaults[lang].baseentry_price
+    )
+
+
+def NewMultiplyEntry(settings=None, client=None):
+    """Return MultiplyEntry according to settings."""
+    is_settings = type(settings) is Settings
+    is_client = type(client) is Client
+
+    if not is_settings or not is_client:
+        return MultiplyEntry()
+
+    # get language from client
+    lang = client.language
+
+    # return entr with default values from settings default
+    return MultiplyEntry(
+        title=settings.defaults[lang].multiplyentry_title,
+        comment=settings.defaults[lang].multiplyentry_comment,
+        amount=settings.defaults[lang].multiplyentry_amount,
+        amount_format=settings.defaults[lang].multiplyentry_amount_format,
+        hour_rate=settings.defaults[lang].multiplyentry_hour_rate
+    )
+
+
+def NewConnectEntry(settings=None, client=None):
+    """Return ConnectEntry according to settings."""
+    is_settings = type(settings) is Settings
+    is_client = type(client) is Client
+
+    if not is_settings or not is_client:
+        return ConnectEntry()
+
+    # get language from client
+    lang = client.language
+
+    # return entr with default values from settings default
+    return ConnectEntry(
+        title=settings.defaults[lang].connectentry_title,
+        comment=settings.defaults[lang].connectentry_comment,
+        amount=settings.defaults[lang].connectentry_amount,
+        amount_format=settings.defaults[lang].connectentry_amount_format,
+        is_time=settings.defaults[lang].connectentry_is_time,
+        multiplicator=settings.defaults[lang].connectentry_multiplicator
+    )

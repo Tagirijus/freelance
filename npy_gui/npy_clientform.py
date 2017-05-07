@@ -18,6 +18,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
 
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_client.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -112,7 +113,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         else:
             self.client_language.value[0] = 0
 
-    def values_to_tmp(self):
+    def values_to_tmp(self, save=False):
         """Store values to temp variable."""
         # get variables in temp
         client_id = self.client_id.value
@@ -141,6 +142,10 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpClient.tax_id = client_tax_id
         self.parentApp.tmpClient.language = client_language
 
+        # save or not?
+        if not save:
+            return False
+
         # it is a new client
         if self.parentApp.tmpClient_new:
             # returns false, if client_id exists in client_list (otherwise true)
@@ -157,7 +162,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
 
     def on_ok(self, keypress=None):
         """Check values and save them."""
-        allright = self.values_to_tmp()
+        allright = self.values_to_tmp(save=True)
 
         # check if it's allright and switch form then
         if allright:

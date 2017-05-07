@@ -146,7 +146,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.project_wage.value = str(float(self.parentApp.tmpDefault.project_wage))
         self.commodity.value = self.parentApp.tmpDefault.commodity
 
-    def values_to_tmp(self):
+    def values_to_tmp(self, save=False):
         """Store values to temp object."""
         # get values in temp variables
         lang_old = self.parentApp.tmpDefault.language
@@ -194,6 +194,10 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.project_wage = wage
         self.parentApp.tmpDefault.commodity = commodity
 
+        # save or not?
+        if not save:
+            return False
+
         # check case
         if case_create_new:
             # try to create a new one
@@ -230,7 +234,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
     def on_ok(self, keypress=None):
         """Check values and set them."""
-        allright = self.values_to_tmp()
+        allright = self.values_to_tmp(save=True)
 
         # everything allright? then switch form!
         if allright:

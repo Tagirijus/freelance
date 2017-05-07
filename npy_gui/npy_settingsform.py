@@ -3,7 +3,7 @@
 import curses
 from general.default import Default
 import npyscreen
-from npy_gui.npy_functions import can_be_dir
+from general.functions import can_be_dir
 
 
 class DefaultsListAction(npyscreen.MultiLineAction):

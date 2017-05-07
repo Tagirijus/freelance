@@ -1,0 +1,1 @@
+A connect entry can calculate its price (and also time, if time is enabled) based on connected other entries. E.g. if you want your client to pay for a usage licence, which would cost 3.5x the price, you can add a connect entry, with time disabled and a multiplication factor of 3.5x linked to the entries, you want to multiply.

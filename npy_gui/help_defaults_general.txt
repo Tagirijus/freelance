@@ -10,6 +10,10 @@ The pattern for the default offer title. Possible replace patterns are:
 - {DAY}: replaces with the day of the offer
 - {PROJECT}: replaces with the project title of the connected project
 - {COUNT}: replace with the count of offers for this project
+- {CLIENT_...}: replaces with the connected clients ..., possible entries:
+	CLIENT_COMPANY, _SALUT, _NAME,
+	_FAMILY, _FULLNAME, _STREET,
+	_POST_CODE,	_CITY, _TAX_ID
 
 
 Offer template:

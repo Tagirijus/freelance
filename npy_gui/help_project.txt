@@ -2,6 +2,17 @@ Title:
 Name of the project.
 
 
+Offers:
+When in the field following keys are possible:
+
+-> INSERT: add a new offer to the project
+-> DEL: remove the selected offer from the project
+
+
+Wage:
+The wage for this project.
+
+
 Hours / day:
 How many hours can you work per day for this specific project?
 
@@ -16,10 +27,3 @@ How many days do you need at least for the project? Use example is that you won'
 
 Client:
 Choose the client.
-
-
-Offers:
-When in the field following keys are possible:
-
--> INSERT: add a new offer to the project
--> DEL: remove the selected offer from the project

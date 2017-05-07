@@ -9,11 +9,7 @@ project_id.
 from clients.client import Client
 from clients.project import Project
 from general.functions import us
-import json
-from offer.offer import Offer
-from offer.entries import BaseEntry
-from offer.entries import MultiplyEntry
-from offer.entries import ConnectEntry
+from general.settings import Settings
 import os
 import shutil
 
@@ -278,6 +274,16 @@ class List(object):
         if type(client) is Client:
             return [p for p in self.project_list if client.client_id == p.client_id]
 
+    def get_client_by_id(self, client_id=None):
+        """Return client object according to found client_id."""
+        # search client_id in list and return the client object
+        for client in self.client_list:
+            if client_id == client.client_id:
+                return client.copy()
+
+        # return empty client otherwise
+        return Client()
+
     def get_project_index(self, project=None):
         """Get the index of the project."""
         if type(project) is Project:
@@ -533,56 +539,7 @@ class List(object):
                 f.close()
 
                 # generate main object
-                tmp = Project().from_json(js=load)
-
-                # important: convert entry_list entries to correct entry objects
-                correct_entries = []
-                for entry in tmp.offer_list:
-                    if type(entry) is not dict:
-                        js_tmp = json.loads(entry)
-                    else:
-                        js_tmp = entry
-                    # check the type for the entry
-                    if 'type' in js_tmp.keys():
-                        # it is an Offer object
-                        if js_tmp['type'] == 'Offer':
-                            correct_entries.append(self.load_offer_from_json(js=js_tmp))
-
-                tmp.offer_list = correct_entries
-                out.append(tmp)
-
-        return out
-
-    def load_offer_from_json(self, js=None):
-        """Load a Offer object from json string."""
-        # if no js is given, return default Offer object
-        if type(js) is None:
-            return Offer()
-
-        # generate main object
-        out = Offer().from_json(js=js)
-
-        # important: convert entry_list entries to correct entry objects
-        correct_entries = []
-        for entry in out.entry_list:
-            if type(entry) is not dict:
-                js_tmp = json.loads(entry)
-            else:
-                js_tmp = entry
-            # check the type for the entry
-            if 'type' in js_tmp.keys():
-                # it's BaseEntry - convert it from json and append it
-                if js_tmp['type'] == 'BaseEntry':
-                    correct_entries.append(BaseEntry().from_json(js=js_tmp))
-
-                # it's MultiplyEntry - convert it from json and append it
-                if js_tmp['type'] == 'MultiplyEntry':
-                    correct_entries.append(MultiplyEntry().from_json(js=js_tmp))
-
-                # it's ConnectEntry - convert it from json and append it
-                if js_tmp['type'] == 'ConnectEntry':
-                    correct_entries.append(ConnectEntry().from_json(js=js_tmp))
-        out.entry_list = correct_entries
+                out.append(Project().from_json(js=load))
 
         return out
 

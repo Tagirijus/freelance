@@ -27,11 +27,21 @@ class ClientList(npyscreen.MultiLineAction):
 
     def update_values(self):
         """Update the values."""
+        # save selection
+        sel = self.cursor_line
+
+        # get new values
         self.values = sorted(
             self.parent.parentApp.L.client_list,
             key=lambda x: x.client_id
         )
         self.display()
+
+        # clear filter for not showing doubled entries (npyscreen bug?)
+        self.clear_filter()
+
+        # restore selection
+        self.cursor_line = sel
 
     def display_value(self, vl):
         """Display values."""
@@ -39,23 +49,41 @@ class ClientList(npyscreen.MultiLineAction):
 
     def refresh_project_list(self):
         """Refresh project list."""
-        if len(self.parent.parentApp.L.client_list) > 0:
+        # do it only if there are clients in the list
+        if len(self.values) > 0:
+            # correct cursor_line if it's now higher than length of values
+            if self.cursor_line >= len(self.values):
+                self.cursor_line = len(self.values) - 1
+
+            # update the values
             self.parent.projects_box.entry_widget.update_values(
                 client=self.values[self.cursor_line]
             )
+
+            # get the nea title for the box widget
             self.parent.projects_box.name = 'Projects for {}, {}'.format(
                 self.values[self.cursor_line].client_id,
                 self.values[self.cursor_line].fullname()
             )
-            self.parent.parentApp.tmpProject_client = (
-                self.values[self.cursor_line]
-            )
+
+            # update the client
+            client = self.values[self.cursor_line]
+            self.parent.parentApp.tmpProject_client = client.copy()
+            self.parent.parentApp.tmpClient = client.copy()
+
+            # update the display
             self.parent.projects_box.display()
+
+        # otherwise update it empty
         else:
             self.parent.projects_box.entry_widget.update_values()
             self.parent.projects_box.name = 'Projects'
             self.parent.parentApp.tmpProject_client = Client()
+            self.parent.parentApp.tmpClient = Client()
             self.parent.projects_box.display()
+
+        # clear filter for not showing doubled entries (npyscreen bug?)
+        self.parent.projects_box.entry_widget.clear_filter()
 
     def h_cursor_line_up(self, ch):
         """Overwrite the method for key pressed up."""
@@ -125,6 +153,8 @@ class ClientList(npyscreen.MultiLineAction):
             # get the actual client into temp client
             self.parent.parentApp.tmpClient = act_on_this.copy()
             self.parent.parentApp.tmpClient_new = False
+
+            # rename form and switch
             title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.fullname())
             self.parent.parentApp.getForm(
                 'Client'
@@ -166,6 +196,7 @@ class ProjectList(npyscreen.MultiLineAction):
 
     def update_values(self, client=None):
         """Update values according to client."""
+        # get new values
         if type(client) is Client:
             self.values = sorted(
                 self.parent.parentApp.L.get_client_projects(client=client),
@@ -173,8 +204,6 @@ class ProjectList(npyscreen.MultiLineAction):
             )
         else:
             self.values = []
-        self.parent.projects_box.entry_widget.clear_filter()
-        self.display()
 
     def display_value(self, vl):
         """Display values."""
@@ -226,6 +255,10 @@ class ProjectList(npyscreen.MultiLineAction):
 
     def deactivate_project(self, keypress=None):
         """Ask to deactivate the project and do it if yes."""
+        # cancel if there are no projects
+        if len(self.values) < 1:
+            return False
+
         project = self.values[self.cursor_line]
         project_str = '"{}: {}"'.format(project.client_id, project.title)
         really = npyscreen.notify_yes_no(
@@ -269,12 +302,14 @@ class ProjectList(npyscreen.MultiLineAction):
             # get the actual project into temp project
             self.parent.parentApp.tmpProject = act_on_this.copy()
             self.parent.parentApp.tmpProject_new = False
+
+            # rename form and switch
             title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.title)
             self.parent.parentApp.getForm(
                 'Project'
             ).name = 'Freelance > Project ({})'.format(title_name)
 
-            # switch to the client form
+            # switch to the project form
             self.editing = False
             self.parent.parentApp.setNextForm('Project')
             self.parent.parentApp.switchFormNow()
@@ -363,26 +398,8 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
 
     def beforeEditing(self):
         """Get correct lists for clients and projects."""
-        # save old selection
-        cursor_save_c = self.clients_box.entry_widget.cursor_line
-        cursor_save_p = self.projects_box.entry_widget.cursor_line
-
         # update clients
         self.clients_box.entry_widget.update_values()
 
-        # clear filter to not show doubled entries ... npyscreen bug?
-        self.clients_box.entry_widget.clear_filter()
-
-        # get old selection back
-        self.clients_box.entry_widget.cursor_line = cursor_save_c
-
-        # --- now the same for the projects ---
-
         # update projects (contains the method .update_values())
         self.clients_box.entry_widget.refresh_project_list()
-
-        # clear filter to not show doubled entries ... npyscreen bug?
-        self.projects_box.entry_widget.clear_filter()
-
-        # get old selection back
-        self.projects_box.entry_widget.cursor_line = cursor_save_p

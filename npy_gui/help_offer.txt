@@ -1,0 +1,23 @@
+Entries:
+
+-> INS: add entry
+-> DEL: delete entry
+
+
+Title:
+The title of the offer.
+
+
+Date:
+Choose a date form the date box.
+
+
+Date fmt:
+Possible formating options are:
+
+- %Y: year
+- %m: month
+- %d: day
+
+Example:
+"%Y-%m on the %d. day" -> e.g. "2017-05 on the 07. day"

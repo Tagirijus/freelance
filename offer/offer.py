@@ -4,7 +4,7 @@ The class holds a list of entries.
 The classes do not have privat values and setter and getter methods!
 """
 
-from datetime import datetime
+from datetime import date as ddate
 import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -24,7 +24,7 @@ class Offer(object):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
-        self.date = datetime.now() if date is None else date
+        self.date = ddate.today() if date is None else date
         self.entry_list = [] if entry_list is None else entry_list
 
     def append(self, entry=None):
@@ -53,9 +53,9 @@ class Offer(object):
         out['title'] = self.title
         out['date_fmt'] = self.date_fmt
         try:
-            out['date'] = self.date.strftime('%Y-%m-%d')
+            out['date'] = self.ddate.strftime('%Y-%m-%d')
         except Exception:
-            out['date'] = datetime.now().strftime('%Y-%m-%d')
+            out['date'] = ddate.today().strftime('%Y-%m-%d')
 
         # fetch the jsons from the entries
         out['entry_list'] = []
@@ -75,6 +75,36 @@ class Offer(object):
             ensure_ascii=ensure_ascii,
             sort_keys=True
         )
+
+    def load_entry_list_from_js(self, lis=None):
+        """Convert list to entry object list."""
+        entry_list = []
+        # cycle through the list of dicts
+        for entry in lis:
+            # it should have a type key
+            if 'type' in entry.keys():
+                # entry is BaseEntry
+                if entry['type'] == 'BaseEntry':
+                    # convert this dict to an offer objetc then!
+                    entry_list.append(BaseEntry().from_json(
+                        js=entry
+                    ))
+
+                # entry is MultiplyEntry
+                if entry['type'] == 'MultiplyEntry':
+                    # convert this dict to an offer objetc then!
+                    entry_list.append(MultiplyEntry().from_json(
+                        js=entry
+                    ))
+
+                # entry is ConnectEntry
+                if entry['type'] == 'ConnectEntry':
+                    # convert this dict to an offer objetc then!
+                    entry_list.append(ConnectEntry().from_json(
+                        js=entry
+                    ))
+
+        return entry_list
 
     @classmethod
     def from_json(cls, js=None):
@@ -103,7 +133,7 @@ class Offer(object):
 
         if 'date' in js.keys():
             try:
-                date = datetime.strptime(js['date'], '%Y-%m-%d')
+                date = ddate.strptime(js['date'], '%Y-%m-%d')
             except Exception:
                 date = None
         else:
@@ -111,6 +141,7 @@ class Offer(object):
 
         if 'entry_list' in js.keys():
             entry_list = js['entry_list']
+            entry_list = cls().load_entry_list_from_js(lis=entry_list)
         else:
             entry_list = None
 

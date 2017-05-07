@@ -139,6 +139,13 @@ class BaseEntry(object):
         """Get time."""
         return self._time
 
+    def get_time_zero(self, *args, **kwargs):
+        """Get time as '-' if time is 0, else str of time."""
+        if self.get_time(*args, **kwargs) == time_module.timedelta(0):
+            return '-'
+        else:
+            return str(self.get_time(*args, **kwargs))
+
     def get_hours(self, *args, **kwargs):
         """Get hours as decimal."""
         return time_module.get_decimal_hours_from_timedelta(
@@ -546,7 +553,7 @@ class ConnectEntry(BaseEntry):
         """Set is_time value."""
         self._is_time = bool(value)
 
-    def get_is_time(self, set_it=None):
+    def get_is_time(self):
         """Get is_time value."""
         return self._is_time
 

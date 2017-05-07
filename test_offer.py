@@ -68,3 +68,17 @@ def test_offer_data_structure():
     t = myoffer.entry_list[2].get_time(myoffer.entry_list)
     multi = 2 * 3 * time.to_timedelta(2.5)
     assert t == multi
+
+
+def test_offer_copy():
+    """Convert offer and convert it back."""
+    a = Offer(title='Testuel')
+    b = a.copy()
+
+    # both have the same title
+    assert a.title == b.title
+
+    a.title = 'other'
+
+    # both now don't have the same title
+    assert a.title != b.title

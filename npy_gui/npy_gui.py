@@ -12,11 +12,17 @@ from npy_gui.npy_defaultsform import DefaultsForm
 from npy_gui.npy_defaultsform import DefaultsGeneralForm
 from npy_gui.npy_defaultsform import DefaultsClientProjectForm
 from npy_gui.npy_defaultsform import DefaultsEntryForm
+from npy_gui.npy_entryform import BaseEntryForm
+from npy_gui.npy_entryform import MultiplyEntryForm
+from npy_gui.npy_entryform import ConnectEntryForm
 from npy_gui.npy_helpform import HelpForm
 from npy_gui.npy_inactiveform import InactiveForm
 from npy_gui.npy_mainform import MainForm
+from npy_gui.npy_offerform import EntryChooseForm
+from npy_gui.npy_offerform import OfferForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
+from offer.entries import BaseEntry
 from offer.offer import Offer
 import os
 
@@ -55,6 +61,10 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpProject_client = Client()
         self.tmpOffer = Offer()
         self.tmpOffer_new = True
+        self.tmpOffer_index = -1
+        self.tmpEntry = BaseEntry()
+        self.tmpEntry_new = True
+        self.tmpEntry_index = -1
 
         # create the forms
         self.addForm(
@@ -106,4 +116,29 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Inactive',
             InactiveForm,
             name='Freelance > Inactive clients and projects'
+        )
+        self.addForm(
+            'Offer',
+            OfferForm,
+            name='Freelance > Project > Offer'
+        )
+        self.addForm(
+            'EntryChoose',
+            EntryChooseForm,
+            name='Freelance > Project > Offer > Entry'
+        )
+        self.addForm(
+            'BaseEntry',
+            BaseEntryForm,
+            name='Freelance > Project > Offer > Base entry'
+        )
+        self.addForm(
+            'MultiplyEntry',
+            MultiplyEntryForm,
+            name='Freelance > Project > Offer > Multiply entry'
+        )
+        self.addForm(
+            'ConnectEntry',
+            ConnectEntryForm,
+            name='Freelance > Project > Offer > Connect entry'
         )

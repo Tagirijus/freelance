@@ -1,0 +1,8 @@
+A multiply entry calculates the estimated time and thus a price for a task, based on a hourly rate. Basically it's a multiplication:
+
+
+hourly rate * amount = time
+
+and then
+
+time * wage = price

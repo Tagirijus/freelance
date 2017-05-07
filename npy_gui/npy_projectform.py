@@ -2,6 +2,7 @@
 
 import curses
 from decimal import Decimal
+from general.functions import NewOffer
 import npyscreen
 
 
@@ -15,20 +16,117 @@ class OfferList(npyscreen.MultiLineAction):
         # set up key shortcuts
         self.add_handlers({
             curses.KEY_IC: self.add_offer,
-            curses.KEY_DC: self.delete_offer
+            curses.KEY_DC: self.delete_offer,
+            'c': self.copy_offer
         })
 
         # set up additional multiline options
         self.slow_scroll = True
         self.scroll_exit = True
 
-    def add_offer(self):
-        """Add a new offer to the project."""
-        pass
+    def update_values(self):
+        """Update list and refresh."""
+        # get values
+        self.values = self.parent.parentApp.tmpProject.offer_list
+        self.display()
 
-    def delete_offer(self):
+        # clear filter for not showing doubled entries (npyscreen bug?)
+        self.clear_filter()
+
+    def display_value(self, vl):
+        """Display the offers."""
+        return '{}'.format(vl.title)
+
+    def copy_offer(self, keypress=None):
+        """Copy the selected offer."""
+        # get copy of the selected offer object
+        new_offer = self.values[self.cursor_line].copy()
+
+        # add the offer to the offer_list
+        self.parent.parentApp.tmpProject.append_offer(
+            offer=new_offer
+        )
+
+        # refresh
+        self.update_values()
+
+    def add_offer(self, keypress=None):
+        """Add a new offer to the project."""
+        # get the selected project
+        project = self.parent.parentApp.tmpProject
+
+        # get its client
+        client = self.parent.parentApp.L.get_client_by_id(
+            client_id=project.client_id
+        )
+
+        # prepare tmpOffer
+        self.parent.parentApp.tmpOffer_index = self.cursor_line
+        self.parent.parentApp.tmpOffer = NewOffer(
+            settings=self.parent.parentApp.S,
+            client=client,
+            project=project
+        )
+        self.parent.parentApp.tmpOffer_new = True
+
+        # switch to offer form
+        title_name = 'Freelance > Project > Offer ({}: {})'.format(
+            client.client_id,
+            project.title
+        )
+        self.parent.parentApp.getForm('Offer').name = title_name
+        self.parent.parentApp.setNextForm('Offer')
+        self.parent.parentApp.switchFormNow()
+
+    def delete_offer(self, keypress=None):
         """Delete the selected offer from the project."""
-        pass
+        # get the selected project
+        project = self.parent.parentApp.tmpProject
+
+        offer = project.offer_list[self.cursor_line]
+
+        really = npyscreen.notify_yes_no(
+            'Really delete offer "{}" from the project?'.format(offer.title),
+            form_color='CRITICAL'
+        )
+
+        if really:
+            # delete offer
+            self.parent.parentApp.tmpProject.pop_offer(self.cursor_line)
+
+            # refresh widget list
+            self.update_values()
+
+    def actionHighlighted(self, act_on_this, keypress=None):
+        """Do something, because a key was pressed."""
+        try:
+            # get the selected project
+            project = self.parent.parentApp.tmpProject
+
+            # get its client
+            client = self.parent.parentApp.L.get_client_by_id(
+                client_id=project.client_id
+            )
+
+            # get the actual offer into temp offer
+            self.parent.parentApp.tmpOffer = act_on_this.copy()
+            self.parent.parentApp.tmpOffer_new = False
+
+            # rename form and switch
+            title_name = '{}: {}'.format(client.client_id, act_on_this.title)
+            self.parent.parentApp.getForm(
+                'Offer'
+            ).name = 'Freelance > Project > Offer ({})'.format(title_name)
+
+            # switch to the client form
+            self.editing = False
+            self.parent.parentApp.setNextForm('Offer')
+            self.parent.parentApp.switchFormNow()
+        except Exception:
+            npyscreen.notify_confirm(
+                'Something went wrong, sorry!',
+                form_color='WARNING'
+            )
 
 
 class OfferListBox(npyscreen.BoxTitle):
@@ -37,7 +135,7 @@ class OfferListBox(npyscreen.BoxTitle):
     _contained_widget = OfferList
 
 
-class ProjectForm(npyscreen.ActionFormWithMenus):
+class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the project."""
 
     def __init__(self, *args, **kwargs):
@@ -50,8 +148,33 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def add_offer(self):
+        """Add an offer."""
+        self.offers_box.entry_widget.add_offer()
+
+    def copy_offer(self):
+        """Copy the selected offer."""
+        self.offers_box.entry_widget.copy_offer()
+
+    def del_offer(self):
+        """Delete an offer."""
+        self.offers_box.entry_widget.delete_offer()
+
+    def save(self):
+        """Save the offer / project."""
+        allright = self.values_to_tmp(save=True)
+
+        # check if it's allright
+        if not allright:
+            npyscreen.notify_confirm(
+                'Project ID not possible. Already exists ' +
+                'or empty. Choose another one, please!',
+                form_color='WARNING'
+            )
+
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_project.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -65,26 +188,35 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add offer', onSelect=self.add_offer, shortcut='o')
+        self.m.addItem(text='Copy offer', onSelect=self.copy_offer, shortcut='c')
+        self.m.addItem(text='Delete offer', onSelect=self.del_offer, shortcut='O')
+        self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        self.title = self.add(
+        self.title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Title:',
             begin_entry_at=20
         )
-        self.wage = self.add(
+        self.offers_box = self.add_widget_intelligent(
+            OfferListBox,
+            name='Offers',
+            max_height=8
+        )
+        self.wage = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Wage:',
             begin_entry_at=20
         )
-        self.hours_per_day = self.add(
+        self.hours_per_day = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Hours / day:',
             begin_entry_at=20
         )
-        self.work_days = self.add(
+        self.work_days = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
             name='Work days:',
             begin_entry_at=20,
@@ -100,12 +232,12 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
                 'Sunday'
             ]
         )
-        self.minimum_days = self.add(
+        self.minimum_days = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Minimum days:',
             begin_entry_at=20
         )
-        self.client_id = self.add(
+        self.client_id = self.add_widget_intelligent(
             npyscreen.TitleSelectOne,
             name='Client:',
             begin_entry_at=20,
@@ -114,14 +246,11 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             value=[0]
         )
         self.client_id_list = []
-        self.offer_list = self.add(
-            OfferListBox,
-            name='Offers'
-        )
 
     def beforeEditing(self):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpProject.title
+        self.offers_box.entry_widget.update_values()
         self.wage.value = str(float(self.parentApp.tmpProject.wage))
         self.hours_per_day.value = str(self.parentApp.tmpProject.hours_per_day)
         self.work_days.value = self.parentApp.tmpProject.work_days
@@ -141,12 +270,11 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
         except Exception:
             pass
 
-        self.offer_list.values = self.parentApp.tmpProject.offer_list
-
-    def values_to_tmp(self):
+    def values_to_tmp(self, save=False):
         """Store values to temp variable."""
         # get variables in temp
         title = self.title.value
+        offer_list = self.offers_box.values
 
         try:
             wage = Decimal(self.wage.value)
@@ -169,17 +297,19 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
             self.client_id.value[0]
         ]
 
-        offer_list = self.offer_list.values
-
         # get values into tmp object
         old_project = self.parentApp.tmpProject.copy()
         self.parentApp.tmpProject.title = title
+        self.parentApp.tmpProject.offer_list = offer_list
         self.parentApp.tmpProject.wage = wage
         self.parentApp.tmpProject.hours_per_day = hours_per_day
         self.parentApp.tmpProject.work_days = work_days
         self.parentApp.tmpProject.minimum_days = minimum_days
         self.parentApp.tmpProject.client_id = client_id
-        self.parentApp.tmpProject.offer_list = offer_list
+
+        # save or not?
+        if not save:
+            return False
 
         # it is a new project
         if self.parentApp.tmpProject_new:
@@ -197,7 +327,7 @@ class ProjectForm(npyscreen.ActionFormWithMenus):
 
     def on_ok(self, keypress=None):
         """Check values and store them."""
-        allright = self.values_to_tmp()
+        allright = self.values_to_tmp(save=True)
 
         # check if it's allright and switch form then
         if allright:

@@ -41,39 +41,6 @@ class Preset(object):
         self.entry_list = (self.load_entry_list_from_file() if entry_list is None
                            else entry_list)
 
-    def load_offer_from_json(self, js=None):
-        """Load a Offer object from json string."""
-        # if no js is given, return default Offer object
-        if type(js) is None:
-            return Offer()
-
-        # generate main object
-        out = Offer().from_json(js=js)
-
-        # important: convert entry_list entries to correct entry objects
-        correct_entries = []
-        for entry in out.entry_list:
-            if type(entry) is not dict:
-                js_tmp = json.loads(entry)
-            else:
-                js_tmp = entry
-            # check the type for the entry
-            if 'type' in js_tmp.keys():
-                # it's BaseEntry - convert it from json and append it
-                if js_tmp['type'] == 'BaseEntry':
-                    correct_entries.append(BaseEntry().from_json(js=js_tmp))
-
-                # it's MultiplyEntry - convert it from json and append it
-                if js_tmp['type'] == 'MultiplyEntry':
-                    correct_entries.append(MultiplyEntry().from_json(js=js_tmp))
-
-                # it's ConnectEntry - convert it from json and append it
-                if js_tmp['type'] == 'ConnectEntry':
-                    correct_entries.append(ConnectEntry().from_json(js=js_tmp))
-        out.entry_list = correct_entries
-
-        return out
-
     def load_offer_list_from_file(self):
         """Load the offers from file and return offer_list."""
         path = self.data_path + self.offer_dir
@@ -92,7 +59,7 @@ class Preset(object):
                 f.close()
 
                 # convert file content to offer object and append it
-                out.append(self.load_offer_from_json(js=load))
+                out.append(Offer().from_json(js=load))
 
         return out
 
