@@ -136,25 +136,37 @@ class List(object):
 
     def set_client_id(self, client=None, client_id=None):
         """Try to set new client ID for client and its projects."""
+        # cancel if its not a client object
         is_client = type(client) is Client
+
+        if not is_client:
+            return False
+
+        # check id
         id_exists = client_id in [c.client_id for c in self.client_list]
         id_is_empty = client_id == ''
         id_is_own = client.client_id == client_id
-
 
         # cancel with true, if there's no need to change the ID
         if id_is_own:
             return True
 
         # cancel if it's no client or the client_id does already exist or is empty
-        if not is_client or id_exists or id_is_empty:
+        if id_exists or id_is_empty:
             return False
 
         # change every client_id of the projects of the original client
         for p in self.get_client_projects(client=client):
-            self.delete_project_file(project=p)
-            p.client_id = client_id
-            self.save_project_to_file(project=p)
+            # get old and new project
+            old_p = p.copy()
+            new_p = p.copy()
+            new_p.client_id = client_id
+
+            # set new projects client_id
+            self.set_project_id(
+                old_project=old_p,
+                new_project=new_p
+            )
 
         # rename the file
         self.rename_client_file(
@@ -162,12 +174,14 @@ class List(object):
             new_client_id=client_id
         )
 
+        # get index
+        index = self.get_client_index(client)
+
         # change the client_id of the original client to the new id
-        self.client_list[self.get_client_index(client)].client_id = client_id
+        self.client_list[index].client_id = client_id
 
         # get new client and save it
-        new_client = self.client_list[self.get_client_index(client)]
-        self.save_client_to_file(client=new_client)
+        self.save_client_to_file(client=self.client_list[index])
 
         return True
 
@@ -197,8 +211,8 @@ class List(object):
     def deactivate_client(self, client=None, inactive_dir=None):
         """Pop client and move its file to the inactive dir."""
         # create absolute path to deactivated_dir and working dir
-        path_deact = self.data_path + self.client_dir + str(inactive_dir)
         path = self.data_path + self.client_dir
+        path_deact = path + str(inactive_dir)
 
         # check arguments and directory
         one_not_set = client is None or inactive_dir is None
@@ -222,25 +236,39 @@ class List(object):
             os.mkdir(path_deact)
 
         # generate filenames
-        filename_old = path + '/' + client.client_id + '.flclient'
-        filename_old_bu = path + '/' + client.client_id + '.flclient_bu'
-        filename_new = path_deact + '/' + client.client_id + '.flclient'
-        filename_new_bu = path_deact + '/' + client.client_id + '.flclient_bu'
+        filename_old = path + '/' + us(client.client_id) + '.flclient'
+        filename_old_bu = path + '/' + us(client.client_id) + '.flclient_bu'
+        filename_new = path_deact + '/' + us(client.client_id) + '.flclient'
+        filename_new_bu = path_deact + '/' + us(client.client_id) + '.flclient_bu'
 
         # move the old file to the inactive directory and pop variable from list
         try:
+            # move original file
             shutil.move(filename_old, filename_new)
-            shutil.move(filename_old_bu, filename_new_bu)
+
+            # move backup only if it exists
+            if os.path.isfile(filename_old_bu):
+                shutil.move(filename_old_bu, filename_new_bu)
+
+            # pop it from the list
             self.client_list.pop(self.get_client_index(client))
+            return True
         except Exception:
             return False
-
-        return True
 
     def get_client_projects(self, client=None):
         """Return list with projects for given client."""
         if type(client) is Client:
             return [p for p in self.project_list if client.client_id == p.client_id]
+
+    def get_project_index(self, project=None):
+        """Get the index of the project."""
+        if type(project) is Project:
+            for i, p in enumerate(self.project_list):
+                if project.project_id() == p.project_id():
+                    return i
+
+        return False
 
     def add_project(self, project=None):
         """Add a project, if its ID does not already exist and the client exist."""
@@ -278,8 +306,8 @@ class List(object):
     def deactivate_project(self, project=None, inactive_dir=None):
         """Pop project and move its file to the inactive dir."""
         # create absolute path to deactivated_dir and working dir
-        path_deact = self.data_path + self.project_dir + str(inactive_dir)
         path = self.data_path + self.project_dir
+        path_deact = path + str(inactive_dir)
 
         # check arguments and directory
         one_not_set = project is None or inactive_dir is None
@@ -295,37 +323,92 @@ class List(object):
             os.mkdir(path_deact)
 
         # generate filenames
-        filename_old = path + '/' + project.project_id() + '.flproject'
-        filename_new = path_deact + '/' + project.project_id() + '.flproject'
-        filename_new_bu = path_deact + '/' + project.project_id() + '.flproject_bu'
-
-        # if it already exists, save a backup
-        if os.path.isfile(filename_new):
-            shutil.copy2(filename_new, filename_new_bu)
+        filename_old = path + '/' + us(project.project_id()) + '.flproject'
+        filename_old_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
+        filename_new = path_deact + '/' + us(project.project_id()) + '.flproject'
+        filename_new_bu = path_deact + '/' + us(project.project_id()) + '.flproject_bu'
 
         # move the old file to the inactive directory and pop variable from list
         try:
+            # move original file
             shutil.move(filename_old, filename_new)
+
+            # move backup only, if it exists
+            if os.path.isfile(filename_old_bu):
+                shutil.move(filename_old_bu, filename_new_bu)
+
+            # pop it from list
             self.project_list.pop(self.project_list.index(project))
+            return True
         except Exception:
             return False
 
-        return True
+    def update_project(self, old_project=None, new_project=None):
+        """Update old project with new project."""
+        old_is_project = type(old_project) is Project
+        new_is_project = type(new_project) is Project
 
-    def set_project_title(self, project=None, title=None):
-        """Try to set new project title for project."""
-        is_project = type(project) is Project
-        title_exists = title in [p.title for p in self.project_list
-                                 if p != project and project.client_id == p.client_id]
-
-        # cancel if it's no project or title exists in clients other project-titles
-        if not is_project or title_exists:
+        # cancel if these are no project
+        if not old_is_project and not new_is_project:
             return False
 
-        # change the title
-        self.delete_project_file(project=project)
-        self.project_list[self.project_list.index(project)].title = title
-        self.save_project_to_file(project=project)
+        # try to change the title + client_id (and its files) first
+        old_index = self.get_project_index(old_project)
+        id_available = self.set_project_id(
+            old_project=old_project,
+            new_project=new_project
+        )
+
+        # only go on change remaining, if the title is possible
+        if id_available:
+            self.project_list[old_index] = new_project
+            return True
+        else:
+            return False
+
+    def set_project_id(self, old_project=None, new_project=None):
+        """Try to set new project title for project."""
+        # cancel if one is no project object
+        old_is_project = type(old_project) is Project
+        new_is_project = type(new_project) is Project
+
+        if not old_is_project or not new_is_project:
+            return False
+
+
+        # check id
+        id_exists = new_project.project_id() in [
+            p.project_id() for p in self.project_list
+        ]
+        id_is_own = old_project.project_id() == new_project.project_id()
+        title_is_empty = new_project.title == ''
+
+        # cancel with true, if there's no need to change the title + client_id
+        if id_is_own:
+            return True
+
+        # cancel
+        #   the id already exists
+        #   or the new title is empty
+        if id_exists or title_is_empty:
+            return False
+
+        # rename the file
+        self.rename_project_file(
+            old_project=old_project,
+            new_project=new_project
+        )
+
+        # get its index
+        index = self.get_project_index(old_project)
+
+        # change the title and client of the original project to the new title
+        self.project_list[index].client_id = new_project.client_id
+        self.project_list[index].title = new_project.title
+
+        # get new project and save it
+        self.save_project_to_file(project=self.project_list[index])
+
         return True
 
     def assign_project_to_client(self, project=None, client_id=None):
@@ -534,6 +617,31 @@ class List(object):
             return True
         else:
             return False
+
+    def rename_project_file(self, old_project=None, new_project=None):
+        """Rename project file (its ID) to new projects ID."""
+        old_is_project = type(old_project) is Project
+        new_is_project = type(new_project) is Project
+
+        # cancel if arguments are not projects
+        if not old_is_project or not new_is_project:
+            return False
+
+        # generate filenames
+        path = self.data_path + self.project_dir
+        filename = path + '/' + us(old_project.project_id()) + '.flproject'
+        filename_bu = path + '/' + us(old_project.project_id()) + '.flproject_bu'
+        filename_new = path + '/' + us(new_project.project_id()) + '.flproject'
+        filename_new_bu = path + '/' + us(new_project.project_id()) + '.flproject_bu'
+
+        # check if the files exist and rename them
+        if os.path.isfile(filename):
+            os.rename(filename, filename_new)
+
+        if os.path.isfile(filename_bu):
+            os.rename(filename_bu, filename_new_bu)
+
+        return True
 
     def save_project_to_file(self, project=None):
         """Save single project to file."""

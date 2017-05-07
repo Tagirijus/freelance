@@ -61,9 +61,12 @@ class Project(object):
         # move it!
         self.offer_list.insert(new_index, self.offer_list.pop(offer_index))
 
-    def project_id(self):
+    def project_id(self, title=None):
         """Generate id with [client_id]_[title]."""
-        return self.client_id + '_' + self.title
+        if title is None:
+            return self.client_id + '_' + self.title
+        else:
+            return self.client_id + '_' + title
 
     def to_dict(self):
         """Convert object to dict."""

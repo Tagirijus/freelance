@@ -3,7 +3,7 @@
 from clients.client import Client
 import curses
 import npyscreen
-import time
+from clients.project import Project
 
 
 class ClientList(npyscreen.MultiLineAction):
@@ -25,12 +25,25 @@ class ClientList(npyscreen.MultiLineAction):
 
     def update_values(self):
         """Update the values."""
-        self.values = self.parent.parentApp.L.client_list
+        self.values = sorted(
+            self.parent.parentApp.L.client_list,
+            key=lambda x: x.client_id
+        )
         self.display()
 
     def display_value(self, vl):
         """Display values."""
         return '{}: {}'.format(vl.client_id, vl.fullname())
+
+    def refresh_project_list(self):
+        """Refresh project list."""
+        if len(self.parent.parentApp.L.client_list) > 0:
+            self.parent.projects_box.entry_widget.update_values(
+                client=self.values[self.cursor_line]
+            )
+            self.parent.parentApp.tmpProject_client = (
+                self.parent.parentApp.L.client_list[self.cursor_line]
+            )
 
     def h_cursor_line_up(self, ch):
         """Overwrite the method for key pressed up."""
@@ -38,12 +51,7 @@ class ClientList(npyscreen.MultiLineAction):
         super(ClientList, self).h_cursor_line_up(ch)
 
         # append function for updating project list
-        if len(self.parent.parentApp.L.client_list) > 0:
-            self.parent.parentApp.getForm(
-                'MAIN'
-            ).projects_box.entry_widget.update_values(
-                client=self.parent.parentApp.L.client_list[self.cursor_line]
-            )
+        self.refresh_project_list()
 
     def h_cursor_line_down(self, ch):
         """Overwrite the method for key pressed up."""
@@ -51,12 +59,7 @@ class ClientList(npyscreen.MultiLineAction):
         super(ClientList, self).h_cursor_line_down(ch)
 
         # append function for updating project list
-        if len(self.parent.parentApp.L.client_list) > 0:
-            self.parent.parentApp.getForm(
-                'MAIN'
-            ).projects_box.entry_widget.update_values(
-                client=self.parent.parentApp.L.client_list[self.cursor_line]
-            )
+        self.refresh_project_list()
 
     def add_client(self, keypress):
         """Add a new client."""
@@ -78,7 +81,7 @@ class ClientList(npyscreen.MultiLineAction):
             # fallback if language does not exist (should not happen)
             self.parent.parentApp.tmpClient = Client()
         self.parent.parentApp.tmpClient_new = True
-        self.parent.parentApp.getForm('Client').name = 'Freelance > Client (new)'
+        self.parent.parentApp.getForm('Client').name = 'Freelance > Client (NEW)'
 
         # switch to the client form
         self.editing = False
@@ -86,7 +89,7 @@ class ClientList(npyscreen.MultiLineAction):
         self.parent.parentApp.switchFormNow()
 
     def deactivate_client(self, keypress):
-        """Ask to delete the client and do it if yes."""
+        """Ask to deactivate the client and do it if yes."""
         really = npyscreen.notify_yes_no(
             'Really deactivate the client and all its projects?',
             form_color='WARNING'
@@ -106,12 +109,21 @@ class ClientList(npyscreen.MultiLineAction):
                     form_color='WARNING'
                 )
 
+            # ouhkaaaay
+            else:
+                self.update_values()
+                self.refresh_project_list()
+
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
         try:
             # get the actual client into temp client
             self.parent.parentApp.tmpClient = act_on_this.copy()
             self.parent.parentApp.tmpClient_new = False
+            title_name = act_on_this.client_id + ', ' + act_on_this.fullname()
+            self.parent.parentApp.getForm(
+                'Client'
+            ).name = 'Freelance > Client ({})'.format(title_name)
 
             # switch to the client form
             self.editing = False
@@ -119,7 +131,7 @@ class ClientList(npyscreen.MultiLineAction):
             self.parent.parentApp.switchFormNow()
         except Exception:
             npyscreen.notify_confirm(
-                'Somethign went wrong, sorry!',
+                'Something went wrong, sorry!',
                 form_color='WARNING'
             )
 
@@ -150,9 +162,14 @@ class ProjectList(npyscreen.MultiLineAction):
     def update_values(self, client=None):
         """Update values according to client."""
         if type(client) is Client:
-            self.values = self.parent.parentApp.L.get_client_projects(client=client)
+            self.values = sorted(
+                self.parent.parentApp.L.get_client_projects(client=client),
+                key=lambda x: x.title
+            )
+            #self.values = self.parent.parentApp.L.get_client_projects(client=client)
         else:
             self.values = []
+        self.parent.projects_box.entry_widget.clear_filter()
         self.display()
 
     def display_value(self, vl):
@@ -161,18 +178,110 @@ class ProjectList(npyscreen.MultiLineAction):
 
     def add_project(self, keypress):
         """Add a new project."""
-        npyscreen.notify('EINF was pressed!')
-        time.sleep(1)
+        # get selected client id
+        client_list = self.parent.clients_box.entry_widget
+        no_client = len(client_list.values) < 1
+
+        # cancel, because no client available / selected
+        if no_client:
+            npyscreen.notify_confirm(
+                'Create / select a client first.'
+            )
+            return False
+
+        # get selected client
+        try:
+            client = client_list.values[client_list.cursor_line]
+        except Exception:
+            npyscreen.notify_confirm(
+                'Could not get client.',
+                form_color='WARNING'
+            )
+            return False
+
+        # get default values according to def language from the settings
+        try:
+            lang = self.parent.parentApp.S.def_language
+            self.parent.parentApp.tmpProject = Project(
+                client_id=client.client_id,
+                title=self.parent.parentApp.S.defaults[lang].project_title,
+                hours_per_day=self.parent.parentApp.S.defaults[
+                    lang
+                ].project_hours_per_day,
+                work_days=self.parent.parentApp.S.defaults[lang].project_work_days,
+                minimum_days=self.parent.parentApp.S.defaults[lang].project_minimum_days
+            )
+        except Exception:
+            # fallback if language does not exist (should not happen)
+            self.parent.parentApp.tmpProject = Project()
+        self.parent.parentApp.tmpProject_new = True
+        title_name = self.parent.parentApp.tmpProject_client.fullname() + ', NEW'
+        self.parent.parentApp.getForm(
+            'Project'
+        ).name = 'Freelance > Project ({})'.format(title_name)
+
+        # switch to the client form
+        self.editing = False
+        self.parent.parentApp.setNextForm('Project')
+        self.parent.parentApp.switchFormNow()
 
     def deactivate_project(self, keypress):
-        """Ask to delete the project and do it if yes."""
-        npyscreen.notify('DEL was pressed!')
-        time.sleep(1)
+        """Ask to deactivate the project and do it if yes."""
+        really = npyscreen.notify_yes_no(
+            'Really deactivate the project?',
+            form_color='WARNING'
+        )
+
+        # yepp, deactivate it
+        if really:
+            worked = self.parent.parentApp.L.deactivate_project(
+                project=self.values[self.cursor_line],
+                inactive_dir=self.parent.parentApp.S.inactive_dir
+            )
+
+            # something went wrong
+            if not worked:
+                npyscreen.notify_confirm(
+                    'Project not properly deactivated, woops!',
+                    form_color='WARNING'
+                )
+
+            # ouhkaaaay
+            else:
+                # get selected client
+                try:
+                    client_list = self.parent.clients_box.entry_widget
+                    client = client_list.values[client_list.cursor_line]
+                except Exception:
+                    npyscreen.notify_confirm(
+                        'Could not get client.',
+                        form_color='WARNING'
+                    )
+                    return False
+
+                # refresh list
+                self.update_values(client=client)
 
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
-        npyscreen.notify(act_on_this.title + ' chosen!')
-        time.sleep(1)
+        try:
+            # get the actual project into temp project
+            self.parent.parentApp.tmpProject = act_on_this.copy()
+            self.parent.parentApp.tmpProject_new = False
+            title_name = act_on_this.client_id + ', ' + act_on_this.title
+            self.parent.parentApp.getForm(
+                'Project'
+            ).name = 'Freelance > Project ({})'.format(title_name)
+
+            # switch to the client form
+            self.editing = False
+            self.parent.parentApp.setNextForm('Project')
+            self.parent.parentApp.switchFormNow()
+        except Exception:
+            npyscreen.notify_confirm(
+                'Something went wrong, sorry!',
+                form_color='WARNING'
+            )
 
 
 class ProjectListBox(npyscreen.BoxTitle):
@@ -226,31 +335,26 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
 
     def beforeEditing(self):
         """Get correct lists for clients and projects."""
+        # save old selection
+        cursor_save_c = self.clients_box.entry_widget.cursor_line
+        cursor_save_p = self.projects_box.entry_widget.cursor_line
+
         # update clients
         self.clients_box.entry_widget.update_values()
-        # clear filter to not show doubled entries ... npyscreen bug?
-        # also set old selection again
-        cursor_save = self.clients_box.entry_widget.cursor_line
-        self.clients_box.entry_widget.clear_filter()
-        self.clients_box.entry_widget.cursor_line = cursor_save
 
-        # update projects
-        # check if there are clients in the list
-        clients_count = len(self.clients_box.entry_widget.values)
-        if clients_count > 0:
-            # select the last selected client, if len fits
-            clients_selected = self.clients_box.entry_widget.cursor_line
-            if clients_selected < clients_count:
-                self.projects_box.entry_widget.update_values(
-                    client=self.parentApp.L.client_list[clients_selected]
-                )
-            # or select the last, if index was too high before
-            else:
-                self.projects_box.entry_widget.update_values(
-                    client=self.parentApp.L.client_list[clients_count - 1]
-                )
-        # no clients, so no projects
-        else:
-            self.projects_box.entry_widget.update_values()
+        # clear filter to not show doubled entries ... npyscreen bug?
+        self.clients_box.entry_widget.clear_filter()
+
+        # get old selection back
+        self.clients_box.entry_widget.cursor_line = cursor_save_c
+
+        # --- now the same for the projects ---
+
+        # update projects (contains the method .update_values())
+        self.clients_box.entry_widget.refresh_project_list()
+
         # clear filter to not show doubled entries ... npyscreen bug?
         self.projects_box.entry_widget.clear_filter()
+
+        # get old selection back
+        self.projects_box.entry_widget.cursor_line = cursor_save_p

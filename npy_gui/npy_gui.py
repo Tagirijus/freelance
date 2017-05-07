@@ -14,6 +14,7 @@ from npy_gui.npy_defaultsform import DefaultsClientProjectForm
 from npy_gui.npy_defaultsform import DefaultsEntryForm
 from npy_gui.npy_helpform import HelpForm
 from npy_gui.npy_mainform import MainForm
+from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
 from offer.offer import Offer
 import os
@@ -50,6 +51,7 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpClient_new = True
         self.tmpProject = Project()
         self.tmpProject_new = True
+        self.tmpProject_client = Client()
         self.tmpOffer = Offer()
         self.tmpOffer_new = True
 
@@ -93,4 +95,9 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Client',
             ClientForm,
             name='Freelance > Client'
+        )
+        self.addForm(
+            'Project',
+            ProjectForm,
+            name='Freelance > Project'
         )
