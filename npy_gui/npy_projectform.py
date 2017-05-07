@@ -76,7 +76,8 @@ class OfferList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display the offers."""
-        return '{}'.format(vl.title)
+        title = '[no title!]' if vl.title == '' else vl.title
+        return '{}'.format(title)
 
     def copy_offer(self, keypress=None):
         """Copy the selected offer."""
@@ -152,6 +153,7 @@ class OfferList(npyscreen.MultiLineAction):
             # get the actual offer into temp offer
             self.parent.parentApp.tmpOffer = act_on_this.copy()
             self.parent.parentApp.tmpOffer_new = False
+            self.parent.parentApp.tmpOffer_index = self.cursor_line
 
             # rename form and switch
             title_name = '{}: {}'.format(client.client_id, act_on_this.title)

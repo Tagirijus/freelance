@@ -184,7 +184,7 @@ class EntryList(npyscreen.MultiLineAction):
         self.clear_filter()
 
     def display_value(self, vl):
-        """Display the offers."""
+        """Display the entries."""
         # get client
         client = self.parent.parentApp.L.get_client_by_id(
             client_id=self.parent.parentApp.tmpProject.client_id
@@ -382,6 +382,11 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             name='Entries',
             max_height=10
         )
+        self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='_' * 500,
+            editable=False
+        )
         self.title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Title:',
@@ -396,11 +401,6 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             npyscreen.TitleText,
             name='Date fmt:',
             begin_entry_at=20
-        )
-        self.add_widget_intelligent(
-            npyscreen.FixedText,
-            value='_' * 500,
-            editable=False
         )
 
     def beforeEditing(self):
