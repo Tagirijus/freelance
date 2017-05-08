@@ -341,8 +341,16 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             npyscreen.TitleSelectOne,
             name='Is time:',
             begin_entry_at=20,
+            max_height=2,
+            scroll_exit=True,
             values=['enabled'],
             value=[0]
+        )
+        self.connected = self.add(
+            npyscreen.TitleMultiSelect,
+            name='Connect to:',
+            begin_entry_at=20,
+            scroll_exit=True
         )
 
     def beforeEditing(self):
@@ -353,6 +361,30 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
         self.multiplicator.value = str(self.parentApp.tmpEntry.get_multiplicator())
         self.is_time.value = [0] if self.parentApp.tmpEntry.get_is_time() else []
+
+        # get all entries into connected list
+
+        # init connected variables
+        self.connected.values = []
+        self.connected.value = []
+        self.connected_entries = []
+        connected_list = self.parentApp.tmpEntry.get_connected()
+
+        # iterate through all entries
+        for e in self.parentApp.tmpOffer.entry_list:
+            # only append it, if it's not its own id
+            if e.get_id() != self.parentApp.tmpEntry.get_id():
+                # append to the widget
+                self.connected.values.append(e.title)
+
+                # check if it's connected to the actual entry
+                if e.get_id() in connected_list:
+                    self.connected.value.append(
+                        len(self.connected.values) - 1
+                    )
+
+                # append original entry also to temp list
+                self.connected_entries.append(e)
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
@@ -367,9 +399,33 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         else:
             self.parentApp.tmpEntry.set_is_time(False)
 
+        # handle the connections - first empty the connected list
+        self.parentApp.tmpEntry.disconnect_all_entries()
+
+        # now connect the entries, chosen in the connected widget
+        not_possible = []
+        for i in self.connected.value:
+            # connect the entry
+            connected = self.parentApp.tmpEntry.connect_entry(
+                entry_list=self.parentApp.tmpOffer.entry_list,
+                entry_id=self.connected_entries[i].get_id()
+            )
+
+            # check if its possible
+            if not connected:
+                not_possible.append(e.title)
+
         # save or not?
         if not save:
             return False
+
+        # give message, if some connections did not work
+        if len(not_possible) > 0:
+            npyscreen.notify_confirm(
+                'Following connectio did not work: ' +
+                ', '.join(not_possible),
+                form_color='WARNING'
+            )
 
         # get the selected offer
         offer = self.parentApp.tmpOffer

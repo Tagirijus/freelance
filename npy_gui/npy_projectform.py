@@ -81,6 +81,10 @@ class OfferList(npyscreen.MultiLineAction):
 
     def copy_offer(self, keypress=None):
         """Copy the selected offer."""
+        # cancel if there is nothign to copy
+        if len(self.values) < 1:
+            return False
+
         # get copy of the selected offer object
         new_offer = self.values[self.cursor_line].copy()
 

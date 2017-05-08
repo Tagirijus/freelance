@@ -571,7 +571,7 @@ class ConnectEntry(BaseEntry):
 
         # cancel if one argument is not given or if entry_id is the own
         if one_not_set or is_own_id:
-            return
+            return False
 
         # check if other entry id exists in entry_list
         connection_possible = False
@@ -584,7 +584,7 @@ class ConnectEntry(BaseEntry):
 
         # cancel if nothing found
         if not connection_possible:
-            return
+            return False
 
         # append / "connect" id to _connected set
         # or remove / "discconnect" id to _connected set
@@ -592,6 +592,8 @@ class ConnectEntry(BaseEntry):
             self._connected -= set([entry_id])
         else:
             self._connected |= set([entry_id])
+
+        return True
 
     def disconnect_entry(self, entry_list=None, entry_id=None):
         """Delete the entry_id from the _connected set."""
@@ -617,6 +619,10 @@ class ConnectEntry(BaseEntry):
         out['connected'] = list(self.get_connected())
 
         return out
+
+    def disconnect_all_entries(self):
+        """Delete all connections."""
+        self._connected = set()
 
     def to_json(self, indent=2, ensure_ascii=False):
         """Convert all data to json format."""

@@ -192,8 +192,8 @@ class EntryList(npyscreen.MultiLineAction):
         lang = client.language
 
         # values
-        title = vl.title[:34]
-        amount = vl.get_amount_str()[:19]
+        title = vl.title[:29]
+        amount = vl.get_amount_str()[:14]
         time = str(vl.get_time_zero(
             entry_list=self.parent.parentApp.tmpOffer.entry_list
         ))
@@ -204,15 +204,20 @@ class EntryList(npyscreen.MultiLineAction):
         price_com = self.parent.parentApp.S.defaults[lang].commodity
         price = '{} {}'.format(price_amt, price_com)
 
-        return '{:35} {:20} {:10} {:>10}'.format(
+        return '{:30} {:15} {:9} {:>10}'.format(
             title,
             amount,
             time,
-            price
+            price,
+            price_tax
         )
 
     def copy_entry(self, keypress=None):
         """Copy the selected entry."""
+        # cancel if there is nothign to copy
+        if len(self.values) < 1:
+            return False
+
         # get entry of the selected object
         new_entry = self.values[self.cursor_line].copy()
 

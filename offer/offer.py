@@ -156,3 +156,29 @@ class Offer(object):
     def copy(self):
         """Copy the own offer into new offer object."""
         return Offer().from_json(js=self.to_json())
+
+    def get_connected_entries(self, entry=None):
+        """Return list with entries, which are connected to the given entry."""
+        is_entry = (
+            type(entry) is BaseEntry or
+            type(entry) is MultiplyEntry or
+            type(entry) is ConnectEntry
+        )
+
+        # return empty list, if argument is no valid entry object
+        if not is_entry:
+            return []
+
+        # get connected ids from given entry
+        connected = entry.get_connected()
+
+        # init output list
+        entries = []
+
+        # iterate through entry_list and find connected entries
+        for e in self.entry_list:
+            if e.get_id() in connected:
+                entries.append(e)
+
+        # return list
+        return entries
