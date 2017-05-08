@@ -3,6 +3,18 @@
 import npyscreen
 
 
+class TitleMultiLineEdit(npyscreen.TitleText):
+    """Titled MultiLineEdit"""
+
+    _entry_type = npyscreen.MultiLineEdit
+    scroll_exit = True
+
+    def reformat(self):
+        """Reformat the content."""
+        self.entry_widget.full_reformat()
+
+
+
 class BaseEntryForm(npyscreen.ActionFormWithMenus):
     """Form for editing the BaseEntry."""
 
@@ -41,9 +53,10 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             begin_entry_at=20
         )
         self.comment = self.add(
-            npyscreen.TitleText,
+            TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_height=2
         )
         self.amount = self.add(
             npyscreen.TitleText,
@@ -55,6 +68,11 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             name='Amount format:',
             begin_entry_at=20
         )
+        self.tax = self.add(
+            npyscreen.TitleText,
+            name='Tax rate:',
+            begin_entry_at=20
+        )
         self.time = self.add(
             npyscreen.TitleText,
             name='Time:',
@@ -62,7 +80,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         )
         self.price = self.add(
             npyscreen.TitleText,
-            name='Price:',
+            name='Price (w/o tax):',
             begin_entry_at=20
         )
 
@@ -70,8 +88,10 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpEntry.title
         self.comment.value = self.parentApp.tmpEntry.comment
+        self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.time.value = str(self.parentApp.tmpEntry.get_time())
         self.price.value = str(self.parentApp.tmpEntry.get_price())
 
@@ -79,9 +99,10 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         """Store values to temp variable."""
         # get values into tmp object
         self.parentApp.tmpEntry.title = self.title.value
-        self.parentApp.tmpEntry.comment = self.comment.value
+        self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_time(self.time.value)
         self.parentApp.tmpEntry.set_price(self.price.value)
 
@@ -183,9 +204,10 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             begin_entry_at=20
         )
         self.comment = self.add(
-            npyscreen.TitleText,
+            TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_height=2
         )
         self.amount = self.add(
             npyscreen.TitleText,
@@ -195,6 +217,11 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.amount_format = self.add(
             npyscreen.TitleText,
             name='Amount format:',
+            begin_entry_at=20
+        )
+        self.tax = self.add(
+            npyscreen.TitleText,
+            name='Tax rate:',
             begin_entry_at=20
         )
         self.hour_rate = self.add(
@@ -207,17 +234,20 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpEntry.title
         self.comment.value = self.parentApp.tmpEntry.comment
+        self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.hour_rate.value = str(self.parentApp.tmpEntry.get_hour_rate())
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
         # get values into tmp object
         self.parentApp.tmpEntry.title = self.title.value
-        self.parentApp.tmpEntry.comment = self.comment.value
+        self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_hour_rate(self.hour_rate.value)
 
         # save or not?
@@ -318,9 +348,10 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             begin_entry_at=20
         )
         self.comment = self.add(
-            npyscreen.TitleText,
+            TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_height=2
         )
         self.amount = self.add(
             npyscreen.TitleText,
@@ -330,6 +361,11 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.amount_format = self.add(
             npyscreen.TitleText,
             name='Amount format:',
+            begin_entry_at=20
+        )
+        self.tax = self.add(
+            npyscreen.TitleText,
+            name='Tax rate:',
             begin_entry_at=20
         )
         self.multiplicator = self.add(
@@ -357,8 +393,10 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpEntry.title
         self.comment.value = self.parentApp.tmpEntry.comment
+        self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.multiplicator.value = str(self.parentApp.tmpEntry.get_multiplicator())
         self.is_time.value = [0] if self.parentApp.tmpEntry.get_is_time() else []
 
@@ -390,9 +428,10 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         """Store values to temp variable."""
         # get values into tmp object
         self.parentApp.tmpEntry.title = self.title.value
-        self.parentApp.tmpEntry.comment = self.comment.value
+        self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_multiplicator(self.multiplicator.value)
         if self.is_time.value == [0]:
             self.parentApp.tmpEntry.set_is_time(True)

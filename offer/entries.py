@@ -22,6 +22,7 @@ class BaseEntry(object):
         amount_format=None,
         time=None,
         price=None,
+        tax=None,
         connected=None
     ):
         """Init the class."""
@@ -37,6 +38,8 @@ class BaseEntry(object):
         self._time = time_module.to_timedelta(time)
         self._price = Decimal('0.0')                # set default
         self.set_price(price)                       # try to set arguments value
+        self._tax = Decimal('0.0')                  # set default
+        self.set_tax(tax)                           # try to set arguments value
 
         # get the connected list (for ConnectEntry only)
         if type(connected) is set:
@@ -166,6 +169,41 @@ class BaseEntry(object):
         """Get price."""
         return self._price
 
+    def get_price_tax(self, *args, **kwargs):
+        """Get tax of the price."""
+        return round(self._tax * self.get_price(*args, **kwargs), 2)
+
+    def get_price_sum(self, *args, **kwargs):
+        """Get tax of price plus price without tax summerized."""
+        return self.get_price(*args, **kwargs) + self.get_price_tax(*args, **kwargs)
+
+    def set_tax(self, value):
+        """Set tax."""
+        # check if value is decimal
+        try:
+            is_percent = True if float(value) > 1.0 else False
+        except Exception:
+            is_percent = False
+
+        # try to set a new tax
+        try:
+            # only works, if input is integer, float or string
+            if is_percent:
+                self._tax = Decimal(str(value)) / 100
+            else:
+                self._tax = Decimal(str(value))
+        except Exception:
+            # otherwise don't do anything
+            pass
+
+    def get_tax(self, *args, **kwargs):
+        """Get tax."""
+        return self._tax
+
+    def get_tax_percent(self, *args, **kwargs):
+        """Get tax."""
+        return self._tax * 100
+
     def get_id(self):
         """Get id."""
         return self._id
@@ -187,6 +225,7 @@ class BaseEntry(object):
         out['id'] = self.get_id()
         out['time'] = float(self.get_hours())
         out['price'] = float(self.get_price())
+        out['tax'] = float(self.get_tax())
 
         return out
 
@@ -255,6 +294,11 @@ class BaseEntry(object):
         else:
             price = None
 
+        if 'tax' in js.keys():
+            tax = js['tax']
+        else:
+            tax = None
+
         return cls(
             id=id,
             title=title,
@@ -262,7 +306,8 @@ class BaseEntry(object):
             amount=amount,
             amount_format=amount_format,
             time=time,
-            price=price
+            price=price,
+            tax=tax
         )
 
     def copy(self):
@@ -287,6 +332,7 @@ class MultiplyEntry(BaseEntry):
         comment=None,
         amount=None,
         amount_format=None,
+        tax=None,
         hour_rate=None
     ):
         """Initialize the class."""
@@ -296,7 +342,8 @@ class MultiplyEntry(BaseEntry):
             title=title,
             comment=comment,
             amount=amount,
-            amount_format=amount_format
+            amount_format=amount_format,
+            tax=tax
         )
 
         # new values for this class
@@ -343,6 +390,7 @@ class MultiplyEntry(BaseEntry):
         out['amount'] = float(self.get_amount())
         out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
+        out['tax'] = float(self.get_tax())
         out['hour_rate'] = float(time_module.get_decimal_hours_from_timedelta(
             self.get_hour_rate()
         ))
@@ -404,6 +452,11 @@ class MultiplyEntry(BaseEntry):
         else:
             amount_format = None
 
+        if 'tax' in js.keys():
+            tax = js['tax']
+        else:
+            tax = None
+
         if 'hour_rate' in js.keys():
             hour_rate = js['hour_rate']
         else:
@@ -415,6 +468,7 @@ class MultiplyEntry(BaseEntry):
             comment=comment,
             amount=amount,
             amount_format=amount_format,
+            tax=tax,
             hour_rate=hour_rate
         )
 
@@ -440,6 +494,7 @@ class ConnectEntry(BaseEntry):
         comment=None,
         amount=None,
         amount_format=None,
+        tax=None,
         connected=None,
         is_time=None,
         multiplicator=None
@@ -452,6 +507,7 @@ class ConnectEntry(BaseEntry):
             comment=comment,
             amount=amount,
             amount_format=amount_format,
+            tax=tax,
             connected=connected
         )
 
@@ -613,6 +669,7 @@ class ConnectEntry(BaseEntry):
         out['comment'] = self.comment
         out['amount'] = float(self.get_amount())
         out['amount_format'] = self.amount_format
+        out['tax'] = float(self.get_tax())
         out['id'] = self.get_id()
         out['is_time'] = self.get_is_time()
         out['multiplicator'] = float(self.get_multiplicator())
@@ -679,6 +736,11 @@ class ConnectEntry(BaseEntry):
         else:
             amount_format = None
 
+        if 'tax' in js.keys():
+            tax = js['tax']
+        else:
+            tax = None
+
         if 'is_time' in js.keys():
             is_time = js['is_time']
         else:
@@ -701,6 +763,7 @@ class ConnectEntry(BaseEntry):
             comment=comment,
             amount=amount,
             amount_format=amount_format,
+            tax=tax,
             is_time=is_time,
             multiplicator=multiplicator,
             connected=connected

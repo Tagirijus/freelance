@@ -197,14 +197,19 @@ class EntryList(npyscreen.MultiLineAction):
         time = str(vl.get_time_zero(
             entry_list=self.parent.parentApp.tmpOffer.entry_list
         ))
+        price_com = self.parent.parentApp.S.defaults[lang].commodity
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpOffer.entry_list,
             wage=self.parent.parentApp.tmpProject.wage
         ))
-        price_com = self.parent.parentApp.S.defaults[lang].commodity
         price = '{} {}'.format(price_amt, price_com)
+        price_tax_amt = str(vl.get_price_tax(
+            entry_list=self.parent.parentApp.tmpOffer.entry_list,
+            wage=self.parent.parentApp.tmpProject.wage
+        ))
+        price_tax = '({} {})'.format(price_tax_amt, price_com)
 
-        return '{:30} {:15} {:9} {:>10}'.format(
+        return '{:30} {:15} {:9} {:>10} {:>10}'.format(
             title,
             amount,
             time,

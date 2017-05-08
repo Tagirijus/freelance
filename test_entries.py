@@ -306,3 +306,42 @@ def test_get_amount_str():
 
     a.amount_format = '{S}'
     assert a.get_amount_str() == '3705'
+
+
+def test_entry_tax_set():
+    """Test the entry tax setter and getter."""
+    taxi = BaseEntry()
+
+    taxi.set_tax(1.54)
+    assert taxi.get_tax() == Decimal('0.0154')
+    assert taxi.get_tax_percent() == Decimal('1.54')
+
+    taxi.set_tax('17.3')
+    assert taxi.get_tax() == Decimal('0.173')
+    assert taxi.get_tax_percent() == Decimal('17.3')
+
+    taxi.set_tax(0.45)
+    assert taxi.get_tax() == Decimal('0.45')
+    assert taxi.get_tax_percent() == Decimal('45')
+
+def test_entry_tax_price():
+    """Test the price calculation with tax."""
+    blubb = MultiplyEntry(
+        amount=1.0,
+        hour_rate=2.0
+    )
+
+    wage = Decimal('50')
+
+    assert blubb.get_price(wage=wage) == Decimal('100')
+    assert blubb.get_price_tax(wage=wage) == Decimal('0')
+    assert blubb.get_price_sum(wage=wage) == Decimal('100')
+
+    # set tax to 19 %
+    blubb.set_tax(19)
+
+    assert blubb.get_price(wage=wage) == Decimal('100')
+    assert blubb.get_price_tax(wage=wage) == Decimal('19')
+    assert blubb.get_price_sum(wage=wage) == Decimal('119')
+
+    assert blubb.get_tax_percent() == Decimal('19')
