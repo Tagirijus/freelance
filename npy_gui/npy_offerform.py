@@ -399,7 +399,13 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             name=entries_title,
             max_height=10
         )
-        self.add_widget_intelligent(
+        self.info_time = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='TIME',
+            editable=False,
+            relx=40
+        )
+        self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='_' * 500,
             editable=False
