@@ -1,5 +1,6 @@
 """Testing app for offer class."""
 
+from decimal import Decimal
 from offer.offer import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -82,3 +83,41 @@ def test_offer_copy():
 
     # both now don't have the same title
     assert a.title != b.title
+
+def test_price_total():
+    """Test the total methods."""
+    off = Offer()
+
+    off.append(
+        BaseEntry(
+            amount=1.0,
+            price=100.0,
+            tax=19
+        )
+    )
+
+    off.append(
+        BaseEntry(
+            amount=1.0,
+            price=10.0,
+            tax=7
+        )
+    )
+
+    off.append(
+        ConnectEntry(
+            amount=1.0,
+            tax=19,
+            multiplicator=1
+        )
+    )
+
+    off.entry_list[2].connect_entry(
+        entry_list=off.entry_list,
+        entry_id=off.entry_list[1].get_id()
+    )
+
+    wage = Decimal('50.00')
+
+    assert off.get_price_total(wage=wage) == Decimal('120')
+    assert off.get_price_tax_total(wage=wage) == Decimal('21.6')

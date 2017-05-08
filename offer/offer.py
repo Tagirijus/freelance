@@ -5,6 +5,7 @@ The classes do not have privat values and setter and getter methods!
 """
 
 from datetime import date as ddate
+from decimal import Decimal
 import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -182,3 +183,31 @@ class Offer(object):
 
         # return list
         return entries
+
+    def get_price_total(self, wage=None, tax=False):
+        """Get prices of entries summerized."""
+        # get wage as Decimal
+        try:
+            wage = Decimal(wage)
+        except Exception:
+            wage = Decimal(0)
+
+        # init output variable
+        out = Decimal(0)
+
+        # iterate through the entries and get its price
+        for e in self.entry_list:
+            out += e.get_price(
+                entry_list=self.entry_list,
+                wage=wage
+            ) if not tax else e.get_price_tax(
+                entry_list=self.entry_list,
+                wage=wage
+            )
+
+        # return it
+        return out
+
+    def get_price_tax_total(self, wage=None):
+        """Get summerized total tax prices form entry_list."""
+        return self.get_price_total(wage=wage, tax=True)
