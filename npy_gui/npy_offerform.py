@@ -209,7 +209,7 @@ class EntryList(npyscreen.MultiLineAction):
         ))
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
-        return '{:30} {:15} {:9} {:>10} {:>10}'.format(
+        return '{:30} {:15} {:9} {:>11} {:>11}'.format(
             title,
             amount,
             time,
@@ -387,7 +387,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        entries_title = '{:—<27}{:—<16}{:—<13}{:—<12}{}'.format(
+        entries_title = '{:—<27}{:—<16}{:—<14}{:—<13}{}'.format(
             'Entries ',
             ' Amount ',
             ' Time ',
@@ -399,17 +399,97 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             name=entries_title,
             max_height=10
         )
+
+        # create the info text section
+        col_a = 35
+        col_b = 51
+        col_c = 61
+        col_d = 73
+
+        self.info_title = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='Sum:',
+            editable=False,
+            relx=col_a,
+            rely=12
+        )
         self.info_time = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='TIME',
+            value='10:00:00',
             editable=False,
-            relx=40
+            relx=col_b,
+            rely=12
+        )
+        self.info_price = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='1000.00 €',
+            editable=False,
+            relx=col_c,
+            rely=12
+        )
+        self.info_tax = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='190.00 €',
+            editable=False,
+            relx=col_d,
+            rely=12
+        )
+        self.info_total_title = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='Total:',
+            editable=False,
+            relx=col_a,
+            rely=12
+        )
+        self.info_price_total = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='1190.00 €',
+            editable=False,
+            relx=col_c,
+            rely=13
+        )
+        self.info_finish_title = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='Finish date:',
+            editable=False,
+            relx=col_a,
+            rely=15
+        )
+        self.info_date = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='05.09.2017',
+            editable=False,
+            relx=col_b,
+            rely=15
+        )
+        self.info_wage_title = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='Wage / h:',
+            editable=False,
+            relx=col_a,
+            rely=16
+        )
+        self.info_wage = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='80 €',
+            editable=False,
+            relx=col_c,
+            rely=16
+        )
+        self.info_wage_tax = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            value='(97.45 €)',
+            editable=False,
+            relx=col_d,
+            rely=16
         )
         self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='_' * 500,
             editable=False
         )
+
+        # create additional widgets
         self.title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Title:',
@@ -435,6 +515,64 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
         # update entry list
         self.entries_box.entry_widget.update_values()
+
+        # get client and commodity for info text preparation
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+        lang = client.language
+        price_com = self.parentApp.S.defaults[lang].commodity
+
+        # update info texts / summerizing stuff etc.
+        time = self.parentApp.tmpOffer.get_time_total()
+
+        price_val = self.parentApp.tmpOffer.get_price_total(
+            wage=self.parentApp.tmpProject.wage
+        )
+        price = '{} {}'.format(
+            price_val,
+            price_com
+        )
+
+        tax_val = self.parentApp.tmpOffer.get_price_tax_total(
+            wage=self.parentApp.tmpProject.wage
+        )
+        tax = '({} {})'.format(
+            tax_val,
+            price_com
+        )
+
+        price_total = '{} {}'.format(
+            price_val + tax_val,
+            price_com
+        )
+
+        date = 'dd.mm.yyyy' # work in progress
+
+        wage_val = self.parentApp.tmpOffer.get_hourly_wage(
+            wage=self.parentApp.tmpProject.wage
+        )
+        wage = '{} {}'.format(
+            wage_val,
+            price_com
+        )
+
+        wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
+            wage=self.parentApp.tmpProject.wage,
+            tax=True
+        )
+        wage_tax = '({} {})'.format(
+            wage_tax_val,
+            price_com
+        )
+
+        self.info_time.value = time
+        self.info_price.value = '{:>11}'.format(price[:11])
+        self.info_tax.value = '{:>11}'.format(tax[:11])
+        self.info_price_total.value = '{:>11}'.format(price_total[:11])
+        self.info_date.value = date
+        self.info_wage.value = '{:>11}'.format(wage[:11])
+        self.info_wage_tax.value = '{:>11}'.format(wage_tax[:11])
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""

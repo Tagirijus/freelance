@@ -10,6 +10,7 @@ import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
+from offer import time as time_module
 
 
 class Offer(object):
@@ -211,3 +212,37 @@ class Offer(object):
     def get_price_tax_total(self, wage=None):
         """Get summerized total tax prices form entry_list."""
         return self.get_price_total(wage=wage, tax=True)
+
+    def get_time_total(self):
+        """Get times of entries summerized."""
+        # init output variable
+        out = time_module.timedelta(0)
+
+        # iterate through the entries and get its time
+        for e in self.entry_list:
+            out += e.get_time(
+                entry_list=self.entry_list
+            )
+
+        # return it
+        return out
+
+    def get_hourly_wage(self, wage=None, tax=False):
+        """Calculate hourly wage according to price and time."""
+        # get wage as Decimal
+        try:
+            wage = Decimal(wage)
+        except Exception:
+            wage = Decimal(0)
+
+        # get price
+        price = self.get_price_total(
+            wage=wage,
+            tax=tax
+        )
+
+        # get hours from total time
+        hours = self.get_time_total().total_seconds() / 3600
+
+        # simply return a Decimal with the calculation
+        return round(Decimal(float(price) / hours), 2)
