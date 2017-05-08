@@ -387,9 +387,16 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
+        entries_title = '{:—<27}{:—<16}{:—<13}{:—<12}{}'.format(
+            'Entries ',
+            ' Amount ',
+            ' Time ',
+            ' Price ',
+            ' Tax'
+        )
         self.entries_box = self.add_widget_intelligent(
             EntryListBox,
-            name='Entries',
+            name=entries_title,
             max_height=10
         )
         self.add_widget_intelligent(
