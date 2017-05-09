@@ -28,7 +28,7 @@ class OfferList(npyscreen.MultiLineAction):
 
     def move_up(self, keypress=None):
         """Move selected offer up in the list."""
-        lis = self.parent.parentApp.tmpProject.offer_list
+        lis = self.parent.parentApp.tmpProject.get_offer_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
@@ -47,7 +47,7 @@ class OfferList(npyscreen.MultiLineAction):
 
     def move_down(self, keypress=None):
         """Move selected offer down in the list."""
-        lis = self.parent.parentApp.tmpProject.offer_list
+        lis = self.parent.parentApp.tmpProject.get_offer_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
