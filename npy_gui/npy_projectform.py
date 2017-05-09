@@ -128,7 +128,7 @@ class OfferList(npyscreen.MultiLineAction):
         # get the selected project
         project = self.parent.parentApp.tmpProject
 
-        offer = project.offer_list[self.cursor_line]
+        offer = project.get_offer_list()[self.cursor_line]
 
         really = npyscreen.notify_yes_no(
             'Really delete offer "{}" from the project?'.format(offer.title),
