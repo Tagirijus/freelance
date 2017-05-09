@@ -119,6 +119,14 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Offer filename:',
             begin_entry_at=20
         )
+        self.offer_round_price = self.add_widget_intelligent(
+            npyscreen.TitleMultiSelect,
+            name='Off. round price:',
+            begin_entry_at=20,
+            max_height=2,
+            scroll_exit=True,
+            values=['enabled']
+        )
         self.date_fmt = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Date format:',
@@ -141,6 +149,9 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.offer_title.value = self.parentApp.tmpDefault.offer_title
         self.offer_template.value = self.parentApp.tmpDefault.offer_template
         self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
+        self.offer_round_price.value = (
+            [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
+        )
         self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
         self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
         self.commodity.value = self.parentApp.tmpDefault.commodity
@@ -168,8 +179,12 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.offer_title = self.offer_title.value
         self.parentApp.tmpDefault.offer_template = self.offer_template.value
         self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
+        if self.offer_round_price.value == [0]:
+            self.parentApp.tmpDefault.set_offer_round_price(True)
+        else:
+            self.parentApp.tmpDefault.set_offer_round_price(False)
         self.parentApp.tmpDefault.date_fmt = self.date_fmt.value
-        self.parentApp.tmpDefault.set_project_wage(self.wage.value)
+        self.parentApp.tmpDefault.set_project_wage(self.project_wage.value)
         self.parentApp.tmpDefault.commodity = self.commodity.value
 
         # check things

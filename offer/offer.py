@@ -22,6 +22,7 @@ class Offer(object):
         date_fmt=None,
         date=None,
         wage=None,
+        round_price=None,
         entry_list=None
     ):
         """Initialize the class."""
@@ -29,6 +30,8 @@ class Offer(object):
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
+        self._round_price = False           # set default
+        self.set_round_price(round_price)   # try to set arguments value
         self._wage = Decimal(0)             # set default
         self.set_wage(wage)                 # try to set arguments value
         self._entry_list = []               # set default
@@ -50,6 +53,14 @@ class Offer(object):
             self._wage = Decimal(str(value))
         except Exception:
             pass
+
+    def get_round_price(self):
+        """Get round_price."""
+        return self._round_price
+
+    def set_round_price(self, value):
+        """Set round_price."""
+        self._round_price = bool(value)
 
     def get_wage(self):
         """Get wage."""
@@ -95,6 +106,7 @@ class Offer(object):
             out['date'] = ddate.today().strftime('%Y-%m-%d')
 
         out['wage'] = float(self._wage)
+        out['round_price'] = self._round_price
 
         # fetch the jsons from the entries
         out['entry_list'] = []
@@ -183,6 +195,11 @@ class Offer(object):
         else:
             wage = None
 
+        if 'round_price' in js.keys():
+            round_price = js['round_price']
+        else:
+            round_price = None
+
         if 'entry_list' in js.keys():
             entry_list = js['entry_list']
             entry_list = cls().load_entry_list_from_js(lis=entry_list)
@@ -195,6 +212,7 @@ class Offer(object):
             date_fmt=date_fmt,
             date=date,
             wage=wage,
+            round_price=round_price,
             entry_list=entry_list
         )
 
@@ -228,10 +246,13 @@ class Offer(object):
         # return list
         return entries
 
-    def get_price_total(self, wage=None, tax=False):
+    def get_price_total(self, wage=None, tax=False, round_price=None):
         """Get prices of entries summerized."""
         if wage is None:
             wage = self.wage
+
+        if round_price is None:
+            round_price = self._round_price
 
         # init output variable
         out = Decimal(0)
@@ -246,12 +267,15 @@ class Offer(object):
                 wage=wage
             )
 
-        # return it
-        return out
+        # return it, check if rounded or not
+        if round_price:
+            return round(out)
+        else:
+            return out
 
-    def get_price_tax_total(self, wage=None):
+    def get_price_tax_total(self, wage=None, round_price=None):
         """Get summerized total tax prices form entry_list."""
-        return self.get_price_total(wage=wage, tax=True)
+        return self.get_price_total(wage=wage, tax=True, round_price=round_price)
 
     def get_time_total(self):
         """Get times of entries summerized."""
@@ -267,15 +291,19 @@ class Offer(object):
         # return it
         return out
 
-    def get_hourly_wage(self, wage=None, tax=False):
+    def get_hourly_wage(self, wage=None, tax=False, round_price=None):
         """Calculate hourly wage according to price and time."""
         if wage is None:
             wage = self.wage
 
+        if round_price is None:
+            round_price = self._round_price
+
         # get price
         price = self.get_price_total(
             wage=wage,
-            tax=tax
+            tax=tax,
+            round_price=round_price
         )
 
         # get hours from total time

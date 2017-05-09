@@ -16,6 +16,7 @@ class Default(object):
         offer_title=None,
         offer_template=None,
         offer_filename=None,
+        offer_round_price=None,
         date_fmt=None,
         commodity=None,
         client_company=None,
@@ -55,6 +56,8 @@ class Default(object):
         self.offer_title = '' if offer_title is None else offer_title
         self.offer_template = '' if offer_template is None else offer_template
         self.offer_filename = '' if offer_filename is None else offer_filename
+        self._offer_round_price = False                 # set default
+        self.set_offer_round_price(offer_round_price)   # try to set arguments value
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
 
@@ -123,10 +126,18 @@ class Default(object):
         if data_path is not None:
             self.load_settings_from_file(data_path)
 
+    def set_offer_round_price(self, value):
+        """Set offer_round_price."""
+        self._offer_round_price = bool(value)
+
+    def get_offer_round_price(self):
+        """Get offer_round_price."""
+        return self._offer_round_price
+
     def set_project_hours_per_day(self, value):
         """Set set_project_hours_per_day."""
         try:
-            self._set_project_hours_per_day = int(value)
+            self._project_hours_per_day = int(value)
         except Exception:
             pass
 
@@ -137,7 +148,7 @@ class Default(object):
     def set_project_work_days(self, value):
         """Set set_project_work_days."""
         if type(value) is list:
-            self._set_project_work_days = value
+            self._project_work_days = value
 
     def get_project_work_days(self):
         """Get set_project_work_days."""
@@ -146,7 +157,7 @@ class Default(object):
     def set_project_minimum_days(self, value):
         """Set set_project_minimum_days."""
         try:
-            self._set_project_minimum_days = int(value)
+            self._project_minimum_days = int(value)
         except Exception:
             pass
 
@@ -157,7 +168,7 @@ class Default(object):
     def set_project_wage(self, value):
         """Set set_project_wage."""
         try:
-            self._set_project_wage = Decimal(str(value))
+            self._project_wage = Decimal(str(value))
         except Exception:
             pass
 
@@ -168,7 +179,7 @@ class Default(object):
     def set_baseentry_amount(self, value):
         """Set set_baseentry_amount."""
         try:
-            self._set_baseentry_amount = Decimal(str(value))
+            self._baseentry_amount = Decimal(str(value))
         except Exception:
             pass
 
@@ -187,7 +198,7 @@ class Default(object):
     def set_baseentry_price(self, value):
         """Set set_baseentry_price."""
         try:
-            self._set_baseentry_price = Decimal(str(value))
+            self._baseentry_price = Decimal(str(value))
         except Exception:
             pass
 
@@ -198,7 +209,7 @@ class Default(object):
     def set_multiplyentry_amount(self, value):
         """Set set_multiplyentry_amount."""
         try:
-            self._set_multiplyentry_amount = Decimal(str(value))
+            self._multiplyentry_amount = Decimal(str(value))
         except Exception:
             pass
 
@@ -209,7 +220,7 @@ class Default(object):
     def set_multiplyentry_hour_rate(self, value):
         """Set set_multiplyentry_hour_rate."""
         try:
-            self._set_multiplyentry_hour_rate = Decimal(str(value))
+            self._multiplyentry_hour_rate = Decimal(str(value))
         except Exception:
             pass
 
@@ -220,7 +231,7 @@ class Default(object):
     def set_connectentry_amount(self, value):
         """Set set_connectentry_amount."""
         try:
-            self._set_connectentry_amount = Decimal(str(value))
+            self._connectentry_amount = Decimal(str(value))
         except Exception:
             pass
 
@@ -230,7 +241,7 @@ class Default(object):
 
     def set_connectentry_is_time(self, value):
         """Set set_connectentry_is_time."""
-        self._set_connectentry_is_time = bool(value)
+        self._connectentry_is_time = bool(value)
 
     def get_connectentry_is_time(self):
         """Get set_connectentry_is_time."""
@@ -239,7 +250,7 @@ class Default(object):
     def set_connectentry_multiplicator(self, value):
         """Set set_connectentry_multiplicator."""
         try:
-            self._set_connectentry_multiplicator = Decimal(str(value))
+            self._connectentry_multiplicator = Decimal(str(value))
         except Exception:
             pass
 
@@ -256,6 +267,7 @@ class Default(object):
         out['offer_title'] = self.offer_title
         out['offer_template'] = self.offer_template
         out['offer_filename'] = self.offer_filename
+        out['offer_round_price'] = self._offer_round_price
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
@@ -322,6 +334,9 @@ class Default(object):
 
         if 'offer_filename' in js.keys():
             self.offer_filename = js['offer_filename']
+
+        if 'offer_round_price' in js.keys():
+            self.set_offer_round_price(js['offer_round_price'])
 
         if 'date_fmt' in js.keys():
             self.date_fmt = js['date_fmt']
@@ -460,6 +475,7 @@ class Default(object):
             offer_title=self.offer_title,
             offer_template=self.offer_template,
             offer_filename=self.offer_filename,
+            offer_round_price=self._offer_round_price,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
             client_company=self.client_company,
@@ -472,25 +488,25 @@ class Default(object):
             client_tax_id=self.client_tax_id,
             client_language=self.client_language,
             project_title=self.project_title,
-            project_hours_per_day=self.get_project_hours_per_day(),
-            project_work_days=self.get_project_work_days(),
-            project_minimum_days=self.get_project_minimum_days(),
-            project_wage=self.get_project_wage(),
+            project_hours_per_day=self._project_hours_per_day,
+            project_work_days=self._project_work_days,
+            project_minimum_days=self._project_minimum_days,
+            project_wage=self._project_wage,
             baseentry_title=self.baseentry_title,
             baseentry_comment=self.baseentry_comment,
-            baseentry_amount=self.get_baseentry_amount(),
+            baseentry_amount=self._baseentry_amount,
             baseentry_amount_format=self.baseentry_amount_format,
-            baseentry_time=self.baseentry_time,
-            baseentry_price=self.get_baseentry_price(),
+            baseentry_time=self._baseentry_time,
+            baseentry_price=self._baseentry_price,
             multiplyentry_title=self.multiplyentry_title,
             multiplyentry_comment=self.multiplyentry_comment,
-            multiplyentry_amount=self.get_multiplyentry_amount(),
+            multiplyentry_amount=self._multiplyentry_amount,
             multiplyentry_amount_format=self.multiplyentry_amount_format,
-            multiplyentry_hour_rate=self.get_multiplyentry_hour_rate(),
+            multiplyentry_hour_rate=self._multiplyentry_hour_rate,
             connectentry_title=self.connectentry_title,
             connectentry_comment=self.connectentry_comment,
-            connectentry_amount=self.get_connectentry_amount(),
+            connectentry_amount=self._connectentry_amount,
             connectentry_amount_format=self.connectentry_amount_format,
-            connectentry_is_time=self.get_connectentry_is_time(),
-            connectentry_multiplicator=self.get_connectentry_multiplicator()
+            connectentry_is_time=self._connectentry_is_time,
+            connectentry_multiplicator=self._connectentry_multiplicator
         )

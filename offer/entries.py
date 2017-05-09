@@ -165,13 +165,26 @@ class BaseEntry(object):
             # otherwise don't do anything
             pass
 
-    def get_price(self, *args, **kwargs):
+    def get_price(self, round_price=False, *args, **kwargs):
         """Get price."""
-        return self._price
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+        return round(self._price, rounder)
 
-    def get_price_tax(self, *args, **kwargs):
+    def get_price_tax(self, round_price=False, *args, **kwargs):
         """Get tax of the price."""
-        return round(self._tax * self.get_price(*args, **kwargs), 2)
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+
+        return round(self._tax * self.get_price(
+            round_price=round_price,
+            *args,
+            **kwargs
+        ), rounder)
 
     def get_price_sum(self, *args, **kwargs):
         """Get tax of price plus price without tax summerized."""
@@ -367,9 +380,13 @@ class MultiplyEntry(BaseEntry):
         """Disable function."""
         pass
 
-    def get_price(self, wage=Decimal('0.00'), *args, **kwargs):
+    def get_price(self, wage=Decimal('0.00'), round_price=False, *args, **kwargs):
         """Get own time * wage as price."""
-        return round(self.get_hours() * wage, 2)
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+        return round(self.get_hours() * wage, rounder)
 
     def set_hour_rate(self, value):
         """Set hour_rate."""
@@ -560,7 +577,14 @@ class ConnectEntry(BaseEntry):
         """Disable function."""
         pass
 
-    def get_price(self, entry_list=None, wage=Decimal('0.00')):
+    def get_price(
+        self,
+        entry_list=None,
+        wage=Decimal('0.00'),
+        round_price=False,
+        *args,
+        **kwargs
+    ):
         """
         Get price according to entry_list or self.get_time().
 
@@ -570,12 +594,18 @@ class ConnectEntry(BaseEntry):
         but it just calculates the prices instead of the time_module.
         wage should be a Decimal() object.
         """
+        # set up rounder
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+
         # if no list is given, return zero
         if type(entry_list) is None:
             return Decimal('0.00')
         # if self.is_time() == True, just multiply self.get_hours() * wage
         if self.get_is_time():
-            return round(self.get_hours(entry_list=entry_list) * wage, 2)
+            return round(self.get_hours(entry_list=entry_list) * wage, rounder)
         else:
             # otherwise iterate through entry_list and find prices of
             # entries which ids exist in the self._connected list
@@ -589,7 +619,7 @@ class ConnectEntry(BaseEntry):
                                 entry_list=entry_list,
                                 wage=wage))
             # return the value
-            return round(out * self.get_amount(), 2)
+            return round(out * self.get_amount(), rounder)
 
     def set_multiplicator(self, value):
         """Set multiplicator."""

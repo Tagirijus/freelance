@@ -200,12 +200,14 @@ class EntryList(npyscreen.MultiLineAction):
         price_com = self.parent.parentApp.S.defaults[lang].commodity
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpProject.get_wage()
+            wage=self.parent.parentApp.tmpProject.get_wage(),
+            round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
         price = '{} {}'.format(price_amt, price_com)
         price_tax_amt = str(vl.get_price_tax(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpProject.get_wage()
+            wage=self.parent.parentApp.tmpProject.get_wage(),
+            round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
@@ -505,6 +507,14 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             name='Wage:',
             begin_entry_at=20
         )
+        self.round_price = self.add_widget_intelligent(
+            npyscreen.TitleMultiSelect,
+            name='Round price:',
+            begin_entry_at=20,
+            max_height=2,
+            scroll_exit=True,
+            values=['enabled']
+        )
 
     def update_info(self):
         """Update info for the offer - summerize etc."""
@@ -519,7 +529,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         time = self.parentApp.tmpOffer.get_time_total()
 
         price_val = self.parentApp.tmpOffer.get_price_total(
-            wage=self.parentApp.tmpProject.get_wage()
+            wage=self.parentApp.tmpProject.get_wage(),
+            round_price=self.parentApp.tmpOffer.get_round_price()
         )
         price = '{} {}'.format(
             price_val,
@@ -527,7 +538,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         tax_val = self.parentApp.tmpOffer.get_price_tax_total(
-            wage=self.parentApp.tmpProject.get_wage()
+            wage=self.parentApp.tmpProject.get_wage(),
+            round_price=self.parentApp.tmpOffer.get_round_price()
         )
         tax = '({} {})'.format(
             tax_val,
@@ -542,7 +554,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         date = 'dd.mm.yyyy'  # work in progress
 
         wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
-            wage=self.parentApp.tmpProject.get_wage()
+            wage=self.parentApp.tmpProject.get_wage(),
+            round_price=self.parentApp.tmpOffer.get_round_price()
         )
         wage_price = '{} {}'.format(
             wage_price_val,
@@ -551,7 +564,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
         wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
             wage=self.parentApp.tmpProject.get_wage(),
-            tax=True
+            tax=True,
+            round_price=self.parentApp.tmpOffer.get_round_price()
         )
         wage_tax = '({} {})'.format(
             wage_tax_val,
@@ -573,6 +587,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.date.value = self.parentApp.tmpOffer.get_date()
         self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
         self.wage.value = str(self.parentApp.tmpOffer.get_wage())
+        self.round_price.value = [0] if self.parentApp.tmpOffer.get_round_price() else []
 
         self.update_info()
 
@@ -586,6 +601,10 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpOffer.set_date(self.date.value)
         self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
         self.parentApp.tmpOffer.set_wage(self.wage.value)
+        if self.round_price.value == [0]:
+            self.parentApp.tmpOffer.set_round_price(True)
+        else:
+            self.parentApp.tmpOffer.set_round_price(False)
 
         # save or not?
         if not save:
