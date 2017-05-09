@@ -92,7 +92,7 @@ class EntryChooseForm(npyscreen.ActionPopup):
             '^Q': self.on_cancel
         })
 
-        self.color='STANDOUT'
+        self.color = 'STANDOUT'
 
     def create(self):
         """Create the form."""
@@ -138,7 +138,7 @@ class EntryList(npyscreen.MultiLineAction):
 
     def move_up(self, keypress=None):
         """Move selected entry up in the list."""
-        lis = self.parent.parentApp.tmpOffer.entry_list
+        lis = self.parent.parentApp.tmpOffer.get_entry_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
@@ -157,7 +157,7 @@ class EntryList(npyscreen.MultiLineAction):
 
     def move_down(self, keypress=None):
         """Move selected entry down in the list."""
-        lis = self.parent.parentApp.tmpOffer.entry_list
+        lis = self.parent.parentApp.tmpOffer.get_entry_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
@@ -177,7 +177,7 @@ class EntryList(npyscreen.MultiLineAction):
     def update_values(self):
         """Update list and refresh."""
         # get values
-        self.values = self.parent.parentApp.tmpOffer.entry_list
+        self.values = self.parent.parentApp.tmpOffer.get_entry_list()
         self.display()
 
         # clear filter for not showing doubled entries (npyscreen bug?)
@@ -195,17 +195,17 @@ class EntryList(npyscreen.MultiLineAction):
         title = vl.title[:29]
         amount = vl.get_amount_str()[:14]
         time = str(vl.get_time_zero(
-            entry_list=self.parent.parentApp.tmpOffer.entry_list
+            entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
         ))
         price_com = self.parent.parentApp.S.defaults[lang].commodity
         price_amt = str(vl.get_price(
-            entry_list=self.parent.parentApp.tmpOffer.entry_list,
-            wage=self.parent.parentApp.tmpProject.wage
+            entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
+            wage=self.parent.parentApp.tmpProject.get_wage()
         ))
         price = '{} {}'.format(price_amt, price_com)
         price_tax_amt = str(vl.get_price_tax(
-            entry_list=self.parent.parentApp.tmpOffer.entry_list,
-            wage=self.parent.parentApp.tmpProject.wage
+            entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
+            wage=self.parent.parentApp.tmpProject.get_wage()
         ))
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
@@ -307,7 +307,7 @@ class EntryList(npyscreen.MultiLineAction):
             self.editing = False
             self.parent.parentApp.setNextForm(form)
             self.parent.parentApp.switchFormNow()
-        except Exception as e:
+        except Exception:
             npyscreen.notify_confirm(
                 'Something went wrong, sorry!',
                 form_color='WARNING'
@@ -366,6 +366,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_offer.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -415,21 +416,18 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.info_time = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='10:00:00',
             editable=False,
             relx=col_b,
             rely=12
         )
         self.info_price = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='1000.00 €',
             editable=False,
             relx=col_c,
             rely=12
         )
         self.info_tax = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='190.00 €',
             editable=False,
             relx=col_d,
             rely=12
@@ -443,7 +441,6 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.info_price_total = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='1190.00 €',
             editable=False,
             relx=col_c,
             rely=13
@@ -457,7 +454,6 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.info_date = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='05.09.2017',
             editable=False,
             relx=col_b,
             rely=15
@@ -471,14 +467,12 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.info_wage = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='80 €',
             editable=False,
             relx=col_c,
             rely=16
         )
         self.info_wage_tax = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='(97.45 €)',
             editable=False,
             relx=col_d,
             rely=16
@@ -505,17 +499,14 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             name='Date fmt:',
             begin_entry_at=20
         )
+        self.wage = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Wage:',
+            begin_entry_at=20
+        )
 
-    def beforeEditing(self):
-        """Get values from temp object."""
-        self.entries_box.entry_widget.values = self.parentApp.tmpOffer.entry_list
-        self.title.value = self.parentApp.tmpOffer.title
-        self.date.value = self.parentApp.tmpOffer.date
-        self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
-
-        # update entry list
-        self.entries_box.entry_widget.update_values()
-
+    def update_info(self):
+        """Update info for the offer - summerize etc."""
         # get client and commodity for info text preparation
         client = self.parentApp.L.get_client_by_id(
             client_id=self.parentApp.tmpProject.client_id
@@ -527,7 +518,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         time = self.parentApp.tmpOffer.get_time_total()
 
         price_val = self.parentApp.tmpOffer.get_price_total(
-            wage=self.parentApp.tmpProject.wage
+            wage=self.parentApp.tmpProject.get_wage()
         )
         price = '{} {}'.format(
             price_val,
@@ -535,7 +526,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         tax_val = self.parentApp.tmpOffer.get_price_tax_total(
-            wage=self.parentApp.tmpProject.wage
+            wage=self.parentApp.tmpProject.get_wage()
         )
         tax = '({} {})'.format(
             tax_val,
@@ -547,18 +538,18 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             price_com
         )
 
-        date = 'dd.mm.yyyy' # work in progress
+        date = 'dd.mm.yyyy'  # work in progress
 
-        wage_val = self.parentApp.tmpOffer.get_hourly_wage(
-            wage=self.parentApp.tmpProject.wage
+        wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
+            wage=self.parentApp.tmpProject.get_wage()
         )
-        wage = '{} {}'.format(
-            wage_val,
+        wage_price = '{} {}'.format(
+            wage_price_val,
             price_com
         )
 
         wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
-            wage=self.parentApp.tmpProject.wage,
+            wage=self.parentApp.tmpProject.get_wage(),
             tax=True
         )
         wage_tax = '({} {})'.format(
@@ -571,22 +562,29 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.info_tax.value = '{:>11}'.format(tax[:11])
         self.info_price_total.value = '{:>11}'.format(price_total[:11])
         self.info_date.value = date
-        self.info_wage.value = '{:>11}'.format(wage[:11])
+        self.info_wage.value = '{:>11}'.format(wage_price[:11])
         self.info_wage_tax.value = '{:>11}'.format(wage_tax[:11])
+
+    def beforeEditing(self):
+        """Get values from temp object."""
+        self.entries_box.entry_widget.update_values()
+        self.title.value = self.parentApp.tmpOffer.title
+        self.date.value = self.parentApp.tmpOffer.get_date()
+        self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
+        self.wage.value = str(self.parentApp.tmpOffer.get_wage())
+
+        self.update_info()
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
-        # get variables in temp
-        entry_list = self.entries_box.entry_widget.values
-        title = self.title.value
-        date = self.date.value
-        date_fmt = self.date_fmt.value
-
         # get values into tmp object
-        self.parentApp.tmpOffer.entry_list = entry_list
-        self.parentApp.tmpOffer.title = title
-        self.parentApp.tmpOffer.date = date
-        self.parentApp.tmpOffer.date_fmt = date_fmt
+        self.parentApp.tmpOffer.set_entry_list(
+            self.entries_box.entry_widget.values
+        )
+        self.parentApp.tmpOffer.title = self.title.value
+        self.parentApp.tmpOffer.set_date(self.date.value)
+        self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
+        self.parentApp.tmpOffer.set_wage(self.wage.value)
 
         # save or not?
         if not save:
@@ -606,8 +604,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         # existing offer just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpOffer_index < len(project.offer_list):
-                project.offer_list[
+            if self.parentApp.tmpOffer_index < len(project.get_offer_list()):
+                project.get_offer_list()[
                     self.parentApp.tmpOffer_index
                 ] = self.parentApp.tmpOffer
                 return True

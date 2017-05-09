@@ -45,7 +45,7 @@ class TestOffer(object):
     out.append(m)
     out.append(c)
 
-    assert len(out.entry_list) == 3
+    assert len(out.get_entry_list()) == 3
 
 
 def test_offer_data_structure():
@@ -53,20 +53,20 @@ def test_offer_data_structure():
     myoffer = TestOffer().out
 
     # first check for title of second entry
-    assert myoffer.entry_list[1].title == 'Multiply title'
+    assert myoffer.get_entry_list()[1].title == 'Multiply title'
 
     # check time of third entry
-    t = myoffer.entry_list[2].get_time(myoffer.entry_list)
+    t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
     assert t == time.to_timedelta(0)
 
     # connect connected entry to base entry (3rd entry to 1st)
-    myoffer.entry_list[2].connect_entry(
-        entry_list=myoffer.entry_list,
-        entry_id=myoffer.entry_list[0].get_id()
+    myoffer.get_entry_list()[2].connect_entry(
+        entry_list=myoffer.get_entry_list(),
+        entry_id=myoffer.get_entry_list()[0].get_id()
     )
 
     # now time of third entry is 2 * 3 * 2.5 hours
-    t = myoffer.entry_list[2].get_time(myoffer.entry_list)
+    t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
     multi = 2 * 3 * time.to_timedelta(2.5)
     assert t == multi
 
@@ -83,6 +83,7 @@ def test_offer_copy():
 
     # both now don't have the same title
     assert a.title != b.title
+
 
 def test_price_total():
     """Test the total methods."""
@@ -112,9 +113,9 @@ def test_price_total():
         )
     )
 
-    off.entry_list[2].connect_entry(
-        entry_list=off.entry_list,
-        entry_id=off.entry_list[1].get_id()
+    off.get_entry_list()[2].connect_entry(
+        entry_list=off.get_entry_list(),
+        entry_id=off.get_entry_list()[1].get_id()
     )
 
     wage = Decimal('50.00')

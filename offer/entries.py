@@ -32,13 +32,13 @@ class BaseEntry(object):
         # get other variables from arguments
         self.title = '' if title is None else str(title)
         self.comment = '' if comment is None else str(comment)
-        self._amount = Decimal('0.0')               # set Default
+        self._amount = Decimal(0)               # set Default
         self.set_amount(amount)                     # try to set arguments value
         self.amount_format = '' if amount_format is None else str(amount_format)
         self._time = time_module.to_timedelta(time)
-        self._price = Decimal('0.0')                # set default
+        self._price = Decimal(0)                # set default
         self.set_price(price)                       # try to set arguments value
-        self._tax = Decimal('0.0')                  # set default
+        self._tax = Decimal(0)                  # set default
         self.set_tax(tax)                           # try to set arguments value
 
         # get the connected list (for ConnectEntry only)
@@ -513,7 +513,7 @@ class ConnectEntry(BaseEntry):
 
         # new values for this class
         self._is_time = bool(is_time)
-        self._multiplicator = Decimal('0.0')    # set default
+        self._multiplicator = Decimal(0)    # set default
         self.set_multiplicator(multiplicator)   # try to set arguments value
 
     def set_time(self, value):
@@ -550,7 +550,7 @@ class ConnectEntry(BaseEntry):
     def get_hours(self, entry_list=None):
         """Get hours as decimal."""
         if type(entry_list) is None:
-            return Decimal('0.0')
+            return Decimal(0)
         else:
             return time_module.get_decimal_hours_from_timedelta(
                 self.get_time(entry_list=entry_list)

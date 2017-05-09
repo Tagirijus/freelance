@@ -4,7 +4,7 @@ import npyscreen
 
 
 class TitleMultiLineEdit(npyscreen.TitleText):
-    """Titled MultiLineEdit"""
+    """Titled MultiLineEdit."""
 
     _entry_type = npyscreen.MultiLineEdit
     scroll_exit = True
@@ -12,7 +12,6 @@ class TitleMultiLineEdit(npyscreen.TitleText):
     def reformat(self):
         """Reformat the content."""
         self.entry_widget.full_reformat()
-
 
 
 class BaseEntryForm(npyscreen.ActionFormWithMenus):
@@ -30,6 +29,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
 
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_baseentry.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -124,8 +124,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.entry_list):
-                offer.entry_list[
+            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
+                offer.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True
@@ -181,6 +181,7 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
 
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_multiplyentry.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -268,8 +269,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.entry_list):
-                offer.entry_list[
+            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
+                offer.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True
@@ -325,6 +326,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
     def switch_to_help(self):
         """Switch to the help screen."""
+        self.values_to_tmp()
         self.parentApp.load_helptext('help_connectentry.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
@@ -374,7 +376,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             begin_entry_at=20
         )
         self.is_time = self.add(
-            npyscreen.TitleSelectOne,
+            npyscreen.TitleMultiSelect,
             name='Is time:',
             begin_entry_at=20,
             max_height=2,
@@ -409,7 +411,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         connected_list = self.parentApp.tmpEntry.get_connected()
 
         # iterate through all entries
-        for e in self.parentApp.tmpOffer.entry_list:
+        for e in self.parentApp.tmpOffer.get_entry_list():
             # only append it, if it's not its own id
             if e.get_id() != self.parentApp.tmpEntry.get_id():
                 # append to the widget
@@ -443,10 +445,10 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
         # now connect the entries, chosen in the connected widget
         not_possible = []
-        for i in self.connected.value:
+        for i, e in enumerate(self.connected.value):
             # connect the entry
             connected = self.parentApp.tmpEntry.connect_entry(
-                entry_list=self.parentApp.tmpOffer.entry_list,
+                entry_list=self.parentApp.tmpOffer.get_entry_list(),
                 entry_id=self.connected_entries[i].get_id()
             )
 
@@ -480,8 +482,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.entry_list):
-                offer.entry_list[
+            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
+                offer.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True

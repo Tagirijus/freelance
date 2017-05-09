@@ -25,21 +25,78 @@ class Project(object):
         """Initialize the class."""
         self.client_id = 'no_id' if client_id is None else str(client_id)
         self.title = '' if title is None else str(title)
-        self.hours_per_day = 4 if hours_per_day is None else hours_per_day
-        self.work_days = [0, 1, 2, 3, 4] if work_days is None else work_days
-        self.minimum_days = 2 if minimum_days is None else minimum_days
-        self.wage = Decimal('50.00') if wage is None else Decimal(wage)
-        self.offer_list = [] if offer_list is None else offer_list
+        self._hours_per_day = 4                 # set default
+        self.set_hours_per_day(hours_per_day)   # try to set arguments value
+        self._work_days = [0, 1, 2, 3, 4]       # set default
+        self.set_work_days(work_days)           # try to set arguments value
+        self._minimum_days = 2                  # set default
+        self.set_minimum_days(minimum_days)     # try to set arguments value
+        self._wage = Decimal('0.00')            # set default
+        self.set_wage(wage)                     # try to set arguments value
+        self._offer_list = []                   # set default
+        self.set_offer_list(offer_list)         # try to set arguments value
+
+    def set_hours_per_day(self, value):
+        """Set hours_per_day."""
+        try:
+            self._hours_per_day = int(value)
+        except Exception:
+            pass
+
+    def get_hours_per_day(self):
+        """Get hours_per_day."""
+        return self._hours_per_day
+
+    def set_work_days(self, value):
+        """Set work_days."""
+        if type(value) is list:
+            self._work_days = value
+
+    def get_work_days(self):
+        """Get work_days."""
+        return self._work_days
+
+    def set_minimum_days(self, value):
+        """Set minimum_days."""
+        try:
+            self._minimum_days = int(value)
+        except Exception:
+            pass
+
+    def get_minimum_days(self):
+        """Get minimum_days."""
+        return self._minimum_days
+
+    def set_wage(self, value):
+        """Set wage."""
+        try:
+            # only works if value is convertable to Decimal
+            self._wage = Decimal(str(value))
+        except Exception:
+            pass
+
+    def get_wage(self):
+        """Get wage."""
+        return self._wage
+
+    def set_offer_list(self, value):
+        """Set offer_list."""
+        if type(value) is list:
+            self._offer_list = value
+
+    def get_offer_list(self):
+        """Get offer_list."""
+        return self._offer_list
 
     def append_offer(self, offer=None):
         """Append offer to project."""
         if type(offer) is Offer:
-            self.offer_list.append(offer)
+            self._offer_list.append(offer)
 
     def pop_offer(self, index=None):
         """Pop offer from project."""
         try:
-            self.offer_list.pop(index)
+            self._offer_list.pop(index)
         except Exception:
             pass
 
@@ -58,14 +115,14 @@ class Project(object):
         out['type'] = self.__class__.__name__
         out['client_id'] = self.client_id
         out['title'] = self.title
-        out['hours_per_day'] = self.hours_per_day
-        out['work_days'] = self.work_days
-        out['wage'] = float(self.wage)
-        out['minimum_days'] = self.minimum_days
+        out['hours_per_day'] = self._hours_per_day
+        out['work_days'] = self._work_days
+        out['wage'] = float(self._wage)
+        out['minimum_days'] = self._minimum_days
 
         # fetch the jsons from the entries
         out['offer_list'] = []
-        for offer in self.offer_list:
+        for offer in self._offer_list:
             try:
                 out['offer_list'].append(offer.to_dict())
             except Exception:

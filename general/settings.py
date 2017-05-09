@@ -12,8 +12,8 @@ class Settings(object):
         self,
         data_path=None,
         inactive_dir=None,
-        def_language=None,
         languages=None,
+        def_language=None,
         defaults=None,
         keep_offer_preset_date=None
     ):
@@ -31,37 +31,50 @@ class Settings(object):
         # settings and programm
         self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
                           if data_path is None else data_path)
+
+        # cancel if given data_path is no dir or a file
         is_dir = os.path.isdir(str(self.data_path))
         is_file = os.path.isfile(str(self.data_path))
         if not is_dir or is_file:
             raise IOError
+
         self.inactive_dir = '/inactive' if inactive_dir is None else inactive_dir
-        self.def_language = 'en' if def_language is None else str(def_language)
-        self.set_def_language(def_language)
-        self.languages = ['en'] if languages is None else languages
+        self._languages = ['en']                # set default
+        self.set_languages(languages)           # try to set arguments value
+        self._def_language = 'en'               # set default
+        self.set_def_language(def_language)     # try to set arguments value
 
         # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
         self.generate_data_path()
 
         # preset settings
-        self.keep_offer_preset_date = (False if keep_offer_preset_date is None
-                                       else bool(keep_offer_preset_date))
+        self._keep_offer_preset_date = False
+        self.set_keep_offer_preset_date(keep_offer_preset_date)
 
         # try to load settings from self.data_path/freelance.settings afterwards
         self.load_settings_from_file()
 
         # get the defaults from the file(s)
         self.defaults = {}
-        for lang in self.languages:
+        for lang in self._languages:
             self.defaults[lang] = Default(
                 data_path=self.data_path,
                 language=str(lang)
             )
 
+    def set_languages(self, value):
+        """Set languages."""
+        if type(value) is list:
+            self._languages = value
+
+    def get_languages(self):
+        """Get languages."""
+        return self._languages
+
     def set_def_language(self, value=None):
-        """Set default language if it exists in the self.languages."""
+        """Set default language if it exists in the self._languages."""
         if value is not None:
-            if str(value) in self.languages:
+            if str(value) in self._languages:
                 self._def_language = str(value)
                 return True
             else:
@@ -69,10 +82,25 @@ class Settings(object):
                 return False
         return False
 
+    def get_def_language(self):
+        """Get default language."""
+        return self._def_language
+
+    def set_keep_offer_preset_date(self, value):
+        """Set keep_offer_preset_date."""
+        try:
+            self._keep_offer_preset_date = bool(value)
+        except Exception:
+            pass
+
+    def get_keep_offer_preset_date(self):
+        """Get keep_offer_preset_date."""
+        return self._keep_offer_preset_date
+
     def remove_default(self, language=None, client_list=None):
         """Remove the default."""
         one_not_set = language is None or client_list is None
-        lang_exists = language in self.defaults.keys() and language in self.languages
+        lang_exists = language in self.defaults.keys() and language in self._languages
 
         # cancel if one argument is not set or language does not exist
         if one_not_set or not lang_exists:
@@ -85,8 +113,8 @@ class Settings(object):
                 # ... set it to the default language
                 client.language = 'en'
 
-        # remove it from self.languages
-        self.languages.pop(self.languages.index(str(language)))
+        # remove it from self._languages
+        self._languages.pop(self._languages.index(str(language)))
 
         # delete the file
         self.defaults[language].delete_default_file(self.data_path)
@@ -98,7 +126,7 @@ class Settings(object):
     def rename_default(self, old_lang=None, new_lang=None, client_list=None):
         """Try to rename the selected old_lang."""
         one_not_set = old_lang is None or new_lang is None or client_list is None
-        old_exists = old_lang in self.defaults.keys() and old_lang in self.languages
+        old_exists = old_lang in self.defaults.keys() and old_lang in self._languages
         new_exists = new_lang in self.defaults.keys()
         new_is_empty = new_lang == ''
 
@@ -115,22 +143,22 @@ class Settings(object):
         # create new default with new name
         self.defaults[new_lang] = self.defaults[old_lang].copy()
         self.defaults[new_lang].language = new_lang
-        self.languages.append(new_lang)
+        self._languages.append(new_lang)
 
-        # delete old default: its file, its dict entry and from self.languages
+        # delete old default: its file, its dict entry and from self._languages
         self.defaults[old_lang].delete_default_file(self.data_path, old_lang)
         del self.defaults[old_lang]
-        self.languages.pop(self.languages.index(old_lang))
+        self._languages.pop(self._languages.index(old_lang))
 
         return True
 
     def new_default(self, language=None):
         """Make a new default."""
-        lang_exists = language in self.defaults.keys() and language in self.languages
+        lang_exists = language in self.defaults.keys() and language in self._languages
 
         if not lang_exists:
-            # appaned language to self.languages
-            self.languages.append(str(language))
+            # appaned language to self._languages
+            self._languages.append(str(language))
 
             # append language to defaults dict
             self.defaults[language] = Default(
@@ -148,9 +176,9 @@ class Settings(object):
         # fetch all setting variables
         out['data_path'] = self.data_path
         out['inactive_dir'] = self.inactive_dir
-        out['def_language'] = self.def_language
-        out['languages'] = self.languages
-        out['keep_offer_preset_date'] = self.keep_offer_preset_date
+        out['languages'] = self._languages
+        out['def_language'] = self._def_language
+        out['keep_offer_preset_date'] = self._keep_offer_preset_date
 
         # return the json
         return json.dumps(
@@ -179,14 +207,14 @@ class Settings(object):
         if 'inactive_dir' in js.keys():
             self.inactive_dir = js['inactive_dir']
 
-        if 'def_language' in js.keys():
-            self.def_language = js['def_language']
-
         if 'languages' in js.keys():
-            self.languages = js['languages']
+            self.set_languages(js['languages'])
+
+        if 'def_language' in js.keys():
+            self.set_def_language(js['def_language'])
 
         if 'keep_offer_preset_date' in js.keys():
-            self.keep_offer_preset_date = js['keep_offer_preset_date']
+            self.set_keep_offer_preset_date(js['keep_offer_preset_date'])
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

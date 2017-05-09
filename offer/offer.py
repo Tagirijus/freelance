@@ -21,13 +21,48 @@ class Offer(object):
         title=None,
         date_fmt=None,
         date=None,
+        wage=None,
         entry_list=None
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
-        self.date = ddate.today() if date is None else date
-        self.entry_list = [] if entry_list is None else entry_list
+        self._date = ddate.today()          # set default
+        self.set_date(date)                 # try to set arguments value
+        self._wage = Decimal(0)             # set default
+        self.set_wage(wage)                 # try to set arguments value
+        self._entry_list = []               # set default
+        self.set_entry_list(entry_list)     # try to set arguments value
+
+    def set_date(self, value):
+        """Set date."""
+        if type(value) is ddate:
+            self._date = value
+
+    def get_date(self):
+        """Get date."""
+        return self._date
+
+    def set_wage(self, value):
+        """Set wage."""
+        try:
+            # only works if value is convertable to Decimal
+            self._wage = Decimal(str(value))
+        except Exception:
+            pass
+
+    def get_wage(self):
+        """Get wage."""
+        return self._wage
+
+    def set_entry_list(self, value):
+        """Set entry_list."""
+        if type(value) is list:
+            self._entry_list = value
+
+    def get_entry_list(self):
+        """Get entry_list."""
+        return self._entry_list
 
     def append(self, entry=None):
         """Add entry to the entry_list."""
@@ -37,12 +72,12 @@ class Offer(object):
         if not is_entry:
             return
 
-        self.entry_list.append(entry)
+        self._entry_list.append(entry)
 
     def pop(self, index):
         """Pop entry with the given index from list."""
         try:
-            self.entry_list.pop(index)
+            self._entry_list.pop(index)
         except Exception:
             pass
 
@@ -55,13 +90,15 @@ class Offer(object):
         out['title'] = self.title
         out['date_fmt'] = self.date_fmt
         try:
-            out['date'] = self.ddate.strftime('%Y-%m-%d')
+            out['date'] = self._date.strftime('%Y-%m-%d')
         except Exception:
             out['date'] = ddate.today().strftime('%Y-%m-%d')
 
+        out['wage'] = float(self._wage)
+
         # fetch the jsons from the entries
         out['entry_list'] = []
-        for entry in self.entry_list:
+        for entry in self._entry_list:
             try:
                 out['entry_list'].append(entry.to_dict())
             except Exception:
@@ -141,6 +178,11 @@ class Offer(object):
         else:
             date = None
 
+        if 'wage' in js.keys():
+            wage = js['wage']
+        else:
+            wage = None
+
         if 'entry_list' in js.keys():
             entry_list = js['entry_list']
             entry_list = cls().load_entry_list_from_js(lis=entry_list)
@@ -152,6 +194,7 @@ class Offer(object):
             title=title,
             date_fmt=date_fmt,
             date=date,
+            wage=wage,
             entry_list=entry_list
         )
 
@@ -178,7 +221,7 @@ class Offer(object):
         entries = []
 
         # iterate through entry_list and find connected entries
-        for e in self.entry_list:
+        for e in self._entry_list:
             if e.get_id() in connected:
                 entries.append(e)
 
@@ -187,22 +230,19 @@ class Offer(object):
 
     def get_price_total(self, wage=None, tax=False):
         """Get prices of entries summerized."""
-        # get wage as Decimal
-        try:
-            wage = Decimal(wage)
-        except Exception:
-            wage = Decimal(0)
+        if wage is None:
+            wage = self.wage
 
         # init output variable
         out = Decimal(0)
 
         # iterate through the entries and get its price
-        for e in self.entry_list:
+        for e in self._entry_list:
             out += e.get_price(
-                entry_list=self.entry_list,
+                entry_list=self._entry_list,
                 wage=wage
             ) if not tax else e.get_price_tax(
-                entry_list=self.entry_list,
+                entry_list=self._entry_list,
                 wage=wage
             )
 
@@ -219,9 +259,9 @@ class Offer(object):
         out = time_module.timedelta(0)
 
         # iterate through the entries and get its time
-        for e in self.entry_list:
+        for e in self._entry_list:
             out += e.get_time(
-                entry_list=self.entry_list
+                entry_list=self._entry_list
             )
 
         # return it
@@ -229,11 +269,8 @@ class Offer(object):
 
     def get_hourly_wage(self, wage=None, tax=False):
         """Calculate hourly wage according to price and time."""
-        # get wage as Decimal
-        try:
-            wage = Decimal(wage)
-        except Exception:
-            wage = Decimal(0)
+        if wage is None:
+            wage = self.wage
 
         # get price
         price = self.get_price_total(
@@ -245,4 +282,7 @@ class Offer(object):
         hours = self.get_time_total().total_seconds() / 3600
 
         # simply return a Decimal with the calculation
-        return round(Decimal(float(price) / hours), 2)
+        if hours > 0.0:
+            return round(Decimal(float(price) / hours), 2)
+        else:
+            return round(Decimal(0), 2)

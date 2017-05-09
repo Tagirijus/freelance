@@ -103,7 +103,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.client_tax_id.value = self.parentApp.tmpClient.tax_id
 
         # handle languages
-        self.client_language.values = self.parentApp.S.languages
+        self.client_language.values = self.parentApp.S.get_languages()
 
         c_lang = self.parentApp.tmpClient.language
         if c_lang in self.client_language.values:
@@ -115,32 +115,20 @@ class ClientForm(npyscreen.ActionFormWithMenus):
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
-        # get variables in temp
-        client_id = self.client_id.value
-        client_company = self.client_company.value
-        client_salutation = self.client_salutation.value
-        client_name = self.client_name.value
-        client_family_name = self.client_family_name.value
-        client_street = self.client_street.value
-        client_post_code = self.client_post_code.value
-        client_city = self.client_city.value
-        client_tax_id = self.client_tax_id.value
-        client_language = self.client_language.values[
-            self.client_language.value[0]
-        ]
-
         # get values into tmp object
         old_client = self.parentApp.tmpClient.copy()
-        self.parentApp.tmpClient.client_id = client_id
-        self.parentApp.tmpClient.company = client_company
-        self.parentApp.tmpClient.salutation = client_salutation
-        self.parentApp.tmpClient.name = client_name
-        self.parentApp.tmpClient.family_name = client_family_name
-        self.parentApp.tmpClient.street = client_street
-        self.parentApp.tmpClient.post_code = client_post_code
-        self.parentApp.tmpClient.city = client_city
-        self.parentApp.tmpClient.tax_id = client_tax_id
-        self.parentApp.tmpClient.language = client_language
+        self.parentApp.tmpClient.client_id = self.client_id.value
+        self.parentApp.tmpClient.company = self.client_company.value
+        self.parentApp.tmpClient.salutation = self.client_salutation.value
+        self.parentApp.tmpClient.name = self.client_name.value
+        self.parentApp.tmpClient.family_name = self.client_family_name.value
+        self.parentApp.tmpClient.street = self.client_street.value
+        self.parentApp.tmpClient.post_code = self.client_post_code.value
+        self.parentApp.tmpClient.city = self.client_city.value
+        self.parentApp.tmpClient.tax_id = self.client_tax_id.value
+        self.parentApp.tmpClient.language = self.client_language.values[
+            self.client_language.value[0]
+        ]
 
         # save or not?
         if not save:

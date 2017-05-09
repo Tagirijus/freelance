@@ -45,7 +45,7 @@ class TestOfferA(object):
     out.append(m)
     out.append(c)
 
-    assert len(out.entry_list) == 3
+    assert len(out.get_entry_list()) == 3
 
 
 class TestOfferB(object):
@@ -94,20 +94,20 @@ class TestOfferB(object):
     out.append(d)
 
     # connect 2nd entry to 4th entry
-    out.entry_list[3].connect_entry(
-        entry_list=out.entry_list,
-        entry_id=out.entry_list[1].get_id()
+    out.get_entry_list()[3].connect_entry(
+        entry_list=out.get_entry_list(),
+        entry_id=out.get_entry_list()[1].get_id()
     )
 
     # 4th entry get_price() should now return 0.5 * 4 * 9 * 0.25 * 50.00 = 225.00
     wage = Decimal('50.00')
     p = round(Decimal(0.5 * 4 * 9 * 0.25) * wage, 2)
-    assert out.entry_list[3].get_price(
-        entry_list=out.entry_list,
+    assert out.get_entry_list()[3].get_price(
+        entry_list=out.get_entry_list(),
         wage=wage
     ) == p
 
-    assert len(out.entry_list) == 4
+    assert len(out.get_entry_list()) == 4
 
 
 def test_offer_data_structure():
@@ -130,12 +130,15 @@ def test_offer_data_structure():
     myproject.append_offer(myoffer_b)
 
     # 1st offer, 2nd entry title should be 'Multiply title'
-    assert myproject.offer_list[0].entry_list[1].title == 'Multiply title'
+    assert myproject.get_offer_list()[0].get_entry_list()[1].title == (
+        'Multiply title'
+    )
 
     # 2nd offer, 3rd entry price should be Decimal(630.00)
     wage = Decimal('50.00')
-    assert myproject.offer_list[1].entry_list[2].get_price(
+    assert myproject.get_offer_list()[1].get_entry_list()[2].get_price(
         wage=wage) == Decimal('630.00')
+
 
 def test_project_copy():
     """Copy a project."""
@@ -153,4 +156,4 @@ def test_project_copy():
     assert a.title == b.title
 
     # both also should have one offer with the same title
-    assert a.offer_list[0].title == b.offer_list[0].title
+    assert a.get_offer_list()[0].title == b.get_offer_list()[0].title

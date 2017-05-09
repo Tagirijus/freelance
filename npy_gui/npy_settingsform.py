@@ -182,15 +182,15 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
     def beforeEditing(self):
         """Get values from settings object."""
         self.data_path.value = self.parentApp.S.data_path
-        self.def_language.values = self.parentApp.S.languages
+        self.def_language.values = self.parentApp.S.get_languages()
         self.def_language.value[0] = self.def_language.values.index(
-            self.parentApp.S.def_language
+            self.parentApp.S.get_def_language()
         )
         self.inactive_dir.value = self.parentApp.S.inactive_dir
         self.keep_offer_preset_date.value = (
-            [0] if self.parentApp.S.keep_offer_preset_date else []
+            [0] if self.parentApp.S.get_keep_offer_preset_date() else []
         )
-        self.defaults.values = self.parentApp.S.languages
+        self.defaults.values = self.parentApp.S.get_languages()
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -227,9 +227,9 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         else:
             # new values
             self.parentApp.S.data_path = data_path
-            self.parentApp.S.def_language = def_language
+            self.parentApp.S.set_def_language(def_language)
             self.parentApp.S.inactive_dir = inactive_dir
-            self.parentApp.S.keep_offer_preset_date = keep_offer_preset_date
+            self.parentApp.S.set_keep_offer_preset_date(keep_offer_preset_date)
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()

@@ -128,10 +128,10 @@ def NewProject(settings=None, client=None):
     return Project(
         client_id=client.client_id,
         title=title,
-        hours_per_day=settings.defaults[lang].project_hours_per_day,
-        work_days=settings.defaults[lang].project_work_days,
-        wage=settings.defaults[lang].project_wage,
-        minimum_days=settings.defaults[lang].project_minimum_days
+        hours_per_day=settings.defaults[lang].get_project_hours_per_day(),
+        work_days=settings.defaults[lang].get_project_work_days(),
+        wage=settings.defaults[lang].get_project_wage(),
+        minimum_days=settings.defaults[lang].get_project_minimum_days()
     )
 
 
@@ -168,7 +168,8 @@ def NewOffer(settings=None, client=None, project=None):
     # return offer with default values according to chosen language
     return Offer(
         title=title,
-        date_fmt=settings.defaults[lang].date_fmt
+        date_fmt=settings.defaults[lang].date_fmt,
+        wage=project.get_wage()
     )
 
 
@@ -187,10 +188,10 @@ def NewBaseEntry(settings=None, client=None):
     return BaseEntry(
         title=settings.defaults[lang].baseentry_title,
         comment=settings.defaults[lang].baseentry_comment,
-        amount=settings.defaults[lang].baseentry_amount,
+        amount=settings.defaults[lang].get_baseentry_amount(),
         amount_format=settings.defaults[lang].baseentry_amount_format,
-        time=settings.defaults[lang].baseentry_time,
-        price=settings.defaults[lang].baseentry_price
+        time=settings.defaults[lang].get_baseentry_time(),
+        price=settings.defaults[lang].get_baseentry_price()
     )
 
 
@@ -209,9 +210,9 @@ def NewMultiplyEntry(settings=None, client=None):
     return MultiplyEntry(
         title=settings.defaults[lang].multiplyentry_title,
         comment=settings.defaults[lang].multiplyentry_comment,
-        amount=settings.defaults[lang].multiplyentry_amount,
+        amount=settings.defaults[lang].get_multiplyentry_amount(),
         amount_format=settings.defaults[lang].multiplyentry_amount_format,
-        hour_rate=settings.defaults[lang].multiplyentry_hour_rate
+        hour_rate=settings.defaults[lang].get_multiplyentry_hour_rate()
     )
 
 
@@ -230,8 +231,8 @@ def NewConnectEntry(settings=None, client=None):
     return ConnectEntry(
         title=settings.defaults[lang].connectentry_title,
         comment=settings.defaults[lang].connectentry_comment,
-        amount=settings.defaults[lang].connectentry_amount,
+        amount=settings.defaults[lang].get_connectentry_amount(),
         amount_format=settings.defaults[lang].connectentry_amount_format,
-        is_time=settings.defaults[lang].connectentry_is_time,
-        multiplicator=settings.defaults[lang].connectentry_multiplicator
+        is_time=settings.defaults[lang].get_connectentry_is_time(),
+        multiplicator=settings.defaults[lang].get_connectentry_multiplicator()
     )

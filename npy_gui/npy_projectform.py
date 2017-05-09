@@ -1,7 +1,6 @@
 """Form for the projects."""
 
 import curses
-from decimal import Decimal
 from general.functions import NewOffer
 from general.functions import move_list_entry
 import npyscreen
@@ -68,7 +67,7 @@ class OfferList(npyscreen.MultiLineAction):
     def update_values(self):
         """Update list and refresh."""
         # get values
-        self.values = self.parent.parentApp.tmpProject.offer_list
+        self.values = self.parent.parentApp.tmpProject.get_offer_list()
         self.display()
 
         # clear filter for not showing doubled entries (npyscreen bug?)
@@ -306,10 +305,12 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpProject.title
         self.offers_box.entry_widget.update_values()
-        self.wage.value = str(float(self.parentApp.tmpProject.wage))
-        self.hours_per_day.value = str(self.parentApp.tmpProject.hours_per_day)
-        self.work_days.value = self.parentApp.tmpProject.work_days
-        self.minimum_days.value = str(self.parentApp.tmpProject.minimum_days)
+        self.wage.value = str(float(self.parentApp.tmpProject.get_wage()))
+        self.hours_per_day.value = str(
+            self.parentApp.tmpProject.get_hours_per_day()
+        )
+        self.work_days.value = self.parentApp.tmpProject.get_work_days()
+        self.minimum_days.value = str(self.parentApp.tmpProject.get_minimum_days())
 
         # handle client id
         self.client_id.values = [
@@ -327,40 +328,19 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
-        # get variables in temp
-        title = self.title.value
-        offer_list = self.offers_box.entry_widget.values
-
-        try:
-            wage = Decimal(self.wage.value)
-        except Exception:
-            wage = self.parentApp.tmpProject.wage
-
-        try:
-            hours_per_day = int(self.hours_per_day.value)
-        except Exception:
-            hours_per_day = self.parentApp.tmpProject.hours_per_day
-
-        work_days = self.work_days.value
-
-        try:
-            minimum_days = int(self.minimum_days.value)
-        except Exception:
-            minimum_days = self.parentApp.tmpProject.minimum_days
-
-        client_id = self.client_id_list[
-            self.client_id.value[0]
-        ]
-
         # get values into tmp object
         old_project = self.parentApp.tmpProject.copy()
-        self.parentApp.tmpProject.title = title
-        self.parentApp.tmpProject.offer_list = offer_list
-        self.parentApp.tmpProject.wage = wage
-        self.parentApp.tmpProject.hours_per_day = hours_per_day
-        self.parentApp.tmpProject.work_days = work_days
-        self.parentApp.tmpProject.minimum_days = minimum_days
-        self.parentApp.tmpProject.client_id = client_id
+        self.parentApp.tmpProject.title = self.title.value
+        self.parentApp.tmpProject.set_offer_list(
+            self.offers_box.entry_widget.values
+        )
+        self.parentApp.tmpProject.set_wage(self.wage.value)
+        self.parentApp.tmpProject.set_hours_per_day(self.hours_per_day.value)
+        self.parentApp.tmpProject.set_work_days(self.work_days.value)
+        self.parentApp.tmpProject.set_minimum_days(self.minimum_days.value)
+        self.parentApp.tmpProject.client_id = self.client_id_list[
+            self.client_id.value[0]
+        ]
 
         # save or not?
         if not save:
