@@ -1,7 +1,7 @@
 """
 Time calculation module.
 
-Neede, since timdelta has no strftime() function, neither has the time module
+Needed, since timdelta has no strptime() function, neither has the time module
 from datetime. So I wrote my own 'little parser'.
 """
 
