@@ -205,6 +205,11 @@ class ProjectList(npyscreen.MultiLineAction):
         else:
             self.values = []
 
+        self.display()
+
+        # clear filter for not showing doubled entries (npyscreen bug?)
+        self.clear_filter()
+
     def display_value(self, vl):
         """Display values."""
         return '{}'.format(vl.title)

@@ -106,13 +106,13 @@ class OfferList(npyscreen.MultiLineAction):
         )
 
         # prepare tmpOffer
+        self.parent.parentApp.tmpOffer_new = True
         self.parent.parentApp.tmpOffer_index = self.cursor_line
         self.parent.parentApp.tmpOffer = NewOffer(
             settings=self.parent.parentApp.S,
             client=client,
             project=project
         )
-        self.parent.parentApp.tmpOffer_new = True
 
         # switch to offer form
         title_name = 'Freelance > Project > Offer ({}: {})'.format(
@@ -349,9 +349,14 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # it is a new project
         if self.parentApp.tmpProject_new:
             # returns false, if project_id() exists in ..._list (otherwise true)
-            return self.parentApp.L.add_project(
+            worked = self.parentApp.L.add_project(
                 project=self.parentApp.tmpProject.copy()
             )
+
+            if worked:
+                self.parentApp.tmpProject_new = False
+
+            return worked
 
         # project gets modified
         else:

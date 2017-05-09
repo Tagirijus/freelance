@@ -236,6 +236,7 @@ class EntryList(npyscreen.MultiLineAction):
 
     def add_entry(self, keypress=None):
         """Add a new entry to the offer."""
+        self.parent.parentApp.tmpEntry_new = True
         self.parent.parentApp.setNextForm('EntryChoose')
         self.parent.parentApp.switchFormNow()
 
@@ -599,6 +600,11 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             project.append_offer(
                 offer=self.parentApp.tmpOffer
             )
+
+            # update the _new boolean and get the new index
+            self.parentApp.tmpOffer_new = False
+            self.parentApp.tmpOffer_index = len(project.get_offer_list()) - 1
+
             return True
 
         # existing offer just gets modified

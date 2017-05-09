@@ -137,9 +137,14 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         # it is a new client
         if self.parentApp.tmpClient_new:
             # returns false, if client_id exists in client_list (otherwise true)
-            return self.parentApp.L.add_client(
+            worked = self.parentApp.L.add_client(
                 client=self.parentApp.tmpClient.copy()
             )
+
+            if worked:
+                self.parentApp.tmpClient_new = False
+
+            return worked
 
         # client gets modified
         else:

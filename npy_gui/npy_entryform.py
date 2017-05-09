@@ -119,6 +119,11 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             offer.append(
                 entry=self.parentApp.tmpEntry
             )
+
+            # update the _new boolean and get the new index
+            self.parentApp.tmpEntry_new = False
+            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+
             return True
 
         # existing entry just gets modified
@@ -264,6 +269,11 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             offer.append(
                 entry=self.parentApp.tmpEntry
             )
+
+            # update the _new boolean and get the new index
+            self.parentApp.tmpEntry_new = False
+            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+
             return True
 
         # existing entry just gets modified
@@ -477,6 +487,11 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             offer.append(
                 entry=self.parentApp.tmpEntry
             )
+
+            # update the _new boolean and get the new index
+            self.parentApp.tmpEntry_new = False
+            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+
             return True
 
         # existing entry just gets modified
