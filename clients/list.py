@@ -733,9 +733,3 @@ class List(object):
         self.data_path = data_path
         self.client_list = self.load_client_list_from_file()
         self.project_list = self.load_project_list_from_file()
-
-    def debug(self, text):
-        """Write debug text into DEBUG.txt."""
-        f = open('DEBUG.txt', 'w')
-        f.write(str(text))
-        f.close()

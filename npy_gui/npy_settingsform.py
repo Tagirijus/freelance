@@ -203,13 +203,35 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
-        inactive_dir_correct = can_be_dir(self.parentApp.S.data_path + inactive_dir)
+        inactive_dir_correct = can_be_dir(self.parentApp.S.BASE_PATH + inactive_dir)
 
         # some dir is not creatable
         if not data_path_correct or not inactive_dir_correct:
+            # what exactly is incorrect?
+            if not data_path_correct and inactive_dir_correct:
+                # only data_path is incorrect
+                message_text = (
+                    'Data path is no valid folder name! Please change it!'
+                )
+            elif data_path_correct and not inactive_dir_correct:
+                # only inactive dir is incorrect
+                message_text = (
+                    'Inactive dir is no valid folder name! Please change it!'
+                )
+            elif not data_path_correct and not inactive_dir_correct:
+                # both are incorrect
+                message_text = (
+                    'Data path and inactive dir do not have valid folder names! ' +
+                    'Please change it!'
+                )
+            else:
+                message_text = (
+                    'Somethign is not right with the folder names ...'
+                )
+
+            # show the message
             message = npyscreen.notify_ok_cancel(
-                ('Data path and/or inactive dir are no valid folder names! '
-                 'Please change them!'),
+                message_text,
                 title='Wrong folder names!',
                 form_color='WARNING'
             )

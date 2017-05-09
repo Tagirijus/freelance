@@ -8,6 +8,14 @@ from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.offer import Offer
+import os
+
+
+def debug(text):
+    """Write debug text into DEBUG.txt."""
+    f = open('DEBUG.txt', 'w')
+    f.write(str(text))
+    f.close()
 
 
 def can_be_dir(string):
@@ -24,7 +32,7 @@ def can_be_dir(string):
             if os.path.isdir(string):
                 # it already exists and is a dir
                 try:
-                    # try to create a dir to check permission
+                    # try to create a dir inside it to check permission
                     os.mkdir(string + '/TAGIRIJUS_FREELANCE_CHECK')
                     os.rmdir(string + '/TAGIRIJUS_FREELANCE_CHECK')
                     # worked!
@@ -33,14 +41,15 @@ def can_be_dir(string):
                     # no permission probably
                     return False
             else:
-                # it already exists, but is a file
+                # it already exists and is probably a file
                 return False
-
-        # it does not exist, try to create it
-        os.mkdir(string)
-        os.rmdir(string)
-        return True
+        else:
+            # it does not exist, try to create it
+            os.mkdir(string)
+            os.rmdir(string)
+            return True
     except Exception:
+        # no permission maybe
         return False
 
 
