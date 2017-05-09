@@ -391,8 +391,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             begin_entry_at=20,
             max_height=2,
             scroll_exit=True,
-            values=['enabled'],
-            value=[0]
+            values=['enabled']
         )
         self.connected = self.add(
             npyscreen.TitleMultiSelect,
@@ -429,6 +428,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
                 # check if it's connected to the actual entry
                 if e.get_id() in connected_list:
+                    # if true, append it's index
                     self.connected.value.append(
                         len(self.connected.values) - 1
                     )
@@ -455,7 +455,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
         # now connect the entries, chosen in the connected widget
         not_possible = []
-        for i, e in enumerate(self.connected.value):
+        for i in self.connected.value:
             # connect the entry
             connected = self.parentApp.tmpEntry.connect_entry(
                 entry_list=self.parentApp.tmpOffer.get_entry_list(),
@@ -473,7 +473,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         # give message, if some connections did not work
         if len(not_possible) > 0:
             npyscreen.notify_confirm(
-                'Following connectio did not work: ' +
+                'Following connections did not work: ' +
                 ', '.join(not_possible),
                 form_color='WARNING'
             )
