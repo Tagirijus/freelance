@@ -245,10 +245,10 @@ class EntryList(npyscreen.MultiLineAction):
         offer = self.parent.parentApp.tmpOffer
 
         # cancel if entry list is empty
-        if len(offer.entry_list) < 1:
+        if len(offer.get_entry_list()) < 1:
             return False
 
-        entry = offer.entry_list[self.cursor_line]
+        entry = offer.get_entry_list()[self.cursor_line]
 
         really = npyscreen.notify_yes_no(
             'Really delete entry "{}" from the offer?'.format(entry.title),
