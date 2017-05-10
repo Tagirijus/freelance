@@ -38,7 +38,7 @@ class DefaultsListAction(npyscreen.MultiLineAction):
         self.parent.parentApp.setNextForm('Defaults')
         self.parent.parentApp.switchFormNow()
 
-    def delete_lang(self, keypress):
+    def delete_lang(self, keypress=None):
         """Ask and delete language if yes."""
         try:
             what = self.values[self.cursor_line]
@@ -142,6 +142,10 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         """Add language."""
         self.defaults.entry_widget.add_lang()
 
+    def del_lang(self):
+        """Delete language."""
+        self.defaults.entry_widget.delete_lang()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.parentApp.load_helptext('help_settings.txt')
@@ -158,6 +162,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         # create the menu
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Add language', onSelect=self.add_lang, shortcut='a')
+        self.m.addItem(text='Delete language', onSelect=self.del_lang, shortcut='d')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
