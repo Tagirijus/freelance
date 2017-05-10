@@ -52,7 +52,7 @@ class Default(object):
         connectentry_multiplicator=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
-        self.language = 'SET_ME' if language is None else language
+        self.language = 'NEW' if language is None else language
         self.offer_title = '' if offer_title is None else offer_title
         self.offer_template = '' if offer_template is None else offer_template
         self.offer_filename = '' if offer_filename is None else offer_filename

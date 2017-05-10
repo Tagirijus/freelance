@@ -100,7 +100,13 @@ class DefaultsListAction(npyscreen.MultiLineAction):
         # or chose a new one, if something went wrong
         else:
             self.parent.parentApp.tmpDefault = Default()
-            self.parent.parentApp.tmpDefault = True
+            self.parent.parentApp.tmpDefault_new = True
+
+        # generate name for form
+        tit = 'Freelance > Settings > Defaults ({})'
+        self.parent.parentApp.getForm('Defaults').name = tit.format(
+            self.parent.parentApp.tmpDefault.language
+        )
 
         # switch to the default form
         self.parent.parentApp.setNextForm('Defaults')

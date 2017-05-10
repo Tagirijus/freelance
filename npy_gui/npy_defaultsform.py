@@ -10,18 +10,36 @@ class DefaultChooseList(npyscreen.MultiLineAction):
         """Do something, because a key was pressed."""
         # general was chosen
         if act_on_this == 'General defaults':
+            # generate name for form
+            tit = 'Freelance > Settings > Defaults ({}) > General'
+            self.parent.parentApp.getForm('Defaults_general').name = tit.format(
+                self.parent.parentApp.tmpDefault.language
+            )
+
             # go to the Defaults_general form
             self.parent.parentApp.setNextForm('Defaults_general')
             self.parent.parentApp.switchFormNow()
 
         # client and project was chosen
         elif act_on_this == 'Client and project defaults':
+            # generate name for form
+            tit = 'Freelance > Settings > Defaults ({}) > Client / Project'
+            self.parent.parentApp.getForm('Defaults_clientproject').name = tit.format(
+                self.parent.parentApp.tmpDefault.language
+            )
+
             # go to the Defaults_clientproject form
             self.parent.parentApp.setNextForm('Defaults_clientproject')
             self.parent.parentApp.switchFormNow()
 
         # entry was chosen
         elif act_on_this == 'Entry defaults':
+            # generate name for form
+            tit = 'Freelance > Settings > Defaults ({}) > Entry'
+            self.parent.parentApp.getForm('Defaults_entry').name = tit.format(
+                self.parent.parentApp.tmpDefault.language
+            )
+
             # go to the Defaults_clientproject form
             self.parent.parentApp.setNextForm('Defaults_entry')
             self.parent.parentApp.switchFormNow()
