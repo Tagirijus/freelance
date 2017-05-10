@@ -161,8 +161,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
-        self.m.addItem(text='Add language', onSelect=self.add_lang, shortcut='a')
-        self.m.addItem(text='Delete language', onSelect=self.del_lang, shortcut='d')
+        self.m.addItem(text='Add language', onSelect=self.add_lang, shortcut='l')
+        self.m.addItem(text='Delete language', onSelect=self.del_lang, shortcut='L')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 

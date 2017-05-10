@@ -412,7 +412,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Add entry', onSelect=self.add_entry, shortcut='a')
         self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
-        self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='d')
+        self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
