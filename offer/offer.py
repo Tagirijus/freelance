@@ -307,10 +307,10 @@ class Offer(object):
         )
 
         # get hours from total time
-        hours = self.get_time_total().total_seconds() / 3600
+        hours = self.get_time_total().get()
 
         # simply return a Decimal with the calculation
         if hours > 0.0:
-            return round(Decimal(float(price) / hours), 2)
+            return round(Decimal(float(price) / float(hours)), 2)
         else:
             return round(Decimal(0), 2)

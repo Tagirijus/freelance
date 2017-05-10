@@ -39,7 +39,10 @@ class OfferAmountTime(object):
         else:
             out += Decimal(other)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __radd__(self, other):
         """Add."""
@@ -55,7 +58,10 @@ class OfferAmountTime(object):
         else:
             out -= Decimal(other)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __rsub__(self, other):
         """Sub."""
@@ -68,7 +74,10 @@ class OfferAmountTime(object):
         # calculate
         out -= Decimal(self._full)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __mul__(self, other):
         """Multiply."""
@@ -80,7 +89,10 @@ class OfferAmountTime(object):
         else:
             out *= Decimal(other)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __rmul__(self, other):
         """Multiply."""
@@ -96,7 +108,10 @@ class OfferAmountTime(object):
         else:
             out /= Decimal(other)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __rtruediv__(self, other):
         """Divide."""
@@ -109,7 +124,10 @@ class OfferAmountTime(object):
         # calculate
         out /= Decimal(self._full)
 
-        return OfferAmountTime(out)
+        out = OfferAmountTime(out)
+        out.type(self._type)
+
+        return out
 
     def __lt__(self, other):
         """Lower than."""

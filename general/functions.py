@@ -11,13 +11,6 @@ from offer.offer import Offer
 import os
 
 
-def debug(text):
-    """Write debug text into DEBUG.txt."""
-    f = open('DEBUG.txt', 'w')
-    f.write(str(text))
-    f.close()
-
-
 def can_be_dir(string):
     """
     Check if the given string could be a creatable dir or exists.
