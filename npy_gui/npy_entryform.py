@@ -464,7 +464,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
             # check if its possible
             if not connected:
-                not_possible.append(e.title)
+                not_possible.append(self.connected_entries[i].title)
 
         # save or not?
         if not save:
