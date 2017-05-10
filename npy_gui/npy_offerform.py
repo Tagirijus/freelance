@@ -323,6 +323,33 @@ class EntryListBox(npyscreen.BoxTitle):
     _contained_widget = EntryList
 
 
+class TitleTextRefresh(npyscreen.TitleText):
+    """TitleText which refreshes info view after leaving widget."""
+
+    def when_value_edited(self):
+        """Refresh info, when cursors moves."""
+        self.parent.values_to_tmp()
+        self.parent.update_info()
+
+
+class TitleDateComboRefresh(npyscreen.TitleDateCombo):
+    """TitleDateCombo which refreshes info view after leaving widget."""
+
+    def when_value_edited(self):
+        """Refresh info, when cursors moves."""
+        self.parent.values_to_tmp()
+        self.parent.update_info()
+
+
+class TitleMultiSelectRefresh(npyscreen.TitleMultiSelect):
+    """TitleMultiSelect which refreshes info view after leaving widget."""
+
+    def when_value_edited(self):
+        """Refresh info, when cursors moves."""
+        self.parent.values_to_tmp()
+        self.parent.update_info()
+
+
 class OfferForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the offer."""
 
@@ -488,27 +515,27 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
         # create additional widgets
         self.title = self.add_widget_intelligent(
-            npyscreen.TitleText,
+            TitleTextRefresh,
             name='Title:',
             begin_entry_at=20
         )
         self.date = self.add_widget_intelligent(
-            npyscreen.TitleDateCombo,
+            TitleDateComboRefresh,
             name='Date:',
             begin_entry_at=20
         )
         self.date_fmt = self.add_widget_intelligent(
-            npyscreen.TitleText,
+            TitleTextRefresh,
             name='Date fmt:',
             begin_entry_at=20
         )
         self.wage = self.add_widget_intelligent(
-            npyscreen.TitleText,
+            TitleTextRefresh,
             name='Wage:',
             begin_entry_at=20
         )
         self.round_price = self.add_widget_intelligent(
-            npyscreen.TitleMultiSelect,
+            TitleMultiSelectRefresh,
             name='Round price:',
             begin_entry_at=20,
             max_height=2,
