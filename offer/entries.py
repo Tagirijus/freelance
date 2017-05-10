@@ -8,7 +8,6 @@ from decimal import Decimal
 import json
 from offer.offeramounttime import OfferAmountTime
 import uuid
-from general.debug import debug
 
 
 class BaseEntry(object):
@@ -520,9 +519,6 @@ class ConnectEntry(BaseEntry):
                     out += (self.get_multiplicator() *
                             entry.get_time(entry_list=entry_list))
             # return the result
-            debug(
-                str(out._type)
-            )
             return out * self._amount
 
     def set_price(self, value):

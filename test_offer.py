@@ -1,5 +1,6 @@
 """Testing app for offer class."""
 
+from datetime import date
 from decimal import Decimal
 from offer.offer import Offer
 from offer.entries import BaseEntry
@@ -71,18 +72,42 @@ def test_offer_data_structure():
     assert t == multi
 
 
+def test_offer_date():
+    """Set offer date."""
+    da = Offer(date=date(1987, 10, 15))
+    assert da.get_date() == date(1987, 10, 15)
+
+    da.set_date('1992-08-02')
+    assert da.get_date() == date(1992, 8, 2)
+
+
 def test_offer_copy():
     """Convert offer and convert it back."""
-    a = Offer(title='Testuel')
+    a = Offer(
+        title='Testuel',
+        date_fmt='%d.%m.%Y',
+        date='2017-01-01',
+        wage=Decimal('50.0'),
+        round_price=True
+    )
     b = a.copy()
 
-    # both have the same title
+    # both have the same
     assert a.title == b.title
+    assert a.date_fmt == b.date_fmt
+    assert a.get_date() == b.get_date()
+    assert a.get_wage() == b.get_wage()
 
     a.title = 'other'
+    a.date_fmt = '%d. in %m, %Y'
+    a.set_date(date.today())
+    a.set_wage('40.0')
 
-    # both now don't have the same title
+    # both now don't have the same
     assert a.title != b.title
+    assert a.date_fmt != b.date_fmt
+    assert a.get_date() != b.get_date()
+    assert a.get_wage() != b.get_wage()
 
 
 def test_price_total():

@@ -5,6 +5,7 @@ The classes do not have privat values and setter and getter methods!
 """
 
 from datetime import date as ddate
+from datetime import datetime
 from decimal import Decimal
 import json
 from offer.entries import BaseEntry
@@ -41,6 +42,11 @@ class Offer(object):
         """Set date."""
         if type(value) is ddate:
             self._date = value
+        else:
+            try:
+                self._date = datetime.strptime(value, '%Y-%m-%d').date()
+            except Exception:
+                pass
 
     def get_date(self):
         """Get date."""
@@ -184,7 +190,7 @@ class Offer(object):
 
         if 'date' in js.keys():
             try:
-                date = ddate.strptime(js['date'], '%Y-%m-%d')
+                date = datetime.strptime(js['date'], '%Y-%m-%d').date()
             except Exception:
                 date = None
         else:
