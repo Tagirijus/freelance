@@ -23,10 +23,16 @@ class DefaultsListAction(npyscreen.MultiLineAction):
         """Display the value."""
         return '[{}]'.format(vl)
 
-    def add_lang(self, keypress):
+    def add_lang(self, keypress=None):
         """Add a new language and edit it (switch to form)."""
         self.parent.parentApp.tmpDefault = Default()
         self.parent.parentApp.tmpDefault_new = True
+
+        # generate name for form
+        tit = 'Freelance > Settings > Defaults ({})'
+        self.parent.parentApp.getForm('Defaults').name = tit.format(
+            self.parent.parentApp.tmpDefault.language
+        )
 
         # switch to the default form
         self.parent.parentApp.setNextForm('Defaults')
@@ -132,6 +138,10 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def add_lang(self):
+        """Add language."""
+        self.defaults.entry_widget.add_lang()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.parentApp.load_helptext('help_settings.txt')
@@ -147,6 +157,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add language', onSelect=self.add_lang, shortcut='a')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
