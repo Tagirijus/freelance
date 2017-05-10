@@ -146,6 +146,7 @@ class OfferList(npyscreen.MultiLineAction):
         """Do something, because a key was pressed."""
         try:
             # get the selected project
+            self.parent.values_to_tmp()
             project = self.parent.parentApp.tmpProject
 
             # get its client

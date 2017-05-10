@@ -269,6 +269,7 @@ class EntryList(npyscreen.MultiLineAction):
         """Do something, because a key was pressed."""
         try:
             # get the offer
+            self.parent.values_to_tmp()
             offer = self.parent.parentApp.tmpOffer
 
             # get the actual offer into temp offer
@@ -578,7 +579,9 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             price_com
         )
 
-        date = 'dd.mm.yyyy'  # work in progress
+        date = self.parentApp.tmpOffer.get_finish_date(
+            project=self.parentApp.tmpProject
+        ).strftime('%d.%m.%Y')
 
         wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
             wage=self.parentApp.tmpOffer.get_wage(),

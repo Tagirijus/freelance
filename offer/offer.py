@@ -6,6 +6,7 @@ The classes do not have privat values and setter and getter methods!
 
 from datetime import date as ddate
 from datetime import datetime
+from datetime import timedelta
 from decimal import Decimal
 import json
 from offer.entries import BaseEntry
@@ -320,3 +321,41 @@ class Offer(object):
             return round(Decimal(float(price) / float(hours)), 2)
         else:
             return round(Decimal(0), 2)
+
+    def get_finish_date(self, project=None):
+        """Calculate and return the finish date."""
+        # if no projetc is given, return 1987-15-10
+        # if not is_project(project):
+        if project is None:
+            return ddate(1987, 10, 15)
+
+        # get time needed for this offer
+        time = self.get_time_total()
+
+        # get initial date
+        date = self._date
+
+        # get first workday
+        while date.weekday() not in project.get_work_days():
+            date += timedelta(days=1)
+
+        # add minimum_days
+        min_days = project.get_minimum_days()
+        while min_days > 0:
+            # add the day only, if it is a working day
+            if date.weekday() in project.get_work_days():
+                min_days -= 1
+
+            # add a day
+            date += timedelta(days=1)
+
+        # subtract hours_per_day from time on work_days, till time <= 0
+        while time > 0:
+            # t's a work day so subtract hours_per_day from time
+            if date.weekday() in project.get_work_days():
+                time -= project.get_hours_per_day()
+
+            # add a day
+            date += timedelta(days=1)
+
+        return date
