@@ -6,7 +6,7 @@ The classes have privat values and setter and getter methods.
 
 from decimal import Decimal
 import json
-from offer import time as time_module
+from offer.offeramounttime import OfferAmountTime
 import uuid
 
 
@@ -32,14 +32,13 @@ class BaseEntry(object):
         # get other variables from arguments
         self.title = '' if title is None else str(title)
         self.comment = '' if comment is None else str(comment)
-        self._amount = Decimal(0)               # set Default
-        self.set_amount(amount)                     # try to set arguments value
+        self._amount = OfferAmountTime(amount)
         self.amount_format = '' if amount_format is None else str(amount_format)
-        self._time = time_module.to_timedelta(time)
+        self._time = OfferAmountTime(time)
         self._price = Decimal(0)                # set default
-        self.set_price(price)                       # try to set arguments value
+        self.set_price(price)                   # try to set arguments value
         self._tax = Decimal(0)                  # set default
-        self.set_tax(tax)                           # try to set arguments value
+        self.set_tax(tax)                       # try to set arguments value
 
         # get the connected list (for ConnectEntry only)
         if type(connected) is set:
@@ -49,11 +48,7 @@ class BaseEntry(object):
 
     def set_amount(self, value):
         """Set amount."""
-        try:
-            # only works if value is convertable to Decimal
-            self._amount = Decimal(str(value))
-        except Exception:
-            pass
+        self._amount.set(value)
 
     def get_amount(self):
         """Get amount."""
@@ -66,66 +61,39 @@ class BaseEntry(object):
         In case the offer is for music production for example, it would
         be good if the quantity of the offer posting would not be listed
         as a decimal rather than a readable time format. So instead of
-        "1,5 min" -> "1:30 min" or similar. With the following format
+        "1.5 min" -> "1:30 min" or similar. With the following format
         options you can achieve this - also with leading zeros:
 
+        {s}: standard automatic amount
         {d}: amount in decimal
-        {H}: amount converted to minutes, show hours
-        {M}: amount converted to minutes, show minutes
-        {S}: amount converted to minutes, show seconds
+        {F}: amount converted to time, show full
+        {R}: amount converted to time, show remaining
 
-        Means that 1.5 with fmt == "{H}:{M}" would output 0:01, while
-        fmt == "{M}:{S}" would output 1:30. 61.75 with
-        fmt == "{H}:{M}:{S}" would output 1:01:45 for example.
+        Means that 1.5 with fmt == "{F}:{R}" would output 0:01, while
+        fmt == "{F}:{R}" would output 1:30. 61.75 with
         """
         # get self.amount_format if no argument is given
         if fmt is None:
             fmt = self.amount_format
 
-        # is this also is empty, get '{d}' as default output
-        # (so that it shows something at least)
+        # is this also is empty, get '{s}' as default output
+        # (so that it shows the default at least)
         if fmt == '':
-            fmt = '{d}'
+            fmt = '{s}'
 
         # init formating output variable
         format_me = {}
 
-        # get simple decimal
-        format_me['d'] = self.get_amount()
+        # get format_me
+        format_me['s'] = self._amount
+        format_me['d'] = self._amount.get()
+        format_me['F'] = self._amount.full()
+        format_me['R'] = self._amount.remain()
 
-        # {H} exists
-        if '{H}' in fmt:
-            # get values from timedelta
-            tdelta = time_module.timedelta(minutes=float(self.get_amount()))
-            format_me['H'], rem = divmod(tdelta.total_seconds(), 3600)
-            format_me['M'], format_me['S'] = divmod(rem, 60)
-
-            # round the stuff
-            format_me['H'] = round(format_me['H'])
-            format_me['M'] = round(format_me['M'])
-            format_me['S'] = round(format_me['S'])
-
+        # {F} exists
+        if '{F}' in fmt:
             # correct leading zeros
-            fmt = fmt.replace('{M}', '{M:02}').replace('{S}', '{S:02}')
-
-        # {M} exists, but not {H}
-        elif '{H}' not in fmt and '{M}' in fmt:
-            # get values from timedelta
-            tdelta = time_module.timedelta(minutes=float(self.get_amount()))
-            format_me['M'], format_me['S'] = divmod(tdelta.total_seconds(), 60)
-
-            # round the stuff
-            format_me['M'] = round(format_me['M'])
-            format_me['S'] = round(format_me['S'])
-
-            # correct leading zeros
-            fmt = fmt.replace('{S}', '{S:02}')
-
-        # {S} exists, but not {H} nor {M}
-        elif '{H}' not in fmt and '{M}' not in fmt and '{S}' in fmt:
-            # get values from timedelta
-            tdelta = time_module.timedelta(minutes=float(self.get_amount()))
-            format_me['S'] = round(tdelta.total_seconds())
+            fmt = fmt.replace('{R}', '{R:02}')
 
         # output the stuff
         try:
@@ -136,24 +104,19 @@ class BaseEntry(object):
 
     def set_time(self, value):
         """Set time."""
-        self._time = time_module.to_timedelta(value)
+        self._time.set(value)
 
     def get_time(self, *args, **kwargs):
         """Get time."""
+        self._time.type('time')
         return self._time
 
     def get_time_zero(self, *args, **kwargs):
         """Get time as '-' if time is 0, else str of time."""
-        if self.get_time(*args, **kwargs) == time_module.timedelta(0):
+        if self.get_time(*args, **kwargs) == OfferAmountTime(0):
             return '-'
         else:
             return str(self.get_time(*args, **kwargs))
-
-    def get_hours(self, *args, **kwargs):
-        """Get hours as decimal."""
-        return time_module.get_decimal_hours_from_timedelta(
-            self.get_time()
-        )
 
     def set_price(self, value):
         """Set price."""
@@ -233,10 +196,10 @@ class BaseEntry(object):
         out['type'] = self.__class__.__name__
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = float(self.get_amount())
+        out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
-        out['time'] = float(self.get_hours())
+        out['time'] = str(self._time)
         out['price'] = float(self.get_price())
         out['tax'] = float(self.get_tax())
 
@@ -360,7 +323,7 @@ class MultiplyEntry(BaseEntry):
         )
 
         # new values for this class
-        self._hour_rate = time_module.to_timedelta(hour_rate)
+        self._hour_rate = OfferAmountTime(hour_rate)
 
     def set_time(self, value):
         """Disable the function."""
@@ -368,13 +331,9 @@ class MultiplyEntry(BaseEntry):
 
     def get_time(self, *args, **kwargs):
         """Get own amount * own hour as time."""
-        return float(self.get_amount()) * self.get_hour_rate()
-
-    def get_hours(self, *args, **kwargs):
-        """Get hours as decimal."""
-        return time_module.get_decimal_hours_from_timedelta(
-            self.get_time()
-        )
+        out = self._amount * self._hour_rate
+        out.type('time')
+        return out
 
     def set_price(self, value):
         """Disable function."""
@@ -386,11 +345,11 @@ class MultiplyEntry(BaseEntry):
             rounder = 0
         else:
             rounder = 2
-        return round(self.get_hours() * wage, rounder)
+        return round(self.get_time(*args, **kwargs) * wage, rounder)
 
     def set_hour_rate(self, value):
         """Set hour_rate."""
-        self._hour_rate = time_module.to_timedelta(value)
+        self._hour_rate.set(value)
 
     def get_hour_rate(self):
         """Get hour_rate."""
@@ -404,13 +363,11 @@ class MultiplyEntry(BaseEntry):
         out['type'] = self.__class__.__name__
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = float(self.get_amount())
+        out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
         out['tax'] = float(self.get_tax())
-        out['hour_rate'] = float(time_module.get_decimal_hours_from_timedelta(
-            self.get_hour_rate()
-        ))
+        out['hour_rate'] = str(self._hour_rate)
 
         return out
 
@@ -548,30 +505,21 @@ class ConnectEntry(BaseEntry):
         can cost x-times multiplied the original working time of a task.
         This class can calculate it.
         """
-        # if is_time() == False or entry_list not a list, return 0 timedelta
+        # if is_time() == False or entry_list not a list, return 0
         if not self.get_is_time() or type(entry_list) is not list:
-            return time_module.to_timedelta(0)
+            return OfferAmountTime('0:00')
         # is_time() == True, calculate time respecting other entires
         else:
             # otherwise iterate through entry_list and find
             # entries which ids exist in the self._connected list
-            out = time_module.to_timedelta(0)
+            out = OfferAmountTime('0:00')
             for entry in entry_list:
                 if entry.get_id() in self._connected:
                     # if its in the list, multiply its time and add it
-                    out += (float(self.get_multiplicator()) *
+                    out += (self.get_multiplicator() *
                             entry.get_time(entry_list=entry_list))
             # return the result
-            return out * float(self.get_amount())
-
-    def get_hours(self, entry_list=None):
-        """Get hours as decimal."""
-        if type(entry_list) is None:
-            return Decimal(0)
-        else:
-            return time_module.get_decimal_hours_from_timedelta(
-                self.get_time(entry_list=entry_list)
-            )
+            return out * self._amount
 
     def set_price(self, value):
         """Disable function."""
@@ -605,7 +553,7 @@ class ConnectEntry(BaseEntry):
             return Decimal('0.00')
         # if self.is_time() == True, just multiply self.get_hours() * wage
         if self.get_is_time():
-            return round(self.get_hours(entry_list=entry_list) * wage, rounder)
+            return round(self.get_time(entry_list=entry_list).get() * wage, rounder)
         else:
             # otherwise iterate through entry_list and find prices of
             # entries which ids exist in the self._connected list
@@ -619,7 +567,7 @@ class ConnectEntry(BaseEntry):
                                 entry_list=entry_list,
                                 wage=wage))
             # return the value
-            return round(out * self.get_amount(), rounder)
+            return round(out * self._amount, rounder)
 
     def set_multiplicator(self, value):
         """Set multiplicator."""
@@ -697,7 +645,7 @@ class ConnectEntry(BaseEntry):
         out['type'] = self.__class__.__name__
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = float(self.get_amount())
+        out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
         out['tax'] = float(self.get_tax())
         out['id'] = self.get_id()

@@ -4,7 +4,7 @@ from decimal import Decimal
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer import time
+from offer.offeramounttime import OfferAmountTime
 
 
 def test_baseentry_set_price():
@@ -97,15 +97,15 @@ def test_integrety_entry():
     assert entries[0].title == 'Title A'
     assert entries[0].comment == 'Comment A'
     assert entries[0].get_amount() == Decimal('1.0')
-    assert entries[0].get_time() == time.to_timedelta(1.0)
+    assert entries[0].get_time() == OfferAmountTime(1.0)
     assert entries[0].get_price() == Decimal('50.00')
 
     # check values for MultiplyEntry
     assert entries[1].title == 'Title B'
     assert entries[1].comment == 'Comment B'
     assert entries[1].get_amount() == Decimal('2.0')
-    assert entries[1].get_hour_rate() == time.to_timedelta(0.5)
-    assert entries[1].get_time() == time.to_timedelta(1.0)
+    assert entries[1].get_hour_rate() == OfferAmountTime(0.5)
+    assert entries[1].get_time() == OfferAmountTime(1.0)
     assert entries[1].get_price(wage=wage) == Decimal('50.00')
 
     # check values for first ConnectEntry
@@ -115,7 +115,7 @@ def test_integrety_entry():
     assert entries[2].get_is_time() is False
     assert entries[2].get_time(
         entry_list=entries
-    ) == time.to_timedelta(0)
+    ) == OfferAmountTime(0)
     assert entries[2].get_price(
         entry_list=entries,
         wage=wage
@@ -128,7 +128,7 @@ def test_integrety_entry():
     assert entries[3].get_is_time() is True
     assert entries[3].get_time(
         entry_list=entries
-    ) == time.to_timedelta('2:15:00')
+    ) == OfferAmountTime('2:15:00')
     assert entries[3].get_price(
         entry_list=entries,
         wage=wage
@@ -142,7 +142,7 @@ def test_json_conversion_baseentry():
         title='Total individual',
         comment='Individual comment!',
         amount=1.25,
-        amount_format='{M}:{S} min',
+        amount_format='{F}:{R} min',
         time='1:45',
         price=1000
     )
@@ -191,7 +191,7 @@ def test_json_conversion_multiplyentry():
         title='Total individual',
         comment='Individual comment!',
         amount=1.25,
-        amount_format='{M}:{S} min',
+        amount_format='{F}:{R} min',
         hour_rate=0.75
     )
 
@@ -236,7 +236,7 @@ def test_json_conversion_connectentry():
         title='Total individual',
         comment='Individual comment!',
         amount=1.23,
-        amount_format='{M}:{S} min',
+        amount_format='{F}:{R} min',
         is_time=True,
         multiplicator=9.99
     )
@@ -295,17 +295,11 @@ def test_get_amount_str():
     )
 
     # test differnet amount formats
-    a.amount_format = '{H}:{M}:{S}'
-    assert a.get_amount_str() == '1:01:45'
-
-    a.amount_format = '{H}:{M}'
-    assert a.get_amount_str() == '1:01'
-
-    a.amount_format = '{M}:{S}'
+    a.amount_format = '{F}:{R}'
     assert a.get_amount_str() == '61:45'
 
-    a.amount_format = '{S}'
-    assert a.get_amount_str() == '3705'
+    a.amount_format = '{s}'
+    assert a.get_amount_str() == '61.75'
 
 
 def test_entry_tax_set():

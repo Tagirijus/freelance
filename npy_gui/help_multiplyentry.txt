@@ -6,3 +6,11 @@ hourly rate * amount = time
 and then
 
 time * wage = price
+
+
+Amount format has replacement values like this:
+
+- {s}: standard automatic amount
+- {d}: amount in decimal
+- {F}: amount converted to time, show full
+- {R}: amount converted to time, show remaining

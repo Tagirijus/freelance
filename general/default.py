@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 import json
-from offer import time as time_module
+from offer.offeramounttime import OfferAmountTime
 import os
 
 
@@ -87,12 +87,10 @@ class Default(object):
         # baseentry default values
         self.baseentry_title = '' if baseentry_title is None else baseentry_title
         self.baseentry_comment = '' if baseentry_comment is None else baseentry_comment
-        self._baseentry_amount = Decimal(0)
-        self.set_baseentry_amount(baseentry_amount)
+        self._baseentry_amount = OfferAmountTime(baseentry_amount)
         self.baseentry_amount_format = ('' if baseentry_amount_format is None
                                         else baseentry_amount_format)
-        self._baseentry_time = Decimal(0)
-        self.set_baseentry_time(baseentry_time)
+        self._baseentry_time = OfferAmountTime(baseentry_time)
         self._baseentry_price = Decimal(0)
         self.set_baseentry_price(baseentry_price)
 
@@ -101,20 +99,17 @@ class Default(object):
                                     multiplyentry_title)
         self.multiplyentry_comment = ('' if multiplyentry_comment is None else
                                       multiplyentry_comment)
-        self._multiplyentry_amount = Decimal(0)
-        self.set_multiplyentry_amount(multiplyentry_amount)
+        self._multiplyentry_amount = OfferAmountTime(multiplyentry_amount)
         self.multiplyentry_amount_format = ('' if multiplyentry_amount_format is None
                                             else multiplyentry_amount_format)
-        self._multiplyentry_hour_rate = Decimal(0)
-        self.set_multiplyentry_hour_rate(multiplyentry_hour_rate)
+        self._multiplyentry_hour_rate = OfferAmountTime(multiplyentry_hour_rate)
 
         # connectentry default values
         self.connectentry_title = ('' if connectentry_title is None else
                                    connectentry_title)
         self.connectentry_comment = ('' if connectentry_comment is None else
                                      connectentry_comment)
-        self._connectentry_amount = Decimal(0)
-        self.set_connectentry_amount(connectentry_amount)
+        self._connectentry_amount = OfferAmountTime(connectentry_amount)
         self.connectentry_amount_format = ('' if connectentry_amount_format is None else
                                            connectentry_amount_format)
         self._connectentry_is_time = True
@@ -178,10 +173,7 @@ class Default(object):
 
     def set_baseentry_amount(self, value):
         """Set set_baseentry_amount."""
-        try:
-            self._baseentry_amount = Decimal(str(value))
-        except Exception:
-            pass
+        self._baseentry_amount.set(value)
 
     def get_baseentry_amount(self):
         """Get set_baseentry_amount."""
@@ -189,10 +181,11 @@ class Default(object):
 
     def set_baseentry_time(self, value):
         """Set set_baseentry_time."""
-        self._time = time_module.to_timedelta(value)
+        self._baseentry_time.set(value)
 
     def get_baseentry_time(self):
         """Get set_baseentry_time."""
+        self._baseentry_time.type('time')
         return self._baseentry_time
 
     def set_baseentry_price(self, value):
@@ -219,21 +212,16 @@ class Default(object):
 
     def set_multiplyentry_hour_rate(self, value):
         """Set set_multiplyentry_hour_rate."""
-        try:
-            self._multiplyentry_hour_rate = Decimal(str(value))
-        except Exception:
-            pass
+        self._multiplyentry_hour_rate.set(value)
 
     def get_multiplyentry_hour_rate(self):
         """Get set_multiplyentry_hour_rate."""
+        self._multiplyentry_hour_rate.type('time')
         return self._multiplyentry_hour_rate
 
     def set_connectentry_amount(self, value):
         """Set set_connectentry_amount."""
-        try:
-            self._connectentry_amount = Decimal(str(value))
-        except Exception:
-            pass
+        self._connectentry_amount.set(value)
 
     def get_connectentry_amount(self):
         """Get set_connectentry_amount."""
@@ -289,20 +277,20 @@ class Default(object):
 
         out['baseentry_title'] = self.baseentry_title
         out['baseentry_comment'] = self.baseentry_comment
-        out['baseentry_amount'] = float(self._baseentry_amount)
+        out['baseentry_amount'] = str(self._baseentry_amount)
         out['baseentry_amount_format'] = self.baseentry_amount_format
         out['baseentry_time'] = str(self._baseentry_time)
         out['baseentry_price'] = float(self._baseentry_price)
 
         out['multiplyentry_title'] = self.multiplyentry_title
         out['multiplyentry_comment'] = self.multiplyentry_comment
-        out['multiplyentry_amount'] = float(self._multiplyentry_amount)
+        out['multiplyentry_amount'] = str(self._multiplyentry_amount)
         out['multiplyentry_amount_format'] = self.multiplyentry_amount_format
-        out['multiplyentry_hour_rate'] = float(self._multiplyentry_hour_rate)
+        out['multiplyentry_hour_rate'] = str(self._multiplyentry_hour_rate)
 
         out['connectentry_title'] = self.connectentry_title
         out['connectentry_comment'] = self.connectentry_comment
-        out['connectentry_amount'] = float(self._connectentry_amount)
+        out['connectentry_amount'] = str(self._connectentry_amount)
         out['connectentry_amount_format'] = self.connectentry_amount_format
         out['connectentry_is_time'] = self._connectentry_is_time
         out['connectentry_multiplicator'] = float(self._connectentry_multiplicator)

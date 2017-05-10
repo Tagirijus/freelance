@@ -10,7 +10,7 @@ import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer import time as time_module
+from offer.offeramounttime import OfferAmountTime
 
 
 class Offer(object):
@@ -280,7 +280,7 @@ class Offer(object):
     def get_time_total(self):
         """Get times of entries summerized."""
         # init output variable
-        out = time_module.timedelta(0)
+        out = OfferAmountTime('0:00')
 
         # iterate through the entries and get its time
         for e in self._entry_list:

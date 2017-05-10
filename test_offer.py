@@ -5,7 +5,7 @@ from offer.offer import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer import time
+from offer.offeramounttime import OfferAmountTime
 
 
 class TestOffer(object):
@@ -57,7 +57,7 @@ def test_offer_data_structure():
 
     # check time of third entry
     t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
-    assert t == time.to_timedelta(0)
+    assert t == OfferAmountTime(0)
 
     # connect connected entry to base entry (3rd entry to 1st)
     myoffer.get_entry_list()[2].connect_entry(
@@ -67,7 +67,7 @@ def test_offer_data_structure():
 
     # now time of third entry is 2 * 3 * 2.5 hours
     t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
-    multi = 2 * 3 * time.to_timedelta(2.5)
+    multi = 2 * 3 * OfferAmountTime(2.5)
     assert t == multi
 
 

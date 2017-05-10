@@ -6,16 +6,14 @@ Strings:
 
 Amount format has replacement values like this:
 
+- {s}: standard automatic amount
 - {d}: amount in decimal
-- {H}: amount converted to minutes, show hours
-- {M}: amount converted to minutes, show minutes
-- {S}: amount converted to minutes, show seconds
+- {F}: amount converted to time, show full
+- {R}: amount converted to time, show remaining
 
 Example for a amount of 91.75:
 "{d} pieces" = "91.75 pieces"
-"{H}:{M} hours" = "1:31 hours"
-"{M}:{S} minutes" = "91:45 minutes"
-"{H}:{M}:{S} hours" = "1:31:45 hours"
+"{F}:{R} minutes" = "91:45 minutes"
 
 
 Float:
