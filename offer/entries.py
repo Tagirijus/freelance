@@ -345,7 +345,7 @@ class MultiplyEntry(BaseEntry):
             rounder = 0
         else:
             rounder = 2
-        return round(self.get_time(*args, **kwargs) * wage, rounder)
+        return round(self.get_time(*args, **kwargs).get() * wage, rounder)
 
     def set_hour_rate(self, value):
         """Set hour_rate."""
@@ -567,7 +567,7 @@ class ConnectEntry(BaseEntry):
                                 entry_list=entry_list,
                                 wage=wage))
             # return the value
-            return round(out * self._amount, rounder)
+            return round(out * self._amount.get(), rounder)
 
     def set_multiplicator(self, value):
         """Set multiplicator."""
