@@ -92,8 +92,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
-        self.time.value = str(self.parentApp.tmpEntry.get_time())
-        self.price.value = str(self.parentApp.tmpEntry.get_price())
+        self.time.value = str(self.parentApp.tmpEntry.get_time_raw())
+        self.price.value = str(self.parentApp.tmpEntry.get_price_raw())
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""

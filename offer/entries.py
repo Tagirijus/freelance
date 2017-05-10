@@ -109,6 +109,11 @@ class BaseEntry(object):
     def get_time(self, *args, **kwargs):
         """Get time."""
         self._time.type('time')
+        return self._time * self._amount
+
+    def get_time_raw(self, *args, **kwargs):
+        """Get raw time value."""
+        self._time.type('time')
         return self._time
 
     def get_time_zero(self, *args, **kwargs):
@@ -134,7 +139,11 @@ class BaseEntry(object):
             rounder = 0
         else:
             rounder = 2
-        return round(self._price, rounder)
+        return round(self._price * self._amount.get(), rounder)
+
+    def get_price_raw(self):
+        """Get raw price value."""
+        return self._price
 
     def get_price_tax(self, round_price=False, *args, **kwargs):
         """Get tax of the price."""
@@ -200,8 +209,8 @@ class BaseEntry(object):
         out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
         out['time'] = str(self._time)
-        out['price'] = float(self.get_price())
-        out['tax'] = float(self.get_tax())
+        out['price'] = float(self._price)
+        out['tax'] = float(self._tax)
 
         return out
 
@@ -366,7 +375,7 @@ class MultiplyEntry(BaseEntry):
         out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
         out['id'] = self.get_id()
-        out['tax'] = float(self.get_tax())
+        out['tax'] = float(self._tax)
         out['hour_rate'] = str(self._hour_rate)
 
         return out
@@ -647,11 +656,11 @@ class ConnectEntry(BaseEntry):
         out['comment'] = self.comment
         out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
-        out['tax'] = float(self.get_tax())
+        out['tax'] = float(self._tax)
         out['id'] = self.get_id()
         out['is_time'] = self.get_is_time()
-        out['multiplicator'] = float(self.get_multiplicator())
-        out['connected'] = list(self.get_connected())
+        out['multiplicator'] = float(self._multiplicator)
+        out['connected'] = list(self._connected)
 
         return out
 
