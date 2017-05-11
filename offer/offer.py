@@ -14,6 +14,8 @@ from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.offeramounttime import OfferAmountTime
 
+from general.debug import debug
+
 
 class Offer(object):
     """A class holding a list of entries."""
@@ -69,9 +71,19 @@ class Offer(object):
         """Set round_price."""
         self._round_price = bool(value)
 
-    def get_wage(self):
+    def get_wage(self, project=None):
         """Get wage."""
-        return self._wage
+        # tr to get projects wage
+        if self.is_project(project):
+            p_wage = project.get_wage()
+        else:
+            p_wage = Decimal(0)
+
+        # return project wage, if own wage is 0, other wise return own wage
+        if self._wage == 0:
+            return p_wage
+        else:
+            return self._wage
 
     def set_entry_list(self, value):
         """Set entry_list."""
@@ -227,10 +239,10 @@ class Offer(object):
         """Copy the own offer into new offer object."""
         return Offer().from_json(js=self.to_json())
 
-    def get_price_total(self, wage=None, tax=False, round_price=None):
+    def get_price_total(self, wage=None, project=None, tax=False, round_price=None):
         """Get prices of entries summerized."""
         if wage is None:
-            wage = self.wage
+            wage = self.get_wage(project=project)
 
         if round_price is None:
             round_price = self._round_price
@@ -254,9 +266,11 @@ class Offer(object):
         else:
             return out
 
-    def get_price_tax_total(self, wage=None, round_price=None):
+    def get_price_tax_total(self, wage=None, project=None, round_price=None):
         """Get summerized total tax prices form entry_list."""
-        return self.get_price_total(wage=wage, tax=True, round_price=round_price)
+        return self.get_price_total(
+            wage=wage, project=project, tax=True, round_price=round_price
+        )
 
     def get_time_total(self):
         """Get times of entries summerized."""
@@ -272,10 +286,10 @@ class Offer(object):
         # return it
         return out
 
-    def get_hourly_wage(self, wage=None, tax=False, round_price=None):
+    def get_hourly_wage(self, wage=None, project=None, tax=False, round_price=None):
         """Calculate hourly wage according to price and time."""
         if wage is None:
-            wage = self.wage
+            wage = self.get_wage(project=project)
 
         if round_price is None:
             round_price = self._round_price
@@ -290,11 +304,17 @@ class Offer(object):
         # get hours from total time
         hours = self.get_time_total().get()
 
+        # check round price for own output
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+
         # simply return a Decimal with the calculation
         if hours > 0.0:
-            return round(Decimal(float(price) / float(hours)), 2)
+            return round(Decimal(float(price) / float(hours)), rounder)
         else:
-            return round(Decimal(0), 2)
+            return round(Decimal(0), rounder)
 
     def get_finish_date(self, project=None):
         """Calculate and return the finish date."""

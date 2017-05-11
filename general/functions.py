@@ -171,7 +171,6 @@ def NewOffer(settings=None, client=None, project=None):
     return Offer(
         title=title,
         date_fmt=settings.defaults[lang].date_fmt,
-        wage=project.get_wage(),
         round_price=settings.defaults[lang].get_offer_round_price()
     )
 

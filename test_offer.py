@@ -1,5 +1,6 @@
 """Testing app for offer class."""
 
+from clients.project import Project
 from datetime import date
 from decimal import Decimal
 from offer.offer import Offer
@@ -147,3 +148,19 @@ def test_price_total():
 
     assert off.get_price_total(wage=wage) == Decimal('120')
     assert off.get_price_tax_total(wage=wage) == Decimal('21.6')
+
+
+def test_offer_wage_zero():
+    """
+    Normally you can get project as argument to get its wage, if own is 0.
+
+    The fallback however should return 0 as wage, when offer wage is zero.
+    """
+    # test offer wage getter on its own
+    offer_wage_test = Offer(wage=0)
+
+    assert offer_wage_test.get_wage() == Decimal(0)
+
+    # now test it with a project linked to it
+    proj = Project(wage=10)
+    assert offer_wage_test.get_wage(project=proj) == Decimal(10)

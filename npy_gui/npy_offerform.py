@@ -200,13 +200,17 @@ class EntryList(npyscreen.MultiLineAction):
         price_com = self.parent.parentApp.S.defaults[lang].commodity
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpOffer.get_wage(),
+            wage=self.parent.parentApp.tmpOffer.get_wage(
+                project=self.parent.parentApp.tmpProject,
+            ),
             round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
         price = '{} {}'.format(price_amt, price_com)
         price_tax_amt = str(vl.get_price_tax(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpOffer.get_wage(),
+            wage=self.parent.parentApp.tmpOffer.get_wage(
+                project=self.parent.parentApp.tmpProject,
+            ),
             round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
         price_tax = '({} {})'.format(price_tax_amt, price_com)
@@ -557,7 +561,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         time = self.parentApp.tmpOffer.get_time_total()
 
         price_val = self.parentApp.tmpOffer.get_price_total(
-            wage=self.parentApp.tmpOffer.get_wage(),
+            project=self.parentApp.tmpProject,
             round_price=self.parentApp.tmpOffer.get_round_price()
         )
         price = '{} {}'.format(
@@ -566,7 +570,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         tax_val = self.parentApp.tmpOffer.get_price_tax_total(
-            wage=self.parentApp.tmpOffer.get_wage(),
+            project=self.parentApp.tmpProject,
             round_price=self.parentApp.tmpOffer.get_round_price()
         )
         tax = '({} {})'.format(
@@ -584,7 +588,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         ).strftime('%d.%m.%Y')
 
         wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
-            wage=self.parentApp.tmpOffer.get_wage(),
+            project=self.parentApp.tmpProject,
             round_price=self.parentApp.tmpOffer.get_round_price()
         )
         wage_price = '{} {}'.format(
@@ -593,7 +597,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
-            wage=self.parentApp.tmpOffer.get_wage(),
+            project=self.parentApp.tmpProject,
             tax=True,
             round_price=self.parentApp.tmpOffer.get_round_price()
         )

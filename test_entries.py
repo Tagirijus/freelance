@@ -9,7 +9,7 @@ from offer.offeramounttime import OfferAmountTime
 
 def test_baseentry_set_price():
     """Set the price for BaseEntry."""
-    a = BaseEntry()
+    a = BaseEntry(amount=1)
     a.set_price(3)
 
     # integer gets two decimal after comma
