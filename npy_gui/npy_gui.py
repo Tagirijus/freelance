@@ -65,6 +65,7 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpEntry = BaseEntry()
         self.tmpEntry_new = True
         self.tmpEntry_index = -1
+        self.tmpEntry_change_type = False
 
         # create the forms
         self.addForm(

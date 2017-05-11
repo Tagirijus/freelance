@@ -189,6 +189,10 @@ class BaseEntry(object):
         """Get tax."""
         return self._tax * 100
 
+    def gen_id(self):
+        """Generate a new ID."""
+        self._id = str(uuid.uuid1())
+
     def get_id(self):
         """Get id."""
         return self._id

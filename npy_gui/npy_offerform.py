@@ -231,6 +231,7 @@ class EntryList(npyscreen.MultiLineAction):
 
         # get entry of the selected object
         new_entry = self.values[self.cursor_line].copy()
+        new_entry.gen_id()
 
         # add the entry to the entry_list
         self.parent.parentApp.tmpOffer.append(
