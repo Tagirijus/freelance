@@ -60,7 +60,7 @@ class ClientList(npyscreen.MultiLineAction):
                 client=self.values[self.cursor_line]
             )
 
-            # get the nea title for the box widget
+            # get the new title for the box widget
             self.parent.projects_box.name = 'Projects for {}, {}'.format(
                 self.values[self.cursor_line].client_id,
                 self.values[self.cursor_line].fullname()
@@ -110,7 +110,6 @@ class ClientList(npyscreen.MultiLineAction):
         )
 
         self.parent.parentApp.tmpClient_new = True
-        self.parent.parentApp.getForm('Client').name = 'Freelance > Client (NEW)'
 
         # switch to the client form
         self.editing = False
@@ -151,12 +150,6 @@ class ClientList(npyscreen.MultiLineAction):
             # get the actual client into temp client
             self.parent.parentApp.tmpClient = act_on_this.copy()
             self.parent.parentApp.tmpClient_new = False
-
-            # rename form and switch
-            title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.fullname())
-            self.parent.parentApp.getForm(
-                'Client'
-            ).name = 'Freelance > Client ({})'.format(title_name)
 
             # switch to the client form
             self.editing = False
@@ -243,10 +236,6 @@ class ProjectList(npyscreen.MultiLineAction):
         )
 
         self.parent.parentApp.tmpProject_new = True
-        title_name = self.parent.parentApp.tmpProject_client.fullname() + ', NEW'
-        self.parent.parentApp.getForm(
-            'Project'
-        ).name = 'Freelance > Project ({})'.format(title_name)
 
         # switch to the client form
         self.editing = False
@@ -302,12 +291,6 @@ class ProjectList(npyscreen.MultiLineAction):
             # get the actual project into temp project
             self.parent.parentApp.tmpProject = act_on_this.copy()
             self.parent.parentApp.tmpProject_new = False
-
-            # rename form and switch
-            title_name = '{}, {}'.format(act_on_this.client_id, act_on_this.title)
-            self.parent.parentApp.getForm(
-                'Project'
-            ).name = 'Freelance > Project ({})'.format(title_name)
 
             # switch to the project form
             self.editing = False

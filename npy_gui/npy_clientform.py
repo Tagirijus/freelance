@@ -113,6 +113,16 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         else:
             self.client_language.value[0] = 0
 
+        # get actual caption for form
+        if self.parentApp.tmpClient_new:
+            self.name = 'Freelance > Client (NEW)'
+        else:
+            title_name = '{}, {}'.format(
+                self.parentApp.tmpClient.client_id,
+                self.parentApp.tmpClient.fullname()
+            )
+            self.name = 'Freelance > Client ({})'.format(title_name)
+
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
         # get values into tmp object

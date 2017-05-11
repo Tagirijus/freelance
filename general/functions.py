@@ -14,6 +14,14 @@ import os
 from general.debug import debug
 
 
+class ReplacementDict(dict):
+    """A dict with a __missing__ method."""
+
+    def __missing__(self, key):
+        """Return the key instead."""
+        return '{' + str(key) + '}'
+
+
 def can_be_dir(string):
     """
     Check if the given string could be a creatable dir or exists.
@@ -88,7 +96,7 @@ def replacer(
     is_global_list = type(global_list) is List
 
     # replace stuff
-    replace_me = {}
+    replace_me = ReplacementDict()
 
     # simple date stuff
     replace_me['YEAR'] = date.today().strftime('%Y')
@@ -218,7 +226,7 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
     # get language from client
     lang = client.language
 
-    # generate default title (according to replacements)
+    # get replaces
     title = replacer(
         text=settings.defaults[lang].offer_title,
         settings=settings,
@@ -227,15 +235,63 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    # return offer with default values according to chosen language
+    # get other values
+    date_fmt = settings.defaults[lang].date_fmt
+    round_price = settings.defaults[lang].get_offer_round_price()
+
+    # return new Offer object
     return Offer(
         title=title,
-        date_fmt=settings.defaults[lang].date_fmt,
-        round_price=settings.defaults[lang].get_offer_round_price()
+        date_fmt=date_fmt,
+        date=date.today(),
+        round_price=round_price
     )
 
 
-def NewBaseEntry(settings=None, client=None, project=None):
+def PresetOffer(
+    offer_preset=None,
+    settings=None,
+    global_list=None,
+    client=None,
+    project=None
+):
+    """Return new Offer based on given offer, but with string replacements."""
+    if type(offer_preset) is not Offer:
+        return NewOffer(
+            settings=settings,
+            global_list=global_list,
+            client=client,
+            project=project
+        )
+
+    # get replaces
+    title = replacer(
+        text=offer_preset.title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    date_fmt = offer_preset.date_fmt
+    off_date = offer_preset.get_date()
+    wage = offer_preset.get_wage()
+    round_price = offer_preset.get_round_price()
+    entry_list = offer_preset.get_entry_list()
+
+    # return new Offer object
+    return Offer(
+        title=title,
+        date_fmt=date_fmt,
+        date=off_date,
+        wage=wage,
+        round_price=round_price,
+        entry_list=entry_list
+    )
+
+
+def NewBaseEntry(settings=None, global_list=None, client=None, project=None):
     """Return BaseEntry according to settings."""
     is_settings = type(settings) is Settings
     is_client = type(client) is Client
@@ -246,30 +302,86 @@ def NewBaseEntry(settings=None, client=None, project=None):
     # get language from client
     lang = client.language
 
-    # replace title and comment
+    # get replaces
     title = replacer(
         text=settings.defaults[lang].baseentry_title,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
     comment = replacer(
         text=settings.defaults[lang].baseentry_comment,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
 
-    # return entr with default values from settings default
+    # get other values
+    amount = settings.defaults[lang].get_baseentry_amount()
+    amount_format = settings.defaults[lang].baseentry_amount_format
+    time = settings.defaults[lang].get_baseentry_time()
+    price = settings.defaults[lang].get_baseentry_price()
+
+    # return entry with default values from settings default
     return BaseEntry(
         title=title,
         comment=comment,
-        amount=settings.defaults[lang].get_baseentry_amount(),
-        amount_format=settings.defaults[lang].baseentry_amount_format,
-        time=settings.defaults[lang].get_baseentry_time(),
-        price=settings.defaults[lang].get_baseentry_price()
+        amount=amount,
+        amount_format=amount_format,
+        time=time,
+        price=price
     )
 
 
-def NewMultiplyEntry(settings=None, client=None, project=None):
+def PresetBaseEntry(
+    entry_preset=None,
+    settings=None,
+    global_list=None,
+    client=None,
+    project=None
+):
+    """Return BaseEntry according to settings."""
+    if type(entry_preset) is not BaseEntry:
+        return NewBaseEntry(settings=settings, client=client, project=project)
+
+    # get replaces
+    title = replacer(
+        text=entry_preset.title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+    comment = replacer(
+        text=entry_preset.comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    id = entry_preset._id
+    amount = entry_preset._amount
+    amount_format = entry_preset.amount_format
+    time = entry_preset._time
+    price = entry_preset._price
+
+    # return entry with default values from settings default
+    return BaseEntry(
+        id=id,
+        title=title,
+        comment=comment,
+        amount=amount,
+        amount_format=amount_format,
+        time=time,
+        price=price
+    )
+
+
+def NewMultiplyEntry(settings=None, global_list=None, client=None, project=None):
     """Return MultiplyEntry according to settings."""
     is_settings = type(settings) is Settings
     is_client = type(client) is Client
@@ -280,29 +392,82 @@ def NewMultiplyEntry(settings=None, client=None, project=None):
     # get language from client
     lang = client.language
 
-    # replace title and comment
+    # get replaces
     title = replacer(
         text=settings.defaults[lang].multiplyentry_title,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
     comment = replacer(
         text=settings.defaults[lang].multiplyentry_comment,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
 
-    # return entr with default values from settings default
+    # get other values
+    amount = settings.defaults[lang].get_multiplyentry_amount()
+    amount_format = settings.defaults[lang].multiplyentry_amount_format
+    hour_rate = settings.defaults[lang].get_multiplyentry_hour_rate()
+
+    # return entry with default values from settings default
     return MultiplyEntry(
         title=title,
         comment=comment,
-        amount=settings.defaults[lang].get_multiplyentry_amount(),
-        amount_format=settings.defaults[lang].multiplyentry_amount_format,
-        hour_rate=settings.defaults[lang].get_multiplyentry_hour_rate()
+        amount=amount,
+        amount_format=amount_format,
+        hour_rate=hour_rate
     )
 
 
-def NewConnectEntry(settings=None, client=None, project=None):
+def PresetMultiplyEntry(
+    entry_preset=None,
+    settings=None,
+    global_list=None,
+    client=None,
+    project=None
+):
+    """Return MultiplyEntry according to settings."""
+    if type(entry_preset) is not MultiplyEntry:
+        return NewMultiplyEntry(settings=settings, client=client, project=project)
+
+    # get replaces
+    title = replacer(
+        text=entry_preset.title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+    comment = replacer(
+        text=entry_preset.comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    id = entry_preset._id
+    amount = entry_preset._amount
+    amount_format = entry_preset.amount_format
+    hour_rate = entry_preset._hour_rate
+
+    # return entry with default values from settings default
+    return MultiplyEntry(
+        id=id,
+        title=title,
+        comment=comment,
+        amount=amount,
+        amount_format=amount_format,
+        hour_rate=hour_rate
+    )
+
+
+def NewConnectEntry(settings=None, global_list=None, client=None, project=None):
     """Return ConnectEntry according to settings."""
     is_settings = type(settings) is Settings
     is_client = type(client) is Client
@@ -313,24 +478,80 @@ def NewConnectEntry(settings=None, client=None, project=None):
     # get language from client
     lang = client.language
 
-    # replace title and comment
+    # get replaces
     title = replacer(
         text=settings.defaults[lang].connectentry_title,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
     comment = replacer(
         text=settings.defaults[lang].connectentry_comment,
+        settings=settings,
+        global_list=global_list,
         client=client,
         project=project
     )
 
-    # return entr with default values from settings default
+    # get other values
+    amount = settings.defaults[lang].get_connectentry_amount()
+    amount_format = settings.defaults[lang].connectentry_amount_format
+    is_time = settings.defaults[lang].get_connectentry_is_time()
+    multiplicator = settings.defaults[lang].get_connectentry_multiplicator()
+
+    # return entry with default values from settings default
     return ConnectEntry(
         title=title,
         comment=comment,
-        amount=settings.defaults[lang].get_connectentry_amount(),
-        amount_format=settings.defaults[lang].connectentry_amount_format,
-        is_time=settings.defaults[lang].get_connectentry_is_time(),
-        multiplicator=settings.defaults[lang].get_connectentry_multiplicator()
+        amount=amount,
+        amount_format=amount_format,
+        is_time=is_time,
+        multiplicator=multiplicator
+    )
+
+
+def PresetConnectEntry(
+    entry_preset=None,
+    settings=None,
+    global_list=None,
+    client=None,
+    project=None
+):
+    """Return ConnectEntry according to settings."""
+    if type(entry_preset) is not ConnectEntry:
+        return NewConnectEntry(settings=settings, client=client, project=project)
+
+    # get replaces
+    title = replacer(
+        text=entry_preset.title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+    comment = replacer(
+        text=entry_preset.comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    id = entry_preset._id
+    amount = entry_preset._amount
+    amount_format = entry_preset.amount_format
+    is_time = entry_preset._is_time
+    multiplicator = entry_preset._multiplicator
+
+    # return entry with default values from settings default
+    return ConnectEntry(
+        id=id,
+        title=title,
+        comment=comment,
+        amount=amount,
+        amount_format=amount_format,
+        is_time=is_time,
+        multiplicator=multiplicator
     )

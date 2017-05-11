@@ -177,7 +177,7 @@ class Offer(object):
         return entry_list
 
     @classmethod
-    def from_json(cls, js=None):
+    def from_json(cls, js=None, keep_date=True):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -209,6 +209,9 @@ class Offer(object):
         else:
             date = None
 
+        if not keep_date:
+            date = None
+
         if 'wage' in js.keys():
             wage = js['wage']
         else:
@@ -235,9 +238,9 @@ class Offer(object):
             entry_list=entry_list
         )
 
-    def copy(self):
+    def copy(self, keep_date=True):
         """Copy the own offer into new offer object."""
-        return Offer().from_json(js=self.to_json())
+        return Offer().from_json(js=self.to_json(), keep_date=keep_date)
 
     def get_price_total(self, wage=None, project=None, tax=False, round_price=None):
         """Get prices of entries summerized."""

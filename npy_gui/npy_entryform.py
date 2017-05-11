@@ -1,5 +1,8 @@
 """Form for the entries."""
 
+from general.functions import PresetBaseEntry
+from general.functions import PresetMultiplyEntry
+from general.functions import PresetConnectEntry
 import npyscreen
 
 
@@ -34,6 +37,24 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.setNextForm('EntryChoose')
         self.parentApp.switchFormNow()
 
+    def replace_str(self):
+        """Replace the strings."""
+        self.values_to_tmp()
+
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.parentApp.tmpEntry = PresetBaseEntry(
+            entry_preset=self.parentApp.tmpEntry,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=client,
+            project=self.parentApp.tmpProject
+        )
+
+        self.beforeEditing()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -51,6 +72,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         # create the menu
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
+        self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -102,6 +124,13 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.time.value = str(self.parentApp.tmpEntry.get_time_raw())
         self.price.value = str(self.parentApp.tmpEntry.get_price_raw())
+
+        # get actual caption for form
+        self.name = '{} > {} > Base entry ({})'.format(
+            self.parentApp.tmpProject.title,
+            self.parentApp.tmpOffer.title,
+            self.parentApp.tmpEntry.title
+        )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
@@ -199,6 +228,24 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.setNextForm('EntryChoose')
         self.parentApp.switchFormNow()
 
+    def replace_str(self):
+        """Replace the strings."""
+        self.values_to_tmp()
+
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.parentApp.tmpEntry = PresetMultiplyEntry(
+            entry_preset=self.parentApp.tmpEntry,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=client,
+            project=self.parentApp.tmpProject
+        )
+
+        self.beforeEditing()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -216,6 +263,7 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         # create the menu
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
+        self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -261,6 +309,13 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.hour_rate.value = str(self.parentApp.tmpEntry.get_hour_rate())
+
+        # get actual caption for form
+        self.name = '{} > {} > Multiply entry ({})'.format(
+            self.parentApp.tmpProject.title,
+            self.parentApp.tmpOffer.title,
+            self.parentApp.tmpEntry.title
+        )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
@@ -357,6 +412,24 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.setNextForm('EntryChoose')
         self.parentApp.switchFormNow()
 
+    def replace_str(self):
+        """Replace the strings."""
+        self.values_to_tmp()
+
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.parentApp.tmpEntry = PresetConnectEntry(
+            entry_preset=self.parentApp.tmpEntry,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=client,
+            project=self.parentApp.tmpProject
+        )
+
+        self.beforeEditing()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -374,6 +447,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         # create the menu
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
+        self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -459,6 +533,13 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
                 # append original entry also to temp list
                 self.connected_entries.append(e)
+
+        # get actual caption for form
+        self.name = '{} > {} > Connect entry ({})'.format(
+            self.parentApp.tmpProject.title,
+            self.parentApp.tmpOffer.title,
+            self.parentApp.tmpEntry.title
+        )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""

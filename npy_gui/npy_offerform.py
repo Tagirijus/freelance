@@ -6,6 +6,7 @@ from general.functions import move_list_entry
 from general.functions import NewBaseEntry
 from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
+from general.functions import PresetOffer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
@@ -52,13 +53,6 @@ class EntryChooseList(npyscreen.MultiLineAction):
             # finally get the new entry into temp
             self.parent.parentApp.tmpEntry = new_entry
 
-            # name form
-            title_str = 'Freelance > Project > Offer > Base entry ({}: {})'.format(
-                self.parent.parentApp.tmpClient.client_id,
-                self.parent.parentApp.tmpOffer.title
-            )
-            self.parent.parentApp.getForm('BaseEntry').name = title_str
-
             # go to the Defaults_general form
             self.parent.parentApp.setNextForm('BaseEntry')
             self.parent.parentApp.switchFormNow()
@@ -94,13 +88,6 @@ class EntryChooseList(npyscreen.MultiLineAction):
             # finally get the new entry into temp
             self.parent.parentApp.tmpEntry = new_entry
 
-            # name form
-            title_str = 'Freelance > Project > Offer > Multiply entry ({}: {})'.format(
-                self.parent.parentApp.tmpClient.client_id,
-                self.parent.parentApp.tmpOffer.title
-            )
-            self.parent.parentApp.getForm('MultiplyEntry').name = title_str
-
             # go to the Defaults_clientproject form
             self.parent.parentApp.setNextForm('MultiplyEntry')
             self.parent.parentApp.switchFormNow()
@@ -135,13 +122,6 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
             # finally get the new entry into temp
             self.parent.parentApp.tmpEntry = new_entry
-
-            # name form
-            title_str = 'Freelance > Project > Offer > Connect entry ({}: {})'.format(
-                self.parent.parentApp.tmpClient.client_id,
-                self.parent.parentApp.tmpOffer.title
-            )
-            self.parent.parentApp.getForm('ConnectEntry').name = title_str
 
             # go to the Defaults_clientproject form
             self.parent.parentApp.setNextForm('ConnectEntry')
@@ -370,15 +350,6 @@ class EntryList(npyscreen.MultiLineAction):
                 )
                 return False
 
-            # rename form and switch
-            title_name = '{}: {}'.format(offer.title, act_on_this.title)
-            self.parent.parentApp.getForm(
-                form
-            ).name = 'Freelance > Project > Offer > {} ({})'.format(
-                title_type,
-                title_name
-            )
-
             # switch to the client form
             self.editing = False
             self.parent.parentApp.setNextForm(form)
@@ -449,6 +420,24 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         """Delete an offer."""
         self.entries_box.entry_widget.delete_entry()
 
+    def replace_str(self):
+        """Replace the strings."""
+        self.values_to_tmp()
+
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.parentApp.tmpOffer = PresetOffer(
+            offer_preset=self.parentApp.tmpOffer,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=client,
+            project=self.parentApp.tmpProject
+        )
+
+        self.beforeEditing()
+
     def save(self):
         """Save the offer / project."""
         allright = self.values_to_tmp(save=True)
@@ -487,6 +476,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Add entry', onSelect=self.add_entry, shortcut='a')
         self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
         self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
+        self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
@@ -693,6 +683,17 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.round_price.value = [0] if self.parentApp.tmpOffer.get_round_price() else []
 
         self.update_info()
+
+        # get actual caption for form
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.name = '{} > {} > {}'.format(
+            client.fullname(),
+            self.parentApp.tmpProject.title,
+            self.parentApp.tmpOffer.title
+        )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""

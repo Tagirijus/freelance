@@ -116,11 +116,6 @@ class OfferList(npyscreen.MultiLineAction):
         )
 
         # switch to offer form
-        title_name = 'Freelance > Project > Offer ({}: {})'.format(
-            client.client_id,
-            project.title
-        )
-        self.parent.parentApp.getForm('Offer').name = title_name
         self.parent.parentApp.setNextForm('Offer')
         self.parent.parentApp.switchFormNow()
 
@@ -159,12 +154,6 @@ class OfferList(npyscreen.MultiLineAction):
             self.parent.parentApp.tmpOffer = act_on_this.copy()
             self.parent.parentApp.tmpOffer_new = False
             self.parent.parentApp.tmpOffer_index = self.cursor_line
-
-            # rename form and switch
-            title_name = '{}: {}'.format(client.client_id, act_on_this.title)
-            self.parent.parentApp.getForm(
-                'Offer'
-            ).name = 'Freelance > Project > Offer ({})'.format(title_name)
 
             # switch to the client form
             self.editing = False
@@ -327,6 +316,16 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
             )]
         except Exception:
             pass
+
+        # get actual caption for form
+        client = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
+        self.name = '{} > {}'.format(
+            client.fullname(),
+            self.parentApp.tmpProject.title
+        )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
