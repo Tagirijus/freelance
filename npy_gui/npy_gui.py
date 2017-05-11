@@ -20,6 +20,7 @@ from npy_gui.npy_inactiveform import InactiveForm
 from npy_gui.npy_mainform import MainForm
 from npy_gui.npy_offerform import EntryChooseForm
 from npy_gui.npy_offerform import OfferForm
+from npy_gui.npy_presetform import PresetForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
 from offer.entries import BaseEntry
@@ -49,6 +50,7 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.S = Settings()
         self.L = List(data_path=self.S.data_path)
         self.P = Preset(data_path=self.S.data_path)
+        self.P_what = 'offer'
         self.H = 'Fallback helptext is: learn by doing! (;'
 
         # set global temp variables
@@ -142,4 +144,9 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'ConnectEntry',
             ConnectEntryForm,
             name='Freelance > Project > Offer > Connect entry'
+        )
+        self.addForm(
+            'Presets',
+            PresetForm,
+            name='Choose a preset'
         )

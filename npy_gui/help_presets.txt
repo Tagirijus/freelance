@@ -1,0 +1,1 @@
+In this form you can choose a preset by selecting it and pressing enter. You can also rename it by selecting it and pressing 'r' or choosing it from the menu.

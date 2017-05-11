@@ -27,7 +27,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^L': self.load_preset
         })
 
     def change_type(self):
@@ -55,6 +56,32 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
 
         self.beforeEditing()
 
+    def load_preset(self, keypress=None):
+        """Load entry from presets."""
+        self.values_to_tmp()
+        self.parentApp.P_what = 'entry'
+        self.parentApp.setNextForm('Presets')
+        self.parentApp.switchFormNow()
+
+    def save_preset(self):
+        """Save entry to presets."""
+        self.values_to_tmp()
+
+        really = npyscreen.notify_yes_no(
+            'Save this entry to the presets?'
+        )
+
+        if really:
+            added = self.parentApp.P.add_entry(
+                entry=self.parentApp.tmpEntry
+            )
+
+            if not added:
+                npyscreen.notify_confirm(
+                    'Entry not added. It probably already exists.',
+                    form_color='DANGER'
+                )
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -73,6 +100,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -218,7 +247,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^L': self.load_preset
         })
 
     def change_type(self):
@@ -246,6 +276,32 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
 
         self.beforeEditing()
 
+    def load_preset(self, keypress=None):
+        """Load entry from presets."""
+        self.values_to_tmp()
+        self.parentApp.P_what = 'entry'
+        self.parentApp.setNextForm('Presets')
+        self.parentApp.switchFormNow()
+
+    def save_preset(self):
+        """Save entry to presets."""
+        self.values_to_tmp()
+
+        really = npyscreen.notify_yes_no(
+            'Save this entry to the presets?'
+        )
+
+        if really:
+            added = self.parentApp.P.add_entry(
+                entry=self.parentApp.tmpEntry
+            )
+
+            if not added:
+                npyscreen.notify_confirm(
+                    'Entry not added. It probably already exists.',
+                    form_color='DANGER'
+                )
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -264,6 +320,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -402,7 +460,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^L': self.load_preset
         })
 
     def change_type(self):
@@ -430,6 +489,32 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
         self.beforeEditing()
 
+    def load_preset(self, keypress=None):
+        """Load entry from presets."""
+        self.values_to_tmp()
+        self.parentApp.P_what = 'entry'
+        self.parentApp.setNextForm('Presets')
+        self.parentApp.switchFormNow()
+
+    def save_preset(self):
+        """Save entry to presets."""
+        self.values_to_tmp()
+
+        really = npyscreen.notify_yes_no(
+            'Save this entry to the presets?'
+        )
+
+        if really:
+            added = self.parentApp.P.add_entry(
+                entry=self.parentApp.tmpEntry
+            )
+
+            if not added:
+                npyscreen.notify_confirm(
+                    'Entry not added. It probably already exists.',
+                    form_color='DANGER'
+                )
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -448,6 +533,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 

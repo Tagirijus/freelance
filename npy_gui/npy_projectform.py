@@ -121,6 +121,10 @@ class OfferList(npyscreen.MultiLineAction):
 
     def delete_offer(self, keypress=None):
         """Delete the selected offer from the project."""
+        # cancel if there are no values
+        if len(self.values) < 1:
+            return False
+
         # get the selected project
         project = self.parent.parentApp.tmpProject
 

@@ -1,6 +1,5 @@
 """Class for preset management."""
 
-from datetime import datetime
 import json
 from offer.offer import Offer
 from offer.entries import BaseEntry
@@ -9,10 +8,7 @@ from offer.entries import ConnectEntry
 import os
 import shutil
 
-
-def us(string=''):
-    """Return string with underscores instead of whitespace."""
-    return string.replace(' ', '_')
+from general.debug import debug
 
 
 class Preset(object):
@@ -67,9 +63,10 @@ class Preset(object):
         """Add an offer preset."""
         is_offer = type(offer) is Offer
         title_exists = offer.title in [o.title for o in self.offer_list]
+        title_empty = offer.title == ''
 
         # cancel if it's no offer or the title already exists in the presets
-        if not is_offer or title_exists:
+        if not is_offer or title_exists or title_empty:
             return False
 
         # add the offer
@@ -91,8 +88,8 @@ class Preset(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + us(offer.title) + '.floffer'
-        filename_bu = path + '/' + us(offer.title) + '.floffer_bu'
+        filename = path + '/' + self.us(offer.title) + '.floffer'
+        filename_bu = path + '/' + self.us(offer.title) + '.floffer_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
@@ -102,6 +99,25 @@ class Preset(object):
         f = open(filename, 'w')
         f.write(offer.to_json(indent=2))
         f.close()
+
+    def delete_offer_file(self, offer=None):
+        """Delete single offer file."""
+        is_offer = type(offer) is Offer
+
+        if not is_offer:
+            return False
+
+        path = self.data_path + self.offer_dir
+
+        # generate filenames
+        filename = path + '/' + self.us(offer.title) + '.floffer'
+
+        # if it already exists, save a backup
+        if os.path.isfile(filename):
+            os.remove(filename)
+            return True
+        else:
+            return False
 
     def remove_offer(self, offer=None):
         """Remove offer, if it exists."""
@@ -119,6 +135,35 @@ class Preset(object):
             return True
         except Exception:
             return False
+
+    def rename_offer(self, old_offer_title=None, new_offer_title=None):
+        """Try to rename the offer with the given title."""
+        offer_found = old_offer_title in [o.title for o in self.offer_list]
+
+        if not offer_found:
+            return False
+
+        # get copy of offer object
+        offer_old = None
+        offer_copy = None
+        for o in self.offer_list:
+            if o.title == old_offer_title:
+                offer_old = o
+                offer_copy = o.copy()
+                break
+
+        # rename it and try to add it
+        offer_copy.title = new_offer_title
+
+        added = self.add_offer(offer=offer_copy)
+
+        if not added:
+            return False
+
+        # delete the old one
+        self.remove_offer(offer=offer_old)
+
+        return True
 
     def load_entry_list_from_file(self):
         """Load the entrys from file and return entry_list."""
@@ -160,9 +205,10 @@ class Preset(object):
         is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
                     type(entry) is ConnectEntry)
         title_exists = entry.title in [e.title for e in self.entry_list]
+        title_empty = entry.title == ''
 
         # cancel if it's no entry or the title already exists in the presets
-        if not is_entry or title_exists:
+        if not is_entry or title_exists or title_empty:
             return False
 
         # clear connected list, since it's just supposed to be a preset for this entry
@@ -191,8 +237,8 @@ class Preset(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + us(entry.title) + '.flentry'
-        filename_bu = path + '/' + us(entry.title) + '.flentry_bu'
+        filename = path + '/' + self.us(entry.title) + '.flentry'
+        filename_bu = path + '/' + self.us(entry.title) + '.flentry_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
@@ -202,6 +248,26 @@ class Preset(object):
         f = open(filename, 'w')
         f.write(entry.to_json())
         f.close()
+
+    def delete_entry_file(self, entry=None):
+        """Delete single entry file."""
+        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
+                    type(entry) is ConnectEntry)
+
+        if not is_entry:
+            return False
+
+        path = self.data_path + self.entry_dir
+
+        # generate filenames
+        filename = path + '/' + self.us(entry.title) + '.flentry'
+
+        # if it already exists, save a backup
+        if os.path.isfile(filename):
+            os.remove(filename)
+            return True
+        else:
+            return False
 
     def remove_entry(self, entry=None):
         """Remove entry, if it exists."""
@@ -220,6 +286,35 @@ class Preset(object):
             return True
         except Exception:
             return False
+
+    def rename_entry(self, old_entry_title=None, new_entry_title=None):
+        """Try to rename the entry with the given title."""
+        entry_found = old_entry_title in [e.title for e in self.entry_list]
+
+        if not entry_found:
+            return False
+
+        # get copy of entry object
+        entry_old = None
+        entry_copy = None
+        for e in self.entry_list:
+            if e.title == old_entry_title:
+                entry_old = e
+                entry_copy = e.copy()
+                break
+
+        # rename it and try to add it
+        entry_copy.title = new_entry_title
+
+        added = self.add_entry(entry=entry_copy)
+
+        if not added:
+            return False
+
+        # delete the old one
+        self.remove_entry(entry=entry_old)
+
+        return True
 
     def save_offer_list_to_file(self):
         """Save offer list to file."""
@@ -246,3 +341,7 @@ class Preset(object):
         self.data_path = data_path
         self.offer_list = self.load_offer_list_from_file()
         self.entry_list = self.load_entry_list_from_file()
+
+    def us(self, string=''):
+        """Return string with underscores instead of whitespace."""
+        return string.replace(' ', '_')

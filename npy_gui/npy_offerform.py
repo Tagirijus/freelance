@@ -405,7 +405,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^L': self.load_preset
         })
 
     def add_entry(self):
@@ -437,6 +438,32 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         self.beforeEditing()
+
+    def load_preset(self, keypress=None):
+        """Load offer from presets."""
+        self.values_to_tmp()
+        self.parentApp.P_what = 'offer'
+        self.parentApp.setNextForm('Presets')
+        self.parentApp.switchFormNow()
+
+    def save_preset(self):
+        """Save offer to presets."""
+        self.values_to_tmp()
+
+        really = npyscreen.notify_yes_no(
+            'Save this offer to the presets?'
+        )
+
+        if really:
+            added = self.parentApp.P.add_offer(
+                offer=self.parentApp.tmpOffer
+            )
+
+            if not added:
+                npyscreen.notify_confirm(
+                    'Offer not added. It probably already exists.',
+                    form_color='DANGER'
+                )
 
     def save(self):
         """Save the offer / project."""
@@ -477,6 +504,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
         self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')

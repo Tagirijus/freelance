@@ -118,6 +118,10 @@ class ClientList(npyscreen.MultiLineAction):
 
     def deactivate_client(self, keypress=None):
         """Ask to deactivate the client and do it if yes."""
+        # cancel if there are no clients
+        if len(self.values) < 1:
+            return False
+
         client = self.parent.parentApp.tmpProject_client
         client_str = '"{}: {}"'.format(client.client_id, client.fullname())
         really = npyscreen.notify_yes_no(
