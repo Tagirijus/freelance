@@ -580,7 +580,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='_' * 500,
+            value='—' * 500,
             editable=False
         )
 
