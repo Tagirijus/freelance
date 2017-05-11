@@ -23,11 +23,33 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
         # general was chosen
         if act_on_this == 'Base entry':
-            # get default BaseEntry
-            self.parent.parentApp.tmpEntry = NewBaseEntry(
-                settings=self.parent.parentApp.S,
-                client=client
-            )
+
+            # new or type change?
+            if self.parent.parentApp.tmpEntry_change_type:
+
+                # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
+                self.parent.parentApp.tmpEntry_change_type = False
+                new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
+                    into='BaseEntry',
+                    entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
+                    wage=self.parent.parentApp.tmpOffer.get_wage(
+                        project=self.parent.parentApp.tmpProject
+                    ),
+                    project=self.parent.parentApp.tmpProject,
+                    round_price=self.parent.parentApp.tmpOffer.get_round_price()
+                )
+
+            else:
+
+                # get default BaseEntry
+                new_entry = NewBaseEntry(
+                    settings=self.parent.parentApp.S,
+                    client=client
+                )
+
+            # finally get the new entry into temp
+            self.parent.parentApp.tmpEntry = new_entry
 
             # name form
             title_str = 'Freelance > Project > Offer > Base entry ({}: {})'.format(
@@ -42,11 +64,33 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
         # client and project was chosen
         elif act_on_this == 'Multiply entry':
-            # get default MultiplyEntry
-            self.parent.parentApp.tmpEntry = NewMultiplyEntry(
-                settings=self.parent.parentApp.S,
-                client=client
-            )
+
+            # new or type change?
+            if self.parent.parentApp.tmpEntry_change_type:
+
+                # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
+                self.parent.parentApp.tmpEntry_change_type = False
+                new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
+                    into='MultiplyEntry',
+                    entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
+                    wage=self.parent.parentApp.tmpOffer.get_wage(
+                        project=self.parent.parentApp.tmpProject
+                    ),
+                    project=self.parent.parentApp.tmpProject,
+                    round_price=self.parent.parentApp.tmpOffer.get_round_price()
+                )
+
+            else:
+
+                # get default MultiplyEntry
+                new_entry = NewMultiplyEntry(
+                    settings=self.parent.parentApp.S,
+                    client=client
+                )
+
+            # finally get the new entry into temp
+            self.parent.parentApp.tmpEntry = new_entry
 
             # name form
             title_str = 'Freelance > Project > Offer > Multiply entry ({}: {})'.format(
@@ -61,11 +105,33 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
         # entry was chosen
         elif act_on_this == 'Connect entry':
-            # get default ConnectEntry
-            self.parent.parentApp.tmpEntry = NewConnectEntry(
-                settings=self.parent.parentApp.S,
-                client=client
-            )
+
+            # new or type change?
+            if self.parent.parentApp.tmpEntry_change_type:
+
+                # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
+                self.parent.parentApp.tmpEntry_change_type = False
+                new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
+                    into='ConnectEntry',
+                    entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
+                    wage=self.parent.parentApp.tmpOffer.get_wage(
+                        project=self.parent.parentApp.tmpProject
+                    ),
+                    project=self.parent.parentApp.tmpProject,
+                    round_price=self.parent.parentApp.tmpOffer.get_round_price()
+                )
+
+            else:
+
+                # get default ConnectEntry
+                new_entry = NewConnectEntry(
+                    settings=self.parent.parentApp.S,
+                    client=client
+                )
+
+            # finally get the new entry into temp
+            self.parent.parentApp.tmpEntry = new_entry
 
             # name form
             title_str = 'Freelance > Project > Offer > Connect entry ({}: {})'.format(
@@ -108,8 +174,7 @@ class EntryChooseForm(npyscreen.ActionPopup):
 
     def on_ok(self, keypress=None):
         """Go back."""
-        self.parentApp.setNextForm('Offer')
-        self.parentApp.switchFormNow()
+        self.parentApp.switchFormPrevious()
 
     def on_cancel(self, keypress=None):
         """Do the same as in on_ok."""
@@ -230,8 +295,7 @@ class EntryList(npyscreen.MultiLineAction):
             return False
 
         # get entry of the selected object
-        new_entry = self.values[self.cursor_line].copy()
-        new_entry.gen_id()
+        new_entry = self.values[self.cursor_line].copy(keep_id=False)
 
         # add the entry to the entry_list
         self.parent.parentApp.tmpOffer.append(
@@ -316,9 +380,10 @@ class EntryList(npyscreen.MultiLineAction):
             self.editing = False
             self.parent.parentApp.setNextForm(form)
             self.parent.parentApp.switchFormNow()
-        except Exception:
+        except Exception as e:
             npyscreen.notify_confirm(
-                'Something went wrong, sorry!',
+                'Something went wrong, sorry!' +
+                'Error: ' + str(e),
                 form_color='WARNING'
             )
 

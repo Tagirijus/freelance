@@ -27,6 +27,13 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def change_type(self):
+        """Change the type of the entry."""
+        self.values_to_tmp()
+        self.parentApp.tmpEntry_change_type = True
+        self.parentApp.setNextForm('EntryChoose')
+        self.parentApp.switchFormNow()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -43,6 +50,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -161,7 +169,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Something went wrong while adding or modifying the entry!',
+                'Something went wrong while adding or modifying the base entry!',
                 form_color='WARNING'
             )
 
@@ -184,6 +192,13 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def change_type(self):
+        """Change the type of the entry."""
+        self.values_to_tmp()
+        self.parentApp.tmpEntry_change_type = True
+        self.parentApp.setNextForm('EntryChoose')
+        self.parentApp.switchFormNow()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -200,6 +215,7 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -311,7 +327,7 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Something went wrong while adding or modifying the entry!',
+                'Something went wrong while adding or modifying the multiply entry!',
                 form_color='WARNING'
             )
 
@@ -334,6 +350,13 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def change_type(self):
+        """Change the type of the entry."""
+        self.values_to_tmp()
+        self.parentApp.tmpEntry_change_type = True
+        self.parentApp.setNextForm('EntryChoose')
+        self.parentApp.switchFormNow()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -350,6 +373,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -529,7 +553,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Something went wrong while adding or modifying the entry!',
+                'Something went wrong while adding or modifying the connect entry!',
                 form_color='WARNING'
             )
 

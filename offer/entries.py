@@ -9,6 +9,8 @@ import json
 from offer.offeramounttime import OfferAmountTime
 import uuid
 
+from general.debug import debug
+
 
 class BaseEntry(object):
     """A very simple entry with basic options and FIXED values."""
@@ -20,9 +22,9 @@ class BaseEntry(object):
         comment=None,
         amount=None,
         amount_format=None,
+        tax=None,
         time=None,
         price=None,
-        tax=None,
         connected=None
     ):
         """Init the class."""
@@ -34,17 +36,21 @@ class BaseEntry(object):
         self.comment = '' if comment is None else str(comment)
         self._amount = OfferAmountTime(amount)
         self.amount_format = '' if amount_format is None else str(amount_format)
+        self._tax = Decimal(0)                  # set default
+        self.set_tax(tax)                       # try to set arguments value
         self._time = OfferAmountTime(time)
         self._price = Decimal(0)                # set default
         self.set_price(price)                   # try to set arguments value
-        self._tax = Decimal(0)                  # set default
-        self.set_tax(tax)                       # try to set arguments value
 
         # get the connected list (for ConnectEntry only)
         if type(connected) is set:
             self._connected = connected
         else:
             self._connected = set()
+
+    def get_id(self):
+        """Get id."""
+        return self._id
 
     def set_amount(self, value):
         """Set amount."""
@@ -101,6 +107,33 @@ class BaseEntry(object):
         except Exception:
             # if any wrong {...} are given
             return fmt
+
+    def set_tax(self, value):
+        """Set tax."""
+        # check if value is decimal
+        try:
+            is_percent = True if float(value) > 1.0 else False
+        except Exception:
+            is_percent = False
+
+        # try to set a new tax
+        try:
+            # only works, if input is integer, float or string
+            if is_percent:
+                self._tax = Decimal(str(value)) / 100
+            else:
+                self._tax = Decimal(str(value))
+        except Exception:
+            # otherwise don't do anything
+            pass
+
+    def get_tax(self, *args, **kwargs):
+        """Get tax."""
+        return self._tax
+
+    def get_tax_percent(self, *args, **kwargs):
+        """Get tax."""
+        return self._tax * 100
 
     def set_time(self, value):
         """Set time."""
@@ -162,41 +195,6 @@ class BaseEntry(object):
         """Get tax of price plus price without tax summerized."""
         return self.get_price(*args, **kwargs) + self.get_price_tax(*args, **kwargs)
 
-    def set_tax(self, value):
-        """Set tax."""
-        # check if value is decimal
-        try:
-            is_percent = True if float(value) > 1.0 else False
-        except Exception:
-            is_percent = False
-
-        # try to set a new tax
-        try:
-            # only works, if input is integer, float or string
-            if is_percent:
-                self._tax = Decimal(str(value)) / 100
-            else:
-                self._tax = Decimal(str(value))
-        except Exception:
-            # otherwise don't do anything
-            pass
-
-    def get_tax(self, *args, **kwargs):
-        """Get tax."""
-        return self._tax
-
-    def get_tax_percent(self, *args, **kwargs):
-        """Get tax."""
-        return self._tax * 100
-
-    def gen_id(self):
-        """Generate a new ID."""
-        self._id = str(uuid.uuid1())
-
-    def get_id(self):
-        """Get id."""
-        return self._id
-
     def get_connected(self):
         """Get connected set."""
         return self._connected
@@ -207,14 +205,14 @@ class BaseEntry(object):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
+        out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
         out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
-        out['id'] = self.get_id()
+        out['tax'] = float(self._tax)
         out['time'] = str(self._time)
         out['price'] = float(self._price)
-        out['tax'] = float(self._tax)
 
         return out
 
@@ -228,7 +226,7 @@ class BaseEntry(object):
         )
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=False):
+    def from_json(cls, js=None, keep_id=True):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -244,7 +242,7 @@ class BaseEntry(object):
         # create new entry object from json
 
         # get ID if it's no preset_loading
-        if preset_loading:
+        if not keep_id:
             id = None
         else:
             if 'id' in js.keys():
@@ -273,6 +271,11 @@ class BaseEntry(object):
         else:
             amount_format = None
 
+        if 'tax' in js.keys():
+            tax = js['tax']
+        else:
+            tax = None
+
         if 'time' in js.keys():
             time = js['time']
         else:
@@ -283,25 +286,89 @@ class BaseEntry(object):
         else:
             price = None
 
-        if 'tax' in js.keys():
-            tax = js['tax']
-        else:
-            tax = None
-
         return cls(
             id=id,
             title=title,
             comment=comment,
             amount=amount,
             amount_format=amount_format,
+            tax=tax,
             time=time,
-            price=price,
-            tax=tax
+            price=price
         )
 
-    def copy(self):
+    def copy(self, keep_id=True):
         """Return a copy of this object."""
-        return BaseEntry().from_json(js=self.to_json())
+        return BaseEntry().from_json(js=self.to_json(), keep_id=keep_id)
+
+    def is_project(self, project=None):
+        """
+        Check if given argument is project object.
+
+        This is some kind of workaround, since I canot import the Project class
+        into Offer module due to circular dependencies. Do I really still have
+        a that bad programm manufacture? )=
+        """
+        try:
+            return project.i_am_project()
+        except Exception:
+            return False
+
+    def return_changed_type(
+        self,
+        into='BaseEntry',
+        entry_list=None,
+        wage=None,
+        project=None,
+        round_price=None
+    ):
+        """Return the own entry object into other entry object."""
+        # return changed into MultiplyEntry
+        if into == 'MultiplyEntry':
+            new_entry = MultiplyEntry(
+                id=self.get_id(),
+                title=self.title,
+                comment=self.comment,
+                amount=self.get_amount(),
+                amount_format=self.amount_format,
+                tax=self.get_tax()
+            )
+
+            return new_entry
+
+        # return changed into ConnectEntry
+        elif into == 'ConnectEntry':
+            new_entry = ConnectEntry(
+                id=self.get_id(),
+                title=self.title,
+                comment=self.comment,
+                amount=self.get_amount(),
+                amount_format=self.amount_format,
+                tax=self.get_tax()
+            )
+
+            return new_entry
+
+        # return changed into BaseEntry (also as fallback if into argument is invalid)
+        else:
+            new_entry = BaseEntry(
+                id=self.get_id(),
+                title=self.title,
+                comment=self.comment,
+                amount=self.get_amount(),
+                amount_format=self.amount_format,
+                tax=self.get_tax(),
+                price=self.get_price(
+                    entry_list=entry_list,
+                    wage=wage,
+                    round_price=round_price
+                ),
+                time=self.get_time(
+                    entry_list=entry_list
+                )
+            )
+
+            return new_entry
 
 
 class MultiplyEntry(BaseEntry):
@@ -374,11 +441,11 @@ class MultiplyEntry(BaseEntry):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
+        out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
         out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
-        out['id'] = self.get_id()
         out['tax'] = float(self._tax)
         out['hour_rate'] = str(self._hour_rate)
 
@@ -394,7 +461,7 @@ class MultiplyEntry(BaseEntry):
         )
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=False):
+    def from_json(cls, js=None, keep_id=True):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -410,7 +477,7 @@ class MultiplyEntry(BaseEntry):
         # create new entry object from json
 
         # get ID if it's no preset_loading
-        if preset_loading:
+        if not keep_id:
             id = None
         else:
             if 'id' in js.keys():
@@ -459,9 +526,9 @@ class MultiplyEntry(BaseEntry):
             hour_rate=hour_rate
         )
 
-    def copy(self):
+    def copy(self, keep_id=True):
         """Return a copy of this object."""
-        return MultiplyEntry().from_json(js=self.to_json())
+        return MultiplyEntry().from_json(js=self.to_json(), keep_id=keep_id)
 
 
 class ConnectEntry(BaseEntry):
@@ -656,12 +723,12 @@ class ConnectEntry(BaseEntry):
 
         # fetch all important data for this entry type
         out['type'] = self.__class__.__name__
+        out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
         out['amount'] = str(self._amount)
         out['amount_format'] = self.amount_format
         out['tax'] = float(self._tax)
-        out['id'] = self.get_id()
         out['is_time'] = self.get_is_time()
         out['multiplicator'] = float(self._multiplicator)
         out['connected'] = list(self._connected)
@@ -682,7 +749,7 @@ class ConnectEntry(BaseEntry):
         )
 
     @classmethod
-    def from_json(cls, js=None, preset_loading=False):
+    def from_json(cls, js=None, keep_id=True):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -698,7 +765,7 @@ class ConnectEntry(BaseEntry):
         # create new entry object from json
 
         # get ID, if it's no preset_loading
-        if preset_loading:
+        if not keep_id:
             id = None
         else:
             if 'id' in js.keys():
@@ -742,8 +809,7 @@ class ConnectEntry(BaseEntry):
         else:
             multiplicator = None
 
-        # get connected entries, if it's no preset_loading
-        if 'connected' in js.keys() and not preset_loading:
+        if 'connected' in js.keys():
             connected = set(js['connected'])
         else:
             connected = None
@@ -760,6 +826,6 @@ class ConnectEntry(BaseEntry):
             connected=connected
         )
 
-    def copy(self):
+    def copy(self, keep_id=True):
         """Return a copy of this object."""
-        return ConnectEntry().from_json(js=self.to_json())
+        return ConnectEntry().from_json(js=self.to_json(), keep_id=keep_id)

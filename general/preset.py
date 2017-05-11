@@ -165,6 +165,10 @@ class Preset(object):
         if not is_entry or title_exists:
             return False
 
+        # clear connected list, since it's just supposed to be a preset for this entry
+        if type(entry) is ConnectEntry:
+            entry.disconnect_all_entries()
+
         # add the entry
         self.entry_list.append(entry)
         self.save_entry_to_file(entry=entry)
