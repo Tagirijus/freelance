@@ -1,6 +1,8 @@
 """Form for the defaults."""
 
+import curses
 import npyscreen
+import os
 
 
 class DefaultChooseList(npyscreen.MultiLineAction):
@@ -83,6 +85,95 @@ class DefaultsForm(npyscreen.ActionPopup):
         self.on_ok(keypress)
 
 
+class TemplatesListAction(npyscreen.MultiLineAction):
+    """List holding the offer templates"""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the class."""
+        super(TemplatesListAction, self).__init__(*args, **kwargs)
+
+        # set up key shortcuts
+        self.add_handlers({
+            curses.KEY_IC: self.add_template,
+            curses.KEY_DC: self.delete_template
+        })
+
+    def update_values(self):
+        """Update values and refresh view."""
+        self.values = self.parent.parentApp.tmpDefault.get_templates_as_list()
+        self.display()
+        self.clear_filter()
+
+    def add_template(self, keypress=None):
+        """Add template."""
+        file = npyscreen.selectFile(
+            starting_value=os.path.expanduser('~'),
+            confirm_if_exists=False
+        )
+
+        name = npyscreen.notify_input(
+            'Name of template:'
+        )
+
+        # add if name and not exists in dict
+        if name and not name in self.parent.parentApp.tmpDefault.get_templates():
+            self.parent.parentApp.tmpDefault.add_template(key=name, value=file)
+            self.update_values()
+
+    def delete_template(self, keypress=None):
+        """Delete template."""
+        # cancel if there are no values
+        if len(self.values) < 1:
+            return False
+
+        selected = self.values[self.cursor_line][0]
+
+        really = npyscreen.notify_yes_no(
+            'Really delete template "{}"?'.format(selected)
+        )
+
+        if really:
+            self.parent.parentApp.tmpDefault.del_template(key=selected)
+            self.update_values()
+
+    def display_value(self, vl):
+        """Display the value."""
+        return '[{}]'.format(vl[0])
+
+    def actionHighlighted(self, act_on_this, keypress):
+        """Do something, because a key was pressed."""
+        # cancel if there are no values
+        if len(self.values) < 1:
+            return False
+
+        # get old
+        old_key = act_on_this[0]
+        old_val = act_on_this[1]
+
+        # ask new stuff
+        file = npyscreen.selectFile(
+            starting_value=old_val,
+            confirm_if_exists=False
+        )
+
+        name = npyscreen.notify_input(
+            'Name of template:',
+            pre_text=old_key
+        )
+
+        if name:
+            self.parent.parentApp.tmpDefault.del_template(key=old_key)
+            self.parent.parentApp.tmpDefault.add_template(key=name, value=file)
+            self.update_values()
+
+
+class TitleTemplatesList(npyscreen.TitleMultiLine):
+    """Inherit from TitleMultiLine, but get MultiLineAction."""
+
+    _entry_type = TemplatesListAction
+
+
+
 class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the general defaults."""
 
@@ -95,6 +186,14 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             '^O': self.on_ok,
             '^Q': self.on_cancel
         })
+
+    def add_temp(self):
+        """Add template."""
+        self.templates.entry_widget.add_template()
+
+    def del_temp(self):
+        """Delete template."""
+        self.templates.entry_widget.delete_template()
 
     def switch_to_help(self):
         """Switch to the help screen."""
@@ -112,6 +211,8 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add template', onSelect=self.add_temp, shortcut='t')
+        self.m.addItem(text='Delete template', onSelect=self.del_temp, shortcut='T')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -130,12 +231,6 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Offer title:',
             begin_entry_at=20
         )
-        self.offer_template = self.add_widget_intelligent(
-            npyscreen.TitleFilenameCombo,
-            name='Offer template:',
-            begin_entry_at=20,
-            must_exist=True
-        )
         self.offer_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer filename:',
@@ -148,6 +243,13 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             max_height=2,
             scroll_exit=True,
             values=['enabled']
+        )
+        self.templates = self.add_widget_intelligent(
+            TitleTemplatesList,
+            name='Templates:',
+            begin_entry_at=20,
+            max_height=3,
+            scroll_exit=True
         )
         self.date_fmt = self.add_widget_intelligent(
             npyscreen.TitleText,
@@ -169,11 +271,11 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Get the values from the active tmpDefault variable."""
         self.language.value = self.parentApp.tmpDefault.language
         self.offer_title.value = self.parentApp.tmpDefault.offer_title
-        self.offer_template.value = self.parentApp.tmpDefault.offer_template
         self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
         self.offer_round_price.value = (
             [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
         )
+        self.templates.entry_widget.update_values()
         self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
         self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
         self.commodity.value = self.parentApp.tmpDefault.commodity
@@ -199,12 +301,12 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         # get stuff into tmpDefault
         self.parentApp.tmpDefault.language = language
         self.parentApp.tmpDefault.offer_title = self.offer_title.value
-        self.parentApp.tmpDefault.offer_template = self.offer_template.value
         self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
         if self.offer_round_price.value == [0]:
             self.parentApp.tmpDefault.set_offer_round_price(True)
         else:
             self.parentApp.tmpDefault.set_offer_round_price(False)
+        self.parentApp.tmpDefault.set_templates(self.templates.values)
         self.parentApp.tmpDefault.date_fmt = self.date_fmt.value
         self.parentApp.tmpDefault.set_project_wage(self.project_wage.value)
         self.parentApp.tmpDefault.commodity = self.commodity.value

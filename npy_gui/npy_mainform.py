@@ -353,10 +353,21 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         self.parentApp.setNextForm(None)
         self.parentApp.switchFormNow()
 
+    def test(self):
+        """Test things."""
+        bla = npyscreen.selectFile(
+            starting_value='/home/manu'
+        )
+        npyscreen.notify_confirm(
+            str(bla) + '\n' +
+            'Type: ' + str(type(bla))
+        )
+
     def create(self):
         """Initialize the form with its widgets."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='TEST', onSelect=self.test)
         self.m.addItem(text='Add client', onSelect=self.add_client, shortcut='c')
         self.m.addItem(text='Deactivate client', onSelect=self.deact_client, shortcut='C')
         self.m.addItem(text='Add project', onSelect=self.add_project, shortcut='p')

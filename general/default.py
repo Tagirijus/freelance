@@ -14,9 +14,9 @@ class Default(object):
         data_path=None,
         language=None,
         offer_title=None,
-        offer_template=None,
         offer_filename=None,
         offer_round_price=None,
+        templates=None,
         date_fmt=None,
         commodity=None,
         client_id=None,
@@ -55,10 +55,11 @@ class Default(object):
         """Initialize the class and hard code defaults, if no file is given."""
         self.language = 'NEW' if language is None else language
         self.offer_title = '' if offer_title is None else offer_title
-        self.offer_template = '' if offer_template is None else offer_template
         self.offer_filename = '' if offer_filename is None else offer_filename
         self._offer_round_price = False                 # set default
         self.set_offer_round_price(offer_round_price)   # try to set arguments value
+        self._templates = {}                             # set default
+        self.set_templates(templates)                     # try to set arguments value
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
 
@@ -122,6 +123,32 @@ class Default(object):
         # try to load default automatically
         if data_path is not None:
             self.load_settings_from_file(data_path)
+
+    def set_templates(self, value):
+        """Set templates."""
+        if type(value) is dict:
+            self._templates = value
+        elif type(value) is list:
+            self._templates = {}
+            for x in value:
+                self.add_template(x[0], x[1])
+
+    def get_templates_as_list(self):
+        """Get templates as list with tuples of key+value."""
+        return [(key, self._templates[key]) for key in self._templates]
+
+    def get_templates(self):
+        """Get templates as dict."""
+        return self._templates
+
+    def add_template(self, key, value):
+        """Add to templates."""
+        self._templates[key] = value
+
+    def del_template(self, key):
+        """try to delete templates entry."""
+        if key in self._templates:
+            del self._templates[key]
 
     def set_offer_round_price(self, value):
         """Set offer_round_price."""
@@ -255,7 +282,7 @@ class Default(object):
         # fetch all setting variables
         out['language'] = self.language
         out['offer_title'] = self.offer_title
-        out['offer_template'] = self.offer_template
+        out['templates'] = self._templates
         out['offer_filename'] = self.offer_filename
         out['offer_round_price'] = self._offer_round_price
         out['date_fmt'] = self.date_fmt
@@ -320,8 +347,8 @@ class Default(object):
         if 'offer_title' in js.keys():
             self.offer_title = js['offer_title']
 
-        if 'offer_template' in js.keys():
-            self.offer_template = js['offer_template']
+        if 'templates' in js.keys():
+            self._templates = js['templates']
 
         if 'offer_filename' in js.keys():
             self.offer_filename = js['offer_filename']
@@ -467,7 +494,7 @@ class Default(object):
         return Default(
             language=self.language,
             offer_title=self.offer_title,
-            offer_template=self.offer_template,
+            templates=self._templates,
             offer_filename=self.offer_filename,
             offer_round_price=self._offer_round_price,
             date_fmt=self.date_fmt,
