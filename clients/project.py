@@ -220,3 +220,13 @@ class Project(object):
     def copy(self):
         """Return copy of own object as new object."""
         return Project().from_json(js=self.to_json())
+
+    def i_am_project(self, project=None):
+        """
+        Check if given argument is project object.
+
+        This is some kind of workaround, since I canot import the Project class
+        into Offer module due to circular dependencies. Do I really still have
+        a that bad programm manufacture? )=
+        """
+        return True
