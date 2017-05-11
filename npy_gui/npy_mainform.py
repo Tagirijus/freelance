@@ -104,13 +104,11 @@ class ClientList(npyscreen.MultiLineAction):
     def add_client(self, keypress=None):
         """Add a new client."""
         # get default values according to def language from the settings
-        try:
-            self.parent.parentApp.tmpClient = NewClient(
-                settings=self.parent.parentApp.S
-            )
-        except Exception:
-            # fallback if language does not exist (should not happen)
-            self.parent.parentApp.tmpClient = Client()
+        self.parent.parentApp.tmpClient = NewClient(
+            settings=self.parent.parentApp.S,
+            global_list=self.parent.parentApp.L
+        )
+
         self.parent.parentApp.tmpClient_new = True
         self.parent.parentApp.getForm('Client').name = 'Freelance > Client (NEW)'
 
@@ -238,14 +236,11 @@ class ProjectList(npyscreen.MultiLineAction):
             return False
 
         # get default values according to language from the client and settings defaults
-        try:
-            self.parent.parentApp.tmpProject = NewProject(
-                settings=self.parent.parentApp.S,
-                client=client
-            )
-        except Exception:
-            # fallback if language does not exist (should not happen)
-            self.parent.parentApp.tmpProject = Project()
+        self.parent.parentApp.tmpProject = NewProject(
+            settings=self.parent.parentApp.S,
+            global_list=self.parent.parentApp.L,
+            client=client
+        )
 
         self.parent.parentApp.tmpProject_new = True
         title_name = self.parent.parentApp.tmpProject_client.fullname() + ', NEW'

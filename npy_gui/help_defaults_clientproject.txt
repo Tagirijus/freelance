@@ -6,15 +6,7 @@ Default language for a new created client - choose from the set up default langu
 
 
 Project title:
-Replace strings are possible:
-
-- {YEAR}: replaces with the actual year
-- {MONTH}: replaces with the actual month
-- {DAY}: replaces with the actual day
-- {CLIENT_...}: replaces with the connected clients ..., possible entries:
-	CLIENT_COMPANY, _SALUT, _NAME,
-	_FAMILY, _FULLNAME, _STREET,
-	_POST_CODE,	_CITY, _TAX_ID
+Obivously the title of the project.
 
 
 Project h / d (hours per day):

@@ -15,6 +15,17 @@ Client list / Project list:
 -> ENTER: edit the selected client / project
 
 
-In the settings you can set up default texts and other settings.
+In the settings you can set up default texts and other settings. There are possible string replacements in the defaults and also in the most string inputs. For example you can set up a project name like "{YEAR}-{MONTH} " and when this becomes a preset, it will (e.g. on the 15th of octobre 1987) become "1987-10 " automatically. Just try these string replacement variables:
+
+- {YEAR}: replaces with the year of the offer
+- {MONTH}: replaces with the month of the offer
+- {DAY}: replaces with the day of the offer
+- {PROJECT_TITLE}: replaces with the project title of the connected project
+- {PROJECT_OFFER_COUNT}: replace with the count + 1 of offers for this project
+- {CLIENT_...}: replaces with the connected clients ..., possible entries:
+	CLIENT_COMPANY, _SALUT, _NAME,
+	_FAMILY, _FULLNAME, _STREET,
+	_POST_CODE,	_CITY, _TAX_ID
+
 
 Hope this programm will help some freelancers out there! (:

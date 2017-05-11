@@ -7,3 +7,6 @@ Amount format has replacement values like this:
 - {d}: amount in decimal
 - {F}: amount converted to time, show full
 - {R}: amount converted to time, show remaining
+
+
+You can also load a preset from the menu.

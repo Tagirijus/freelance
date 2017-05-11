@@ -121,6 +121,10 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Language:',
             begin_entry_at=20
         )
+        self.seperation = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            editable=False
+        )
         self.offer_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer title:',
@@ -314,6 +318,11 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
+        self.client_id = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Client ID:',
+            begin_entry_at=20
+        )
         self.client_company = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client company:',
@@ -354,13 +363,9 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
             name='Client tax ID:',
             begin_entry_at=20
         )
-        self.client_language = self.add_widget_intelligent(
-            npyscreen.TitleSelectOne,
-            name='Client language:',
-            begin_entry_at=20,
-            max_height=4,
-            scroll_exit=True,
-            value=[0]
+        self.seperation = self.add_widget_intelligent(
+            npyscreen.FixedText,
+            editable=False
         )
         self.project_title = self.add_widget_intelligent(
             npyscreen.TitleText,
@@ -397,6 +402,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
     def beforeEditing(self):
         """Get values from parentApp.tmpDefault object."""
         # simple strings
+        self.client_id.value = self.parentApp.tmpDefault.client_id
         self.client_company.value = self.parentApp.tmpDefault.client_company
         self.client_salutation.value = self.parentApp.tmpDefault.client_salutation
         self.client_name.value = self.parentApp.tmpDefault.client_name
@@ -405,17 +411,6 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.client_post_code.value = self.parentApp.tmpDefault.client_post_code
         self.client_city.value = self.parentApp.tmpDefault.client_city
         self.client_tax_id.value = self.parentApp.tmpDefault.client_tax_id
-
-        # handle languages
-        self.client_language.values = self.parentApp.S.get_languages()
-
-        c_lang = self.parentApp.tmpDefault.client_language
-        if c_lang in self.client_language.values:
-            self.client_language.value[0] = self.client_language.values.index(
-                c_lang
-            )
-        else:
-            self.client_language.value[0] = 0
 
         # another simple string or integers
         self.project_title.value = self.parentApp.tmpDefault.project_title
@@ -434,6 +429,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
     def values_to_tmp(self):
         """Store values in temp object."""
         # get values into temp object
+        self.parentApp.tmpDefault.client_id = self.client_id.value
         self.parentApp.tmpDefault.client_company = self.client_company.value
         self.parentApp.tmpDefault.client_salutation = self.client_salutation.value
         self.parentApp.tmpDefault.client_name = self.client_name.value
@@ -442,9 +438,6 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.client_post_code = self.client_post_code.value
         self.parentApp.tmpDefault.client_city = self.client_city.value
         self.parentApp.tmpDefault.client_tax_id = self.client_tax_id.value
-        self.parentApp.tmpDefault.client_language = self.client_language.values[
-            self.client_language.value[0]
-        ]
         self.parentApp.tmpDefault.project_title = self.project_title.value
         self.parentApp.tmpDefault.set_project_hours_per_day(
             self.project_hours_per_day.value

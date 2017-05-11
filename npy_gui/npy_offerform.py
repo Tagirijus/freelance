@@ -45,7 +45,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default BaseEntry
                 new_entry = NewBaseEntry(
                     settings=self.parent.parentApp.S,
-                    client=client
+                    client=client,
+                    project=self.parent.parentApp.tmpProject
                 )
 
             # finally get the new entry into temp
@@ -86,7 +87,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default MultiplyEntry
                 new_entry = NewMultiplyEntry(
                     settings=self.parent.parentApp.S,
-                    client=client
+                    client=client,
+                    project=self.parent.parentApp.tmpProject
                 )
 
             # finally get the new entry into temp
@@ -127,7 +129,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default ConnectEntry
                 new_entry = NewConnectEntry(
                     settings=self.parent.parentApp.S,
-                    client=client
+                    client=client,
+                    project=self.parent.parentApp.tmpProject
                 )
 
             # finally get the new entry into temp

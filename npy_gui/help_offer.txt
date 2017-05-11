@@ -29,3 +29,6 @@ Example:
 
 Wage:
 Enter an individual wage for this offer. If this is set to 0, the projects wage will be used.
+
+
+You can also load a preset from the menu.

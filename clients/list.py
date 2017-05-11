@@ -8,23 +8,9 @@ project_id.
 
 from clients.client import Client
 from clients.project import Project
-from general.functions import us
 from general.settings import Settings
 import os
 import shutil
-
-
-def get_inactive_list(settings=None):
-    """Get inactive clients and projects and return it into new list."""
-    if type(settings) is Settings:
-        data_path = settings.data_path
-        client_dir = '/clients' + settings.inactive_dir
-        project_dir = '/projects' + settings.inactive_dir
-        return List(
-            data_path=data_path,
-            client_dir=client_dir,
-            project_dir=project_dir
-        )
 
 
 class List(object):
@@ -205,10 +191,10 @@ class List(object):
             os.mkdir(path_deact)
 
         # generate filenames
-        filename_old = path + '/' + us(client.client_id) + '.flclient'
-        filename_old_bu = path + '/' + us(client.client_id) + '.flclient_bu'
-        filename_new = path_deact + '/' + us(client.client_id) + '.flclient'
-        filename_new_bu = path_deact + '/' + us(client.client_id) + '.flclient_bu'
+        filename_old = path + '/' + self.us(client.client_id) + '.flclient'
+        filename_old_bu = path + '/' + self.us(client.client_id) + '.flclient_bu'
+        filename_new = path_deact + '/' + self.us(client.client_id) + '.flclient'
+        filename_new_bu = path_deact + '/' + self.us(client.client_id) + '.flclient_bu'
 
         # move the old file to the inactive directory and pop variable from list
         try:
@@ -241,10 +227,10 @@ class List(object):
             return False
 
         # generate filenames
-        filename_old = path_deact + '/' + us(client.client_id) + '.flclient'
-        filename_old_bu = path_deact + '/' + us(client.client_id) + '.flclient_bu'
-        filename_new = path + '/' + us(client.client_id) + '.flclient'
-        filename_new_bu = path + '/' + us(client.client_id) + '.flclient_bu'
+        filename_old = path_deact + '/' + self.us(client.client_id) + '.flclient'
+        filename_old_bu = path_deact + '/' + self.us(client.client_id) + '.flclient_bu'
+        filename_new = path + '/' + self.us(client.client_id) + '.flclient'
+        filename_new_bu = path + '/' + self.us(client.client_id) + '.flclient_bu'
 
         # move the old file to the inactive directory and add variable to list
         try:
@@ -346,10 +332,10 @@ class List(object):
             os.mkdir(path_deact)
 
         # generate filenames
-        filename_old = path + '/' + us(project.project_id()) + '.flproject'
-        filename_old_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
-        filename_new = path_deact + '/' + us(project.project_id()) + '.flproject'
-        filename_new_bu = path_deact + '/' + us(project.project_id()) + '.flproject_bu'
+        filename_old = path + '/' + self.us(project.project_id()) + '.flproject'
+        filename_old_bu = path + '/' + self.us(project.project_id()) + '.flproject_bu'
+        filename_new = path_deact + '/' + self.us(project.project_id()) + '.flproject'
+        filename_new_bu = path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
 
         # move the old file to the inactive directory and pop variable from list
         try:
@@ -382,10 +368,10 @@ class List(object):
             return False
 
         # generate filenames
-        filename_old = path_deact + '/' + us(project.project_id()) + '.flproject'
-        filename_old_bu = path_deact + '/' + us(project.project_id()) + '.flproject_bu'
-        filename_new = path + '/' + us(project.project_id()) + '.flproject'
-        filename_new_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
+        filename_old = path_deact + '/' + self.us(project.project_id()) + '.flproject'
+        filename_old_bu = path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
+        filename_new = path + '/' + self.us(project.project_id()) + '.flproject'
+        filename_new_bu = path + '/' + self.us(project.project_id()) + '.flproject_bu'
 
         # move the old file to the inactive directory and add variable to list
         try:
@@ -551,7 +537,7 @@ class List(object):
         path = self.data_path + self.client_dir
 
         # generate filenames
-        filename = path + '/' + us(client.client_id) + '.flclient'
+        filename = path + '/' + self.us(client.client_id) + '.flclient'
 
         # check if the file exists and delete it
         if os.path.isfile(filename):
@@ -570,10 +556,10 @@ class List(object):
 
         # generate filenames
         path = self.data_path + self.client_dir
-        filename = path + '/' + us(old_client_id) + '.flclient'
-        filename_bu = path + '/' + us(old_client_id) + '.flclient_bu'
-        filename_new = path + '/' + us(new_client_id) + '.flclient'
-        filename_new_bu = path + '/' + us(new_client_id) + '.flclient_bu'
+        filename = path + '/' + self.us(old_client_id) + '.flclient'
+        filename_bu = path + '/' + self.us(old_client_id) + '.flclient_bu'
+        filename_new = path + '/' + self.us(new_client_id) + '.flclient'
+        filename_new_bu = path + '/' + self.us(new_client_id) + '.flclient_bu'
 
         # check if the files exist and rename them
         if os.path.isfile(filename):
@@ -598,8 +584,8 @@ class List(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + us(client.client_id) + '.flclient'
-        filename_bu = path + '/' + us(client.client_id) + '.flclient_bu'
+        filename = path + '/' + self.us(client.client_id) + '.flclient'
+        filename_bu = path + '/' + self.us(client.client_id) + '.flclient_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
@@ -626,7 +612,7 @@ class List(object):
         path = self.data_path + self.project_dir
 
         # generate filenames
-        filename = path + '/' + us(project.project_id()) + '.flproject'
+        filename = path + '/' + self.us(project.project_id()) + '.flproject'
 
         # check if the file exists and delete it
         if os.path.isfile(filename):
@@ -646,10 +632,10 @@ class List(object):
 
         # generate filenames
         path = self.data_path + self.project_dir
-        filename = path + '/' + us(old_project.project_id()) + '.flproject'
-        filename_bu = path + '/' + us(old_project.project_id()) + '.flproject_bu'
-        filename_new = path + '/' + us(new_project.project_id()) + '.flproject'
-        filename_new_bu = path + '/' + us(new_project.project_id()) + '.flproject_bu'
+        filename = path + '/' + self.us(old_project.project_id()) + '.flproject'
+        filename_bu = path + '/' + self.us(old_project.project_id()) + '.flproject_bu'
+        filename_new = path + '/' + self.us(new_project.project_id()) + '.flproject'
+        filename_new_bu = path + '/' + self.us(new_project.project_id()) + '.flproject_bu'
 
         # check if the files exist and rename them
         if os.path.isfile(filename):
@@ -674,8 +660,8 @@ class List(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + us(project.project_id()) + '.flproject'
-        filename_bu = path + '/' + us(project.project_id()) + '.flproject_bu'
+        filename = path + '/' + self.us(project.project_id()) + '.flproject'
+        filename_bu = path + '/' + self.us(project.project_id()) + '.flproject_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
@@ -733,3 +719,19 @@ class List(object):
         self.data_path = data_path
         self.client_list = self.load_client_list_from_file()
         self.project_list = self.load_project_list_from_file()
+
+    def us(self, string=''):
+        """Return string with underscores instead of whitespace."""
+        return string.replace(' ', '_')
+
+    def get_inactive_list(self, settings=None):
+        """Get inactive clients and projects and return it into new list."""
+        if type(settings) is Settings:
+            data_path = settings.data_path
+            client_dir = self.client_dir + settings.inactive_dir
+            project_dir = self.project_dir + settings.inactive_dir
+            return List(
+                data_path=data_path,
+                client_dir=client_dir,
+                project_dir=project_dir
+            )

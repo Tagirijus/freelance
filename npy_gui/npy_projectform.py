@@ -110,6 +110,7 @@ class OfferList(npyscreen.MultiLineAction):
         self.parent.parentApp.tmpOffer_index = self.cursor_line
         self.parent.parentApp.tmpOffer = NewOffer(
             settings=self.parent.parentApp.S,
+            global_list=self.parent.parentApp.L,
             client=client,
             project=project
         )

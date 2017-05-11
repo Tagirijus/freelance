@@ -19,6 +19,7 @@ class Default(object):
         offer_round_price=None,
         date_fmt=None,
         commodity=None,
+        client_id=None,
         client_company=None,
         client_salutation=None,
         client_name=None,
@@ -62,6 +63,7 @@ class Default(object):
         self.commodity = '' if commodity is None else commodity
 
         # client default values
+        self.client_id = '{CLIENT_COUNT}' if client_id is None else client_id
         self.client_company = '' if client_company is None else client_company
         self.client_salutation = '' if client_salutation is None else client_salutation
         self.client_name = '' if client_name is None else client_name
@@ -74,7 +76,7 @@ class Default(object):
         self.client_language = 'en' if client_language is None else client_language
 
         # project default values
-        self.project_title = '' if project_title is None else project_title
+        self.project_title = '{PROJECT_COUNT}' if project_title is None else project_title
         self._project_hours_per_day = 0
         self.set_project_hours_per_day(project_hours_per_day)
         self._project_work_days = [0, 1, 2, 3, 4]
@@ -259,6 +261,7 @@ class Default(object):
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
+        out['client_id'] = self.client_id
         out['client_company'] = self.client_company
         out['client_salutation'] = self.client_salutation
         out['client_name'] = self.client_name
@@ -331,6 +334,9 @@ class Default(object):
 
         if 'commodity' in js.keys():
             self.commodity = js['commodity']
+
+        if 'client_id' in js.keys():
+            self.client_id = js['client_id']
 
         if 'client_company' in js.keys():
             self.client_company = js['client_company']
@@ -466,6 +472,7 @@ class Default(object):
             offer_round_price=self._offer_round_price,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
+            client_id=self.client_id,
             client_company=self.client_company,
             client_salutation=self.client_salutation,
             client_name=self.client_name,

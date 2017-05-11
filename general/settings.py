@@ -15,7 +15,7 @@ class Settings(object):
         languages=None,
         def_language=None,
         defaults=None,
-        keep_offer_preset_date=None
+        offer_count_offset=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -43,13 +43,11 @@ class Settings(object):
         self.set_languages(languages)           # try to set arguments value
         self._def_language = 'en'               # set default
         self.set_def_language(def_language)     # try to set arguments value
+        self._offer_count_offset = 0            # set default
+        self.set_offer_count_offset(offer_count_offset) # try to set arguments value
 
         # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
         self.generate_data_path()
-
-        # preset settings
-        self._keep_offer_preset_date = False
-        self.set_keep_offer_preset_date(keep_offer_preset_date)
 
         # try to load settings from self.data_path/freelance.settings afterwards
         self.load_settings_from_file()
@@ -86,16 +84,16 @@ class Settings(object):
         """Get default language."""
         return self._def_language
 
-    def set_keep_offer_preset_date(self, value):
-        """Set keep_offer_preset_date."""
+    def set_offer_count_offset(self, value):
+        """Set offer_count_offset."""
         try:
-            self._keep_offer_preset_date = bool(value)
+            self._offer_count_offset = int(value)
         except Exception:
             pass
 
-    def get_keep_offer_preset_date(self):
-        """Get keep_offer_preset_date."""
-        return self._keep_offer_preset_date
+    def get_offer_count_offset(self):
+        """Get offer_count_offset."""
+        return self._offer_count_offset
 
     def remove_default(self, language=None, client_list=None):
         """Remove the default."""
@@ -178,7 +176,7 @@ class Settings(object):
         out['inactive_dir'] = self.inactive_dir
         out['languages'] = self._languages
         out['def_language'] = self._def_language
-        out['keep_offer_preset_date'] = self._keep_offer_preset_date
+        out['offer_count_offset'] = self._offer_count_offset
 
         # return the json
         return json.dumps(
@@ -213,8 +211,8 @@ class Settings(object):
         if 'def_language' in js.keys():
             self.set_def_language(js['def_language'])
 
-        if 'keep_offer_preset_date' in js.keys():
-            self.set_keep_offer_preset_date(js['keep_offer_preset_date'])
+        if 'offer_count_offset' in js.keys():
+            self.set_offer_count_offset(js['offer_count_offset'])
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

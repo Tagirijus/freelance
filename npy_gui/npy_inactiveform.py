@@ -1,6 +1,5 @@
 """Form for deactivated clients and projects."""
 
-from clients.list import get_inactive_list
 import curses
 import npyscreen
 
@@ -239,7 +238,7 @@ class InactiveForm(npyscreen.ActionFormWithMenus):
     def beforeEditing(self):
         """Get correct lists for clients and projects."""
         # get the inactive list from inactive folders
-        self.iL = get_inactive_list(
+        self.iL = self.parentApp.L.get_inactive_list(
             settings=self.parentApp.S
         )
 
