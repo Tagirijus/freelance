@@ -9,6 +9,7 @@ from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.offerinvoice import Offer
+from offer.offerinvoice import Invoice
 import os
 
 from general.debug import debug
@@ -158,6 +159,14 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    comment = replacer(
+        text=settings.defaults[lang].offer_comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
     round_price = settings.defaults[lang].get_offer_round_price()
@@ -165,6 +174,7 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
     # return new Offer object
     return Offer(
         title=title,
+        comment=comment,
         date_fmt=date_fmt,
         date=date.today(),
         round_price=round_price
@@ -196,6 +206,14 @@ def PresetOffer(
         project=project
     )
 
+    comment = replacer(
+        text=offer_preset.comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     # get other values
     date_fmt = offer_preset.date_fmt
     off_date = offer_preset.get_date()
@@ -206,6 +224,7 @@ def PresetOffer(
     # return new Offer object
     return Offer(
         title=title,
+        comment=comment,
         date_fmt=date_fmt,
         date=off_date,
         wage=wage,
@@ -477,4 +496,108 @@ def PresetConnectEntry(
         amount_format=amount_format,
         is_time=is_time,
         multiplicator=multiplicator
+    )
+
+
+def NewInvoice(settings=None, global_list=None, client=None, project=None):
+    """Return new invoice object according to settings defaults."""
+    # return empty invoice, if there is no correct settings object given
+    is_settings = type(settings) is Settings
+    is_client = type(client) is Client
+    is_project = type(project) is Project
+
+    if not is_settings or not is_project or not is_client:
+        return Invoice()
+
+    # get language from client
+    lang = client.language
+
+    # get replaces
+    title = replacer(
+        text=settings.defaults[lang].invoice_title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    comment = replacer(
+        text=settings.defaults[lang].invoice_comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    date_fmt = settings.defaults[lang].date_fmt
+    due_days = settings.defaults[lang].get_due_days()
+    round_price = settings.defaults[lang].get_invoice_round_price()
+
+    # return new Invoice object
+    return Invoice(
+        title=title,
+        comment=comment,
+        date_fmt=date_fmt,
+        date=date.today(),
+        due_days=due_days,
+        round_price=round_price
+    )
+
+
+def PresetInvoice(
+    invoice_preset=None,
+    settings=None,
+    global_list=None,
+    client=None,
+    project=None
+):
+    """Return new Invoice based on given invoice, but with string replacements."""
+    if type(invoice_preset) is not Invoice:
+        return NewInvoice(
+            settings=settings,
+            global_list=global_list,
+            client=client,
+            project=project
+        )
+
+    # get replaces
+    title = replacer(
+        text=invoice_preset.title,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    comment = replacer(
+        text=invoice_preset.comment,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
+    # get other values
+    date_fmt = invoice_preset.date_fmt
+    inv_date = invoice_preset.get_date()
+    due_days = invoice_preset.get_due_days()
+    due_date = invoice_preset.get_due_date()
+    due_remind = invoice_preset.get_due_remind()
+    wage = invoice_preset.get_wage()
+    round_price = invoice_preset.get_round_price()
+    entry_list = invoice_preset.get_entry_list()
+
+    # return new Invoice object
+    return Invoice(
+        title=title,
+        comment=comment,
+        date_fmt=date_fmt,
+        due_days=due_days,
+        due_date=due_date,
+        due_remind=due_remind,
+        date=off_date,
+        wage=wage,
+        round_price=round_price,
+        entry_list=entry_list
     )

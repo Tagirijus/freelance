@@ -17,6 +17,11 @@ class Default(object):
         offer_comment=None,
         offer_filename=None,
         offer_round_price=None,
+        invoice_title=None,
+        invoice_comment=None,
+        invoice_filename=None,
+        invoice_round_price=None,
+        invoice_due_days=None,
         templates=None,
         date_fmt=None,
         commodity=None,
@@ -55,11 +60,21 @@ class Default(object):
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.language = 'NEW' if language is None else language
+
         self.offer_title = '' if offer_title is None else offer_title
         self.offer_comment = '' if offer_comment is None else offer_comment
         self.offer_filename = '' if offer_filename is None else offer_filename
         self._offer_round_price = False                 # set default
         self.set_offer_round_price(offer_round_price)   # try to set arguments value
+
+        self.invoice_title = '' if invoice_title is None else invoice_title
+        self.invoice_comment = '' if invoice_comment is None else invoice_comment
+        self.invoice_filename = '' if invoice_filename is None else invoice_filename
+        self._invoice_round_price = False                   # set default
+        self.set_invoice_round_price(invoice_round_price)   # try to set arguments value
+        self._invoice_due_days = 7                          # set default
+        self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
+
         self._templates = {}                             # set default
         self.set_templates(templates)                     # try to set arguments value
         self.date_fmt = '' if date_fmt is None else date_fmt
@@ -159,6 +174,25 @@ class Default(object):
     def get_offer_round_price(self):
         """Get offer_round_price."""
         return self._offer_round_price
+
+    def set_invoice_round_price(self, value):
+        """Set invoice_round_price."""
+        self._invoice_round_price = bool(value)
+
+    def get_invoice_round_price(self):
+        """Get invoice_round_price."""
+        return self._invoice_round_price
+
+    def set_invoice_due_days(self, value):
+        """Set invoice_due_days."""
+        try:
+            self._invoice_due_days = int(value)
+        except Exception:
+            pass
+
+    def get_invoice_due_days(self):
+        """Get invoice_due_days."""
+        return self._invoice_due_days
 
     def set_project_hours_per_day(self, value):
         """Set set_project_hours_per_day."""
@@ -283,11 +317,19 @@ class Default(object):
 
         # fetch all setting variables
         out['language'] = self.language
+
         out['offer_title'] = self.offer_title
         out['offer_comment'] = self.offer_comment
-        out['templates'] = self._templates
         out['offer_filename'] = self.offer_filename
         out['offer_round_price'] = self._offer_round_price
+
+        out['invoice_title'] = self.invoice_title
+        out['invoice_comment'] = self.invoice_comment
+        out['invoice_filename'] = self.invoice_filename
+        out['invoice_round_price'] = self._invoice_round_price
+        out['invoice_due_days'] = self._invoice_due_days
+
+        out['templates'] = self._templates
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
@@ -353,14 +395,29 @@ class Default(object):
         if 'offer_comment' in js.keys():
             self.offer_comment = js['offer_comment']
 
-        if 'templates' in js.keys():
-            self._templates = js['templates']
-
         if 'offer_filename' in js.keys():
             self.offer_filename = js['offer_filename']
 
         if 'offer_round_price' in js.keys():
             self.set_offer_round_price(js['offer_round_price'])
+
+        if 'invoice_title' in js.keys():
+            self.invoice_title = js['invoice_title']
+
+        if 'invoice_comment' in js.keys():
+            self.invoice_comment = js['invoice_comment']
+
+        if 'invoice_filename' in js.keys():
+            self.invoice_filename = js['invoice_filename']
+
+        if 'invoice_round_price' in js.keys():
+            self.set_invoice_round_price(js['invoice_round_price'])
+
+        if 'invoice_due_days' in js.keys():
+            self.set_invoice_due_days(js['invoice_due_days'])
+
+        if 'templates' in js.keys():
+            self._templates = js['templates']
 
         if 'date_fmt' in js.keys():
             self.date_fmt = js['date_fmt']
@@ -503,6 +560,11 @@ class Default(object):
             offer_comment=self.offer_comment,
             offer_filename=self.offer_filename,
             offer_round_price=self._offer_round_price,
+            invoice_title=self.invoice_title,
+            invoice_comment=self.invoice_comment,
+            invoice_filename=self.invoice_filename,
+            invoice_round_price=self._invoice_round_price,
+            invoice_due_days=self._invoice_due_days,
             templates=self._templates,
             date_fmt=self.date_fmt,
             commodity=self.commodity,

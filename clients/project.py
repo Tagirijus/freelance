@@ -7,6 +7,7 @@ The classes do not have privat values and setter and getter methods!
 from decimal import Decimal
 import json
 from offer.offerinvoice import Offer
+from offer.offerinvoice import Invoice
 
 
 class Project(object):
@@ -20,7 +21,8 @@ class Project(object):
         work_days=None,
         minimum_days=None,
         wage=None,
-        offer_list=None
+        offer_list=None,
+        invoice_list=None
     ):
         """Initialize the class."""
         self.client_id = 'no_id' if client_id is None else str(client_id)
@@ -35,6 +37,8 @@ class Project(object):
         self.set_wage(wage)                     # try to set arguments value
         self._offer_list = []                   # set default
         self.set_offer_list(offer_list)         # try to set arguments value
+        self._invoice_list = []                 # set default
+        self.set_invoice_list(invoice_list)     # try to set arguments value
 
     def set_hours_per_day(self, value):
         """Set hours_per_day."""
@@ -88,6 +92,15 @@ class Project(object):
         """Get offer_list."""
         return self._offer_list
 
+    def set_invoice_list(self, value):
+        """Set invoice_list."""
+        if type(value) is list:
+            self._invoice_list = value
+
+    def get_invoice_list(self):
+        """Get invoice_list."""
+        return self._invoice_list
+
     def append_offer(self, offer=None):
         """Append offer to project."""
         if type(offer) is Offer:
@@ -97,6 +110,18 @@ class Project(object):
         """Pop offer from project."""
         try:
             self._offer_list.pop(index)
+        except Exception:
+            pass
+
+    def append_invoice(self, invoice=None):
+        """Append invoice to project."""
+        if type(invoice) is Invoice:
+            self._invoice_list.append(invoice)
+
+    def pop_invoice(self, index=None):
+        """Pop invoice from project."""
+        try:
+            self._invoice_list.pop(index)
         except Exception:
             pass
 
@@ -128,6 +153,13 @@ class Project(object):
             except Exception:
                 out['offer_list'].append(offer)
 
+        out['invoice_list'] = []
+        for invoice in self._invoice_list:
+            try:
+                out['invoice_list'].append(invoice.to_dict())
+            except Exception:
+                out['invoice_list'].append(invoice)
+
         return out
 
     def to_json(self, indent=2, ensure_ascii=False):
@@ -154,6 +186,22 @@ class Project(object):
                     ))
 
         return offer_list
+
+    def load_invoice_list_from_js(self, lis=None):
+        """Convert list to invoice object list."""
+        invoice_list = []
+        # cycle through the list of dicts
+        for invoice in lis:
+            # it should have a type key
+            if 'type' in invoice.keys():
+                # this type key should be "Invoice"
+                if invoice['type'] == 'Invoice':
+                    # convert this dict to an invoice objetc then!
+                    invoice_list.append(Invoice().from_json(
+                        js=invoice
+                    ))
+
+        return invoice_list
 
     @classmethod
     def from_json(cls, js=None):
@@ -206,6 +254,12 @@ class Project(object):
         else:
             offer_list = None
 
+        if 'invoice_list' in js.keys():
+            invoice_list = js['invoice_list']
+            invoice_list = cls().load_invoice_list_from_js(lis=invoice_list)
+        else:
+            invoice_list = None
+
         # return new object
         return cls(
             client_id=client_id,
@@ -214,7 +268,8 @@ class Project(object):
             work_days=work_days,
             minimum_days=minimum_days,
             wage=wage,
-            offer_list=offer_list
+            offer_list=offer_list,
+            invoice_list=invoice_list
         )
 
     def copy(self):
