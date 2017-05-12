@@ -9,7 +9,7 @@ import npyscreen
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offer import Offer
+from offer.offerinvoice import Offer
 
 
 class PresetList(npyscreen.MultiLineAction):
@@ -54,7 +54,7 @@ class PresetList(npyscreen.MultiLineAction):
                 entry_preset=entry,
                 settings=self.parent.parentApp.S,
                 global_list=self.parent.parentApp.L,
-                client=client,
+                client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
             self.parent.parentApp.setNextForm('BaseEntry')
@@ -66,7 +66,7 @@ class PresetList(npyscreen.MultiLineAction):
                 entry_preset=entry,
                 settings=self.parent.parentApp.S,
                 global_list=self.parent.parentApp.L,
-                client=client,
+                client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
             self.parent.parentApp.setNextForm('MultiplyEntry')
@@ -78,7 +78,7 @@ class PresetList(npyscreen.MultiLineAction):
                 entry_preset=entry,
                 settings=self.parent.parentApp.S,
                 global_list=self.parent.parentApp.L,
-                client=client,
+                client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
             self.parent.parentApp.setNextForm('ConnectEntry')

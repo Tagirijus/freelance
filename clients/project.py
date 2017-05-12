@@ -6,7 +6,7 @@ The classes do not have privat values and setter and getter methods!
 
 from decimal import Decimal
 import json
-from offer.offer import Offer
+from offer.offerinvoice import Offer
 
 
 class Project(object):

@@ -8,7 +8,7 @@ from general.settings import Settings
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offer import Offer
+from offer.offerinvoice import Offer
 import os
 
 from general.debug import debug

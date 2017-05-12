@@ -1,7 +1,7 @@
 """Class for preset management."""
 
 import json
-from offer.offer import Offer
+from offer.offerinvoice import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry

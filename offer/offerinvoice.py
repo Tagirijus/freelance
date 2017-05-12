@@ -14,7 +14,7 @@ from offer.offeramounttime import OfferAmountTime
 import os
 
 
-class Offer(object):
+class OfferInvoice(object):
     """A class holding a list of entries."""
 
     def __init__(
@@ -449,8 +449,8 @@ class Offer(object):
         replace_me['COMMENT'] = self.comment
 
         replace_me['WAGE'] = '{} {}/h'.format(
-             self.get_wage(project=project),
-             commodity
+            self.get_wage(project=project),
+            commodity
         )
 
         price_total = self.get_price_total(
@@ -536,3 +536,7 @@ class Offer(object):
         output.close()
 
         return True
+
+
+class Offer(OfferInvoice):
+    """The offer object."""

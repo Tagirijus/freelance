@@ -25,7 +25,7 @@ from npy_gui.npy_presetform import PresetForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
 from offer.entries import BaseEntry
-from offer.offer import Offer
+from offer.offerinvoice import Offer
 import os
 
 
@@ -108,7 +108,8 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.addForm(
             'Client',
             ClientForm,
-            name='Freelance > Client'
+            name='Freelance > Client',
+            color='NO_EDIT'
         )
         self.addForm(
             'Project',
