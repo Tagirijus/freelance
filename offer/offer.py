@@ -20,6 +20,7 @@ class Offer(object):
     def __init__(
         self,
         title=None,
+        comment=None,
         date_fmt=None,
         date=None,
         wage=None,
@@ -28,6 +29,7 @@ class Offer(object):
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
+        self.comment = '' if comment is None else str(comment)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
@@ -115,6 +117,7 @@ class Offer(object):
         # fetch the variables
         out['type'] = self.__class__.__name__
         out['title'] = self.title
+        out['comment'] = self.comment
         out['date_fmt'] = self.date_fmt
         try:
             out['date'] = self._date.strftime('%Y-%m-%d')
@@ -193,6 +196,11 @@ class Offer(object):
         else:
             title = None
 
+        if 'comment' in js.keys():
+            comment = js['comment']
+        else:
+            comment = None
+
         if 'date_fmt' in js.keys():
             date_fmt = js['date_fmt']
         else:
@@ -228,6 +236,7 @@ class Offer(object):
         # return new object
         return cls(
             title=title,
+            comment=comment,
             date_fmt=date_fmt,
             date=date,
             wage=wage,
@@ -417,7 +426,7 @@ class Offer(object):
             file = self.title.replace(' ', '_')
 
         # check if output file exists and alter the name then
-        file_num = 1
+        file_num = 2
         file_new = file + file_ext
         while os.path.isfile(file_new):
             file_new = file + '_' + str(file_num) + file_ext
@@ -433,47 +442,83 @@ class Offer(object):
         )
 
         # get own data for this offer as well
+        commodity = settings.defaults[client.language].commodity
+
         replace_me['TITLE'] = self.title
-        replace_me['WAGE'] = self.get_wage(project=project)
-        replace_me['PRICE_TOTAL'] = self.get_price_total(
+
+        replace_me['COMMENT'] = self.comment
+
+        replace_me['WAGE'] = '{} {}/h'.format(
+             self.get_wage(project=project),
+             commodity
+        )
+
+        price_total = self.get_price_total(
             wage=replace_me['WAGE'],
             project=project,
             round_price=self.get_round_price()
         )
-        replace_me['TAX_TOTAL'] = self.get_price_total(
+        replace_me['PRICE_TOTAL'] = '{} {}'.format(
+            price_total,
+            commodity
+        )
+
+        tax_total = self.get_price_total(
             wage=replace_me['WAGE'],
             project=project,
             tax=True,
-            round_price=self._round_price
+            round_price=self.get_round_price()
         )
-        replace_me['PRICE_TAX_TOTAL'] = (
-            replace_me['PRICE_TOTAL'] + replace_me['TAX_TOTAL']
+        replace_me['TAX_TOTAL'] = '{} {}'.format(
+            tax_total,
+            commodity
         )
+
+        replace_me['PRICE_TAX_TOTAL'] = '{} {}'.format(
+            price_total + tax_total,
+            commodity
+        )
+
         if self.date_fmt != '':
             replace_me['DATE'] = self._date.strftime(self.date_fmt)
         else:
             replace_me['DATE'] = self._date
+
         replace_me['FINISH_DATE'] = self.get_finish_date(project=project)
+
         replace_me['TIME_TOTAL'] = self.get_time_total()
 
         # get entries
         entries = []
+        position = 0
         for e in self._entry_list:
+            position += 1
+
+            time = e.get_time(
+                entry_list=self._entry_list
+            )
+
+            price = e.get_price(
+                entry_list=self._entry_list,
+                wage=replace_me['WAGE'],
+                round_price=self._round_price
+            )
+
+            tax = e.get_price_tax(
+                entry_list=self._entry_list,
+                wage=replace_me['WAGE'],
+                round_price=self._round_price
+            )
+
             entries.append(
                 {
+                    'POSITION': position,
                     'TITLE': e.title,
                     'COMMENT': e.comment,
+                    'TIME': time,
                     'AMOUNT': e.get_amount_str(),
-                    'PRICE': e.get_price(
-                        entry_list=self._entry_list,
-                        wage=replace_me['WAGE'],
-                        round_price=self._round_price
-                    ),
-                    'TAX': e.get_price_tax(
-                        entry_list=self._entry_list,
-                        wage=replace_me['WAGE'],
-                        round_price=self._round_price
-                    )
+                    'PRICE': '{} {}'.format(price, commodity),
+                    'TAX': '{} {}'.format(tax, commodity)
                 }
             )
 

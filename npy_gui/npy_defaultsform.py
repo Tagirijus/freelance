@@ -173,6 +173,16 @@ class TitleTemplatesList(npyscreen.TitleMultiLine):
     _entry_type = TemplatesListAction
 
 
+class TitleMultiLineEdit(npyscreen.TitleText):
+    """Titled MultiLineEdit."""
+
+    _entry_type = npyscreen.MultiLineEdit
+    scroll_exit = True
+
+    def reformat(self):
+        """Reformat the content."""
+        self.entry_widget.full_reformat()
+
 
 class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the general defaults."""
@@ -231,6 +241,13 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Offer title:',
             begin_entry_at=20
         )
+        self.offer_comment = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Offer comment:',
+            begin_entry_at=20,
+            max_height=2,
+            value=''
+        )
         self.offer_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer filename:',
@@ -271,6 +288,8 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Get the values from the active tmpDefault variable."""
         self.language.value = self.parentApp.tmpDefault.language
         self.offer_title.value = self.parentApp.tmpDefault.offer_title
+        self.offer_comment.value = self.parentApp.tmpDefault.offer_comment
+        self.offer_comment.reformat()
         self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
         self.offer_round_price.value = (
             [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
@@ -301,6 +320,9 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         # get stuff into tmpDefault
         self.parentApp.tmpDefault.language = language
         self.parentApp.tmpDefault.offer_title = self.offer_title.value
+        self.parentApp.tmpDefault.offer_comment = self.offer_comment.value.replace(
+            '\n', ' '
+        )
         self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
         if self.offer_round_price.value == [0]:
             self.parentApp.tmpDefault.set_offer_round_price(True)

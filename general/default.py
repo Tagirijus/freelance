@@ -14,6 +14,7 @@ class Default(object):
         data_path=None,
         language=None,
         offer_title=None,
+        offer_comment=None,
         offer_filename=None,
         offer_round_price=None,
         templates=None,
@@ -55,6 +56,7 @@ class Default(object):
         """Initialize the class and hard code defaults, if no file is given."""
         self.language = 'NEW' if language is None else language
         self.offer_title = '' if offer_title is None else offer_title
+        self.offer_comment = '' if offer_comment is None else offer_comment
         self.offer_filename = '' if offer_filename is None else offer_filename
         self._offer_round_price = False                 # set default
         self.set_offer_round_price(offer_round_price)   # try to set arguments value
@@ -146,7 +148,7 @@ class Default(object):
         self._templates[key] = value
 
     def del_template(self, key):
-        """try to delete templates entry."""
+        """Try to delete templates entry."""
         if key in self._templates:
             del self._templates[key]
 
@@ -282,6 +284,7 @@ class Default(object):
         # fetch all setting variables
         out['language'] = self.language
         out['offer_title'] = self.offer_title
+        out['offer_comment'] = self.offer_comment
         out['templates'] = self._templates
         out['offer_filename'] = self.offer_filename
         out['offer_round_price'] = self._offer_round_price
@@ -346,6 +349,9 @@ class Default(object):
 
         if 'offer_title' in js.keys():
             self.offer_title = js['offer_title']
+
+        if 'offer_comment' in js.keys():
+            self.offer_comment = js['offer_comment']
 
         if 'templates' in js.keys():
             self._templates = js['templates']
@@ -494,9 +500,10 @@ class Default(object):
         return Default(
             language=self.language,
             offer_title=self.offer_title,
-            templates=self._templates,
+            offer_comment=self.offer_comment,
             offer_filename=self.offer_filename,
             offer_round_price=self._offer_round_price,
+            templates=self._templates,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
             client_id=self.client_id,

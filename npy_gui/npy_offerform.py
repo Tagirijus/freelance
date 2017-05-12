@@ -388,6 +388,17 @@ class TitleMultiSelectRefresh(npyscreen.TitleMultiSelect):
         self.parent.update_info()
 
 
+class TitleMultiLineEdit(npyscreen.TitleText):
+    """Titled MultiLineEdit."""
+
+    _entry_type = npyscreen.MultiLineEdit
+    scroll_exit = True
+
+    def reformat(self):
+        """Reformat the content."""
+        self.entry_widget.full_reformat()
+
+
 class OfferForm(npyscreen.FormMultiPageActionWithMenus):
     """Form for editing the offer."""
 
@@ -517,10 +528,14 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.entries_box = self.add_widget_intelligent(
             EntryListBox,
             name=entries_title,
-            max_height=10
+            max_height=9
         )
 
         # create the info text section
+        row_a = 11
+        row_b = 12
+        row_c = 13
+        row_d = 14
         col_a = 35
         col_b = 51
         col_c = 61
@@ -531,70 +546,70 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             value='Sum:',
             editable=False,
             relx=col_a,
-            rely=12
+            rely=row_a
         )
         self.info_time = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_b,
-            rely=12
+            rely=row_a
         )
         self.info_price = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_c,
-            rely=12
+            rely=row_a
         )
         self.info_tax = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_d,
-            rely=12
+            rely=row_a
         )
         self.info_total_title = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='Total:',
             editable=False,
             relx=col_a,
-            rely=12
+            rely=row_a
         )
         self.info_price_total = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_c,
-            rely=13
+            rely=row_b
         )
         self.info_finish_title = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='Finish date:',
             editable=False,
             relx=col_a,
-            rely=15
+            rely=row_c
         )
         self.info_date = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_b,
-            rely=15
+            rely=row_c
         )
         self.info_wage_title = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='Wage / h:',
             editable=False,
             relx=col_a,
-            rely=16
+            rely=row_d
         )
         self.info_wage = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_c,
-            rely=16
+            rely=row_d
         )
         self.info_wage_tax = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_d,
-            rely=16
+            rely=row_d
         )
         self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
@@ -607,6 +622,13 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             TitleTextRefresh,
             name='Title:',
             begin_entry_at=20
+        )
+        self.comment = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Comment:',
+            begin_entry_at=20,
+            max_height=2,
+            value=''
         )
         self.date = self.add_widget_intelligent(
             TitleDateComboRefresh,
@@ -700,6 +722,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         """Get values from temp object."""
         self.entries_box.entry_widget.update_values()
         self.title.value = self.parentApp.tmpOffer.title
+        self.comment.value = self.parentApp.tmpOffer.comment
+        self.comment.reformat()
         self.date.value = self.parentApp.tmpOffer.get_date()
         self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
         self.wage.value = str(self.parentApp.tmpOffer.get_wage())
@@ -721,6 +745,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             self.entries_box.entry_widget.values
         )
         self.parentApp.tmpOffer.title = self.title.value
+        self.parentApp.tmpOffer.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpOffer.set_date(self.date.value)
         self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
         self.parentApp.tmpOffer.set_wage(self.wage.value)
