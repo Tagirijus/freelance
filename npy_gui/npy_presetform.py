@@ -36,17 +36,13 @@ class PresetList(npyscreen.MultiLineAction):
 
         entry = act_on_this
 
-        client = self.parent.parentApp.L.get_client_by_id(
-            client_id=self.parent.parentApp.tmpProject.client_id
-        )
-
         # it's an Offer
         if type(entry) is Offer:
             self.parent.parentApp.tmpOffer = PresetOffer(
                 offer_preset=entry,
                 settings=self.parent.parentApp.S,
                 global_list=self.parent.parentApp.L,
-                client=client,
+                client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_date=False)
             self.parent.parentApp.setNextForm('Offer')

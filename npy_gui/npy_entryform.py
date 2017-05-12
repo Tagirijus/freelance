@@ -42,15 +42,11 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         """Replace the strings."""
         self.values_to_tmp()
 
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-
         self.parentApp.tmpEntry = PresetBaseEntry(
             entry_preset=self.parentApp.tmpEntry,
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
-            client=client,
+            client=self.parentApp.tmpClient,
             project=self.parentApp.tmpProject
         )
 
@@ -262,15 +258,11 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         """Replace the strings."""
         self.values_to_tmp()
 
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-
         self.parentApp.tmpEntry = PresetMultiplyEntry(
             entry_preset=self.parentApp.tmpEntry,
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
-            client=client,
+            client=self.parentApp.tmpClient,
             project=self.parentApp.tmpProject
         )
 
@@ -475,15 +467,11 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         """Replace the strings."""
         self.values_to_tmp()
 
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-
         self.parentApp.tmpEntry = PresetConnectEntry(
             entry_preset=self.parentApp.tmpEntry,
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
-            client=client,
+            client=self.parentApp.tmpClient,
             project=self.parentApp.tmpProject
         )
 

@@ -97,22 +97,14 @@ class OfferList(npyscreen.MultiLineAction):
 
     def add_offer(self, keypress=None):
         """Add a new offer to the project."""
-        # get the selected project
-        project = self.parent.parentApp.tmpProject
-
-        # get its client
-        client = self.parent.parentApp.L.get_client_by_id(
-            client_id=project.client_id
-        )
-
         # prepare tmpOffer
         self.parent.parentApp.tmpOffer_new = True
         self.parent.parentApp.tmpOffer_index = self.cursor_line
         self.parent.parentApp.tmpOffer = NewOffer(
             settings=self.parent.parentApp.S,
             global_list=self.parent.parentApp.L,
-            client=client,
-            project=project
+            client=self.parent.parentApp.tmpClient,
+            project=self.prent.parentApp.tmpProject
         )
 
         # switch to offer form
@@ -125,10 +117,7 @@ class OfferList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
-        # get the selected project
-        project = self.parent.parentApp.tmpProject
-
-        offer = project.get_offer_list()[self.cursor_line]
+        offer = self.parent.parentApp.tmpProject.get_offer_list()[self.cursor_line]
 
         really = npyscreen.notify_yes_no(
             'Really delete offer "{}" from the project?'.format(offer.title),
@@ -148,11 +137,6 @@ class OfferList(npyscreen.MultiLineAction):
             # get the selected project
             self.parent.values_to_tmp()
             project = self.parent.parentApp.tmpProject
-
-            # get its client
-            client = self.parent.parentApp.L.get_client_by_id(
-                client_id=project.client_id
-            )
 
             # get the actual offer into temp offer
             self.parent.parentApp.tmpOffer = act_on_this.copy()
@@ -321,13 +305,9 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         except Exception:
             pass
 
-        # get actual caption for form
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
 
         self.name = '{} > {}'.format(
-            client.fullname(),
+            self.parentApp.tmpClient.fullname(),
             self.parentApp.tmpProject.title
         )
 

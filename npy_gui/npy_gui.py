@@ -15,6 +15,7 @@ from npy_gui.npy_defaultsform import DefaultsEntryForm
 from npy_gui.npy_entryform import BaseEntryForm
 from npy_gui.npy_entryform import MultiplyEntryForm
 from npy_gui.npy_entryform import ConnectEntryForm
+from npy_gui.npy_exportform import ExportForm
 from npy_gui.npy_helpform import HelpForm
 from npy_gui.npy_inactiveform import InactiveForm
 from npy_gui.npy_mainform import MainForm
@@ -60,7 +61,6 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpClient_new = True
         self.tmpProject = Project()
         self.tmpProject_new = True
-        self.tmpProject_client = Client()
         self.tmpOffer = Offer()
         self.tmpOffer_new = True
         self.tmpOffer_index = -1
@@ -149,4 +149,9 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Presets',
             PresetForm,
             name='Choose a preset'
+        )
+        self.addForm(
+            'Export',
+            ExportForm,
+            name='Choose a template'
         )

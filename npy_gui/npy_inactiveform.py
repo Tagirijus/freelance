@@ -71,7 +71,7 @@ class ClientList(npyscreen.MultiLineAction):
         if really:
             add_worked = self.parent.parentApp.L.activate_client(
                 client=tmp_client,
-                inactive_dir=self.parent.parentApp.S.inactive_dir,
+                settings=self.parent.parentApp.S,
                 inactive_list=self.parent.iL
             )
 
@@ -163,7 +163,7 @@ class ProjectList(npyscreen.MultiLineAction):
         if really:
             add_worked = self.parent.parentApp.L.activate_project(
                 project=tmp_project,
-                inactive_dir=self.parent.parentApp.S.inactive_dir,
+                settings=self.parent.parentApp.S,
                 inactive_list=self.parent.iL
             )
 

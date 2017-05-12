@@ -211,14 +211,18 @@ class List(object):
         except Exception:
             return False
 
-    def activate_client(self, client=None, inactive_dir=None, inactive_list=None):
+    def activate_client(self, client=None, settings=None, inactive_list=None):
         """Add client and move its file from the inactive dir."""
+        # cancel if no settings object is given
+        if type(settings) is not Settings:
+            return False
+
         # create absolute path to deactivated_dir and working dir
         path = self.data_path + self.client_dir
-        path_deact = path + str(inactive_dir)
+        path_deact = path + str(settings.inactive_dir)
 
         # check arguments and directory
-        one_not_set = client is None or inactive_dir is None or inactive_list is None
+        one_not_set = client is None or settings is None or inactive_list is None
         is_client = type(client) is Client
         is_dir = os.path.isdir(path_deact)
 
@@ -234,6 +238,10 @@ class List(object):
 
         # move the old file to the inactive directory and add variable to list
         try:
+            # check if the language exists and adjust it, if not
+            if client.language not in settings.get_languages():
+                client.language = 'en'
+
             # add client to the active list
             added = self.add_client(client=client)
 
@@ -352,14 +360,18 @@ class List(object):
         except Exception:
             return False
 
-    def activate_project(self, project=None, inactive_dir=None, inactive_list=None):
+    def activate_project(self, project=None, settings=None, inactive_list=None):
         """Add project and move its file from the inactive dir."""
+        # cancel if no settings object is given
+        if type(settings) is not Settings:
+            return False
+
         # create absolute path to deactivated_dir and working dir
         path = self.data_path + self.project_dir
-        path_deact = path + str(inactive_dir)
+        path_deact = path + str(settings.inactive_dir)
 
         # check arguments and directory
-        one_not_set = project is None or inactive_dir is None or inactive_list is None
+        one_not_set = project is None or settings is None or inactive_list is None
         is_project = type(project) is Project
         is_dir = os.path.isdir(path_deact)
 

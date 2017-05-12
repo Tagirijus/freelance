@@ -1,20 +1,17 @@
-"""
-The class holds a list of entries.
-
-The classes do not have privat values and setter and getter methods!
-"""
+"""The class holds a list of entries."""
 
 from datetime import date as ddate
 from datetime import datetime
 from datetime import timedelta
 from decimal import Decimal
+from general import check_objects
+from general.replacer import replacer
 import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.offeramounttime import OfferAmountTime
-
-from general.debug import debug
+import os
 
 
 class Offer(object):
@@ -74,7 +71,7 @@ class Offer(object):
     def get_wage(self, project=None):
         """Get wage."""
         # tr to get projects wage
-        if self.is_project(project):
+        if check_objects.is_project(project):
             p_wage = project.get_wage()
         else:
             p_wage = Decimal(0)
@@ -323,7 +320,7 @@ class Offer(object):
         """Calculate and return the finish date."""
         # if no projetc is given, return 1987-15-10
         # if not is_project(project):
-        if not self.is_project(project):
+        if not check_objects.is_project(project):
             return ddate(1987, 10, 15)
 
         # get time needed for this offer
@@ -357,15 +354,140 @@ class Offer(object):
 
         return date
 
-    def is_project(self, project=None):
-        """
-        Check if given argument is project object.
-
-        This is some kind of workaround, since I canot import the Project class
-        into Offer module due to circular dependencies. Do I really still have
-        a that bad programm manufacture? )=
-        """
+    def export_to_openoffice(
+        self,
+        client=None,
+        project=None,
+        global_list=None,
+        settings=None,
+        template=None,
+        file=None
+    ):
+        """Export the offer to an open office file with the secretary module."""
         try:
-            return project.i_am_project()
+            import secretary
         except Exception:
             return False
+
+        is_client = check_objects.is_client(client)
+        is_project = check_objects.is_project(project)
+        is_list = check_objects.is_list(global_list)
+        is_settings = check_objects.is_settings(settings)
+        is_template = os.path.isfile(template)
+        one_not_correct = (
+            not is_client or
+            not is_project or
+            not is_list or
+            not is_settings or
+            not is_template
+        )
+
+        # cancel if one argument is not valid
+        if one_not_correct:
+            return False
+
+        # cancel if template does not exist
+        if not os.path.isfile(template):
+            return False
+
+        # get extension from template
+        template_name, template_ext = os.path.splitext(template)
+
+        # get accordingly extension for filename
+        if template_ext == '.ott' or template_ext == '.odt':
+            file_ext = '.odt'
+        elif template_ext == '.ots' or template_ext == '.ods':
+            file_ext = '.ods'
+        else:
+            # cancel if template is no openoffice template
+            return False
+
+        # get filename with replaced values, if file not empty
+        if file != '':
+            file = replacer(
+                text=file,
+                settings=settings,
+                client=client,
+                project=project,
+                global_list=global_list
+            ).replace(' ', '_')
+
+        # use the offer title as filename
+        else:
+            file = self.title.replace(' ', '_')
+
+        # check if output file exists and alter the name then
+        file_num = 1
+        file_new = file + file_ext
+        while os.path.isfile(file_new):
+            file_new = file + '_' + str(file_num) + file_ext
+            file_num += 1
+        file = file_new
+
+        # get replacement dict
+        replace_me = replacer(
+            settings=settings,
+            client=client,
+            project=project,
+            global_list=global_list
+        )
+
+        # get own data for this offer as well
+        replace_me['TITLE'] = self.title
+        replace_me['WAGE'] = self.get_wage(project=project)
+        replace_me['PRICE_TOTAL'] = self.get_price_total(
+            wage=replace_me['WAGE'],
+            project=project,
+            round_price=self.get_round_price()
+        )
+        replace_me['TAX_TOTAL'] = self.get_price_total(
+            wage=replace_me['WAGE'],
+            project=project,
+            tax=True,
+            round_price=self._round_price
+        )
+        replace_me['PRICE_TAX_TOTAL'] = (
+            replace_me['PRICE_TOTAL'] + replace_me['TAX_TOTAL']
+        )
+        if self.date_fmt != '':
+            replace_me['DATE'] = self._date.strftime(self.date_fmt)
+        else:
+            replace_me['DATE'] = self._date
+        replace_me['FINISH_DATE'] = self.get_finish_date(project=project)
+        replace_me['TIME_TOTAL'] = self.get_time_total()
+
+        # get entries
+        entries = []
+        for e in self._entry_list:
+            entries.append(
+                {
+                    'TITLE': e.title,
+                    'COMMENT': e.comment,
+                    'AMOUNT': e.get_amount_str(),
+                    'PRICE': e.get_price(
+                        entry_list=self._entry_list,
+                        wage=replace_me['WAGE'],
+                        round_price=self._round_price
+                    ),
+                    'TAX': e.get_price_tax(
+                        entry_list=self._entry_list,
+                        wage=replace_me['WAGE'],
+                        round_price=self._round_price
+                    )
+                }
+            )
+
+        # final endering
+        engine = secretary.Renderer()
+
+        result = engine.render(
+            template,
+            entries=entries,
+            data=replace_me
+        )
+
+        output = open(file, 'wb')
+        output.write(result)
+        output.close()
+
+        return True

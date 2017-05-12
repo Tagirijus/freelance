@@ -17,11 +17,6 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
-        # get client
-        client = self.parent.parentApp.L.get_client_by_id(
-            client_id=self.parent.parentApp.tmpProject.client_id
-        )
-
         # general was chosen
         if act_on_this == 'Base entry':
 
@@ -46,7 +41,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default BaseEntry
                 new_entry = NewBaseEntry(
                     settings=self.parent.parentApp.S,
-                    client=client,
+                    global_list=self.parent.parentApp.L,
+                    client=self.parent.parentApp.tmpClient,
                     project=self.parent.parentApp.tmpProject
                 )
 
@@ -81,7 +77,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default MultiplyEntry
                 new_entry = NewMultiplyEntry(
                     settings=self.parent.parentApp.S,
-                    client=client,
+                    global_list=self.parent.parentApp.L,
+                    client=self.parent.parentApp.tmpClient,
                     project=self.parent.parentApp.tmpProject
                 )
 
@@ -116,7 +113,8 @@ class EntryChooseList(npyscreen.MultiLineAction):
                 # get default ConnectEntry
                 new_entry = NewConnectEntry(
                     settings=self.parent.parentApp.S,
-                    client=client,
+                    global_list=self.parent.parentApp.L,
+                    client=self.parent.parentApp.tmpClient,
                     project=self.parent.parentApp.tmpProject
                 )
 
@@ -233,19 +231,14 @@ class EntryList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display the entries."""
-        # get client
-        client = self.parent.parentApp.L.get_client_by_id(
-            client_id=self.parent.parentApp.tmpProject.client_id
-        )
-        lang = client.language
-
-        # values
         title = vl.title[:29]
         amount = vl.get_amount_str()[:14]
         time = str(vl.get_time_zero(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
         ))
-        price_com = self.parent.parentApp.S.defaults[lang].commodity
+        price_com = self.parent.parentApp.S.defaults[
+            self.parent.parentApp.tmpClient.language
+        ].commodity
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
             wage=self.parent.parentApp.tmpOffer.get_wage(
@@ -425,15 +418,11 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         """Replace the strings."""
         self.values_to_tmp()
 
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-
         self.parentApp.tmpOffer = PresetOffer(
             offer_preset=self.parentApp.tmpOffer,
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
-            client=client,
+            client=self.parentApp.tmpClient,
             project=self.parentApp.tmpProject
         )
 
@@ -484,6 +473,12 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
                 form_color='WARNING'
             )
 
+    def export(self):
+        """Export the offer."""
+        self.values_to_tmp()
+        self.parentApp.setNextForm('Export')
+        self.parentApp.switchFormNow()
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -507,6 +502,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
         self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
+        self.m.addItem(text='Export', onSelect=self.export, shortcut='^X')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -638,12 +634,10 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
     def update_info(self):
         """Update info for the offer - summerize etc."""
-        # get client and commodity for info text preparation
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-        lang = client.language
-        price_com = self.parentApp.S.defaults[lang].commodity
+        # get commodity for info text preparation
+        price_com = self.parentApp.S.defaults[
+            self.parentApp.tmpClient.language
+        ].commodity
 
         # update info texts / summerizing stuff etc.
         time = self.parentApp.tmpOffer.get_time_total()
@@ -714,12 +708,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.update_info()
 
         # get actual caption for form
-        client = self.parentApp.L.get_client_by_id(
-            client_id=self.parentApp.tmpProject.client_id
-        )
-
         self.name = '{} > {} > {}'.format(
-            client.fullname(),
+            self.parentApp.tmpClient.fullname(),
             self.parentApp.tmpProject.title,
             self.parentApp.tmpOffer.title
         )
