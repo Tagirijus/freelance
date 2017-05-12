@@ -113,17 +113,20 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.addForm(
             'Project',
             ProjectForm,
-            name='Freelance > Project'
+            name='Freelance > Project',
+            color='NO_EDIT'
         )
         self.addForm(
             'Inactive',
             InactiveForm,
-            name='Freelance > Inactive clients and projects'
+            name='Freelance > Inactive clients and projects',
+            color='WARNING'
         )
         self.addForm(
             'Offer',
             OfferForm,
-            name='Freelance > Project > Offer'
+            name='Freelance > Project > Offer',
+            color='NO_EDIT'
         )
         self.addForm(
             'EntryChoose',
@@ -133,22 +136,26 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.addForm(
             'BaseEntry',
             BaseEntryForm,
-            name='Freelance > Project > Offer > Base entry'
+            name='Freelance > Project > Offer > Base entry',
+            color='NO_EDIT'
         )
         self.addForm(
             'MultiplyEntry',
             MultiplyEntryForm,
-            name='Freelance > Project > Offer > Multiply entry'
+            name='Freelance > Project > Offer > Multiply entry',
+            color='NO_EDIT'
         )
         self.addForm(
             'ConnectEntry',
             ConnectEntryForm,
-            name='Freelance > Project > Offer > Connect entry'
+            name='Freelance > Project > Offer > Connect entry',
+            color='NO_EDIT'
         )
         self.addForm(
             'Presets',
             PresetForm,
-            name='Choose a preset'
+            name='Choose a preset',
+            color='WARNING'
         )
         self.addForm(
             'Export',
