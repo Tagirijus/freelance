@@ -589,7 +589,19 @@ class OfferInvoice(object):
                 round_price=self._round_price
             )
 
+            price_unit = e.get_unit_price(
+                entry_list=self._entry_list,
+                wage=self.get_wage(project=project),
+                round_price=self._round_price
+            )
+
             tax = e.get_price_tax(
+                entry_list=self._entry_list,
+                wage=self.get_wage(project=project),
+                round_price=self._round_price
+            )
+
+            tax_unit = e.get_unit_price_tax(
                 entry_list=self._entry_list,
                 wage=self.get_wage(project=project),
                 round_price=self._round_price
@@ -603,7 +615,9 @@ class OfferInvoice(object):
                     'TIME': time,
                     'AMOUNT': e.get_amount_str(),
                     'PRICE': '{} {}'.format(price, commodity),
-                    'TAX': '{} {}'.format(tax, commodity)
+                    'UNIT_PRICE': '{} {}'.format(price_unit, commodity),
+                    'TAX': '{} {}'.format(tax, commodity),
+                    'UNIT_TAX': '{} {}'.format(tax_unit, commodity)
                 }
             )
 

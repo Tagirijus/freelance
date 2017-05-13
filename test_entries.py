@@ -318,6 +318,7 @@ def test_entry_tax_set():
     assert taxi.get_tax() == Decimal('0.45')
     assert taxi.get_tax_percent() == Decimal('45')
 
+
 def test_entry_tax_price():
     """Test the price calculation with tax."""
     blubb = MultiplyEntry(
@@ -353,3 +354,51 @@ def test_copy_entry():
 
     # now bc is a copy of ac, but with its own ID
     assert ac.get_id() != bc.get_id()
+
+
+def test_unit_price():
+    """Test unit price and unit price tax methods."""
+    # BaseEntry
+    a_unitp = BaseEntry(
+        amount=2,
+        price=100
+    )
+
+    assert a_unitp.get_price() == Decimal('200.00')
+    assert a_unitp.get_unit_price() == Decimal('100.00')
+
+    # MultiplyEntry
+    b_unitp = MultiplyEntry(
+        amount=2,
+        hour_rate='0:30'
+    )
+
+    assert b_unitp.get_price(wage=Decimal('50.00')) == Decimal('50.00')
+    assert b_unitp.get_unit_price(wage=Decimal('50.00')) == Decimal('25.00')
+
+    # ConnectEntry
+    c_unitp = ConnectEntry(
+        amount=3,
+        multiplicator=2
+    )
+
+    # list creation
+    liste = []
+    liste.append(b_unitp)
+    liste.append(c_unitp)
+
+    # linking
+    liste[1].connect_entry(
+        entry_list=liste,
+        entry_id=liste[0].get_id()
+    )
+
+    assert c_unitp.get_price(
+        entry_list=liste,
+        wage=Decimal('50.00')
+    ) == Decimal('300.00')
+
+    assert c_unitp.get_unit_price(
+        entry_list=liste,
+        wage=Decimal('50.00')
+    ) == Decimal('100.00')

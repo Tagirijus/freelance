@@ -9,8 +9,6 @@ import json
 from offer.offeramounttime import OfferAmountTime
 import uuid
 
-from general.debug import debug
-
 
 class BaseEntry(object):
     """A very simple entry with basic options and FIXED values."""
@@ -174,6 +172,35 @@ class BaseEntry(object):
             rounder = 2
         return round(self._price * self._amount.get(), rounder)
 
+    def get_unit_price(self, round_price=False, *args, **kwargs):
+        """Get price / amount."""
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+
+        # divide with amount, if its > 0
+        if self._amount.get() > 0:
+            return round(
+                self.get_price(
+                    round_price=round_price,
+                    *args,
+                    **kwargs
+                ) / self._amount.get(),
+                rounder
+            )
+
+        # fallback output: simple get_price
+        else:
+            return round(
+                self.get_price(
+                    round_price=round_price,
+                    *args,
+                    **kwargs
+                ),
+                rounder
+            )
+
     def get_price_raw(self):
         """Get raw price value."""
         return self._price
@@ -185,11 +212,43 @@ class BaseEntry(object):
         else:
             rounder = 2
 
-        return round(self._tax * self.get_price(
-            round_price=round_price,
-            *args,
-            **kwargs
-        ), rounder)
+        return round(
+            self._tax * self.get_price(
+                round_price=round_price,
+                *args,
+                **kwargs
+            ),
+            rounder
+        )
+
+    def get_unit_price_tax(self, round_price=False, *args, **kwargs):
+        """Get price_tax / amount."""
+        if round_price:
+            rounder = 0
+        else:
+            rounder = 2
+
+        # divide with amount, if its > 0
+        if self._amount.get() > 0:
+            return round(
+                self.get_price_tax(
+                    round_price=round_price,
+                    *args,
+                    **kwargs
+                ) / self._amount.get(),
+                rounder
+            )
+
+        # fallback output: simple get_price
+        else:
+            return round(
+                self.get_price_tax(
+                    round_price=round_price,
+                    *args,
+                    **kwargs
+                ),
+                rounder
+            )
 
     def get_price_sum(self, *args, **kwargs):
         """Get tax of price plus price without tax summerized."""
