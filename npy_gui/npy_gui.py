@@ -21,11 +21,13 @@ from npy_gui.npy_inactiveform import InactiveForm
 from npy_gui.npy_mainform import MainForm
 from npy_gui.npy_offerform import EntryChooseForm
 from npy_gui.npy_offerform import OfferForm
+from npy_gui.npy_invoiceform import InvoiceForm
 from npy_gui.npy_presetform import PresetForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
 from offer.entries import BaseEntry
 from offer.offerinvoice import Offer
+from offer.offerinvoice import Invoice
 import os
 
 
@@ -64,10 +66,14 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         self.tmpOffer = Offer()
         self.tmpOffer_new = True
         self.tmpOffer_index = -1
+        self.tmpInvoice = Invoice()
+        self.tmpInvoice_new = True
+        self.tmpInvoice_index = -1
         self.tmpEntry = BaseEntry()
         self.tmpEntry_new = True
         self.tmpEntry_index = -1
         self.tmpEntry_change_type = False
+        self.tmpEntry_offer_invoice = 'offer'
 
         # create the forms
         self.addForm(
@@ -127,6 +133,12 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Offer',
             OfferForm,
             name='Freelance > Project > Offer',
+            color='NO_EDIT'
+        )
+        self.addForm(
+            'Invoice',
+            InvoiceForm,
+            name='Freelance > Project > Invoice',
             color='NO_EDIT'
         )
         self.addForm(

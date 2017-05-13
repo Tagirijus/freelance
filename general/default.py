@@ -72,7 +72,7 @@ class Default(object):
         self.invoice_filename = '' if invoice_filename is None else invoice_filename
         self._invoice_round_price = False                   # set default
         self.set_invoice_round_price(invoice_round_price)   # try to set arguments value
-        self._invoice_due_days = 7                          # set default
+        self._invoice_due_days = 14                         # set default
         self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
 
         self._templates = {}                             # set default

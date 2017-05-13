@@ -531,7 +531,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
 
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
-    due_days = settings.defaults[lang].get_due_days()
+    due_days = settings.defaults[lang].get_invoice_due_days()
     round_price = settings.defaults[lang].get_invoice_round_price()
 
     # return new Invoice object

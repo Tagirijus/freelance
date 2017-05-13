@@ -20,17 +20,31 @@ class TemplateChooseList(npyscreen.MultiLineAction):
 
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
-        # export with selected template
-        exported = self.parent.parentApp.tmpOffer.export_to_openoffice(
-            client=self.parent.parentApp.tmpClient,
-            project=self.parent.parentApp.tmpProject,
-            global_list=self.parent.parentApp.L,
-            settings=self.parent.parentApp.S,
-            template=act_on_this[1],
-            file=self.parent.parentApp.S.defaults[
-                self.parent.parentApp.tmpClient.language
-            ].offer_filename
-        )
+        # export offer with selected template
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            exported = self.parent.parentApp.tmpOffer.export_to_openoffice(
+                client=self.parent.parentApp.tmpClient,
+                project=self.parent.parentApp.tmpProject,
+                global_list=self.parent.parentApp.L,
+                settings=self.parent.parentApp.S,
+                template=act_on_this[1],
+                file=self.parent.parentApp.S.defaults[
+                    self.parent.parentApp.tmpClient.language
+                ].offer_filename
+            )
+
+        # export invoice with selected template
+        else:
+            exported = self.parent.parentApp.tmpInvoice.export_to_openoffice(
+                client=self.parent.parentApp.tmpClient,
+                project=self.parent.parentApp.tmpProject,
+                global_list=self.parent.parentApp.L,
+                settings=self.parent.parentApp.S,
+                template=act_on_this[1],
+                file=self.parent.parentApp.S.defaults[
+                    self.parent.parentApp.tmpClient.language
+                ].invoice_filename
+            )
 
         if not exported:
             npyscreen.notify_confirm(

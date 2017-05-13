@@ -1,4 +1,4 @@
-"""Form for the offer."""
+"""Form for the invoice."""
 
 import curses
 import npyscreen
@@ -6,7 +6,7 @@ from general.functions import move_list_entry
 from general.functions import NewBaseEntry
 from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
-from general.functions import PresetOffer
+from general.functions import PresetInvoice
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
@@ -17,11 +17,6 @@ class EntryChooseList(npyscreen.MultiLineAction):
 
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
-        if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
-            offerinvoice = self.parent.parentApp.tmpOffer
-        else:
-            offerinvoice = self.parent.parentApp.tmpOffer
-
         # general was chosen
         if act_on_this == 'Base entry':
 
@@ -29,15 +24,16 @@ class EntryChooseList(npyscreen.MultiLineAction):
             if self.parent.parentApp.tmpEntry_change_type:
 
                 # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
                 self.parent.parentApp.tmpEntry_change_type = False
                 new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
                     into='BaseEntry',
-                    entry_list=offerinvoice.get_entry_list(),
-                    wage=offerinvoice.get_wage(
+                    entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+                    wage=self.parent.parentApp.tmpInvoice.get_wage(
                         project=self.parent.parentApp.tmpProject
                     ),
                     project=self.parent.parentApp.tmpProject,
-                    round_price=offerinvoice.get_round_price()
+                    round_price=self.parent.parentApp.tmpInvoice.get_round_price()
                 )
 
             else:
@@ -64,15 +60,16 @@ class EntryChooseList(npyscreen.MultiLineAction):
             if self.parent.parentApp.tmpEntry_change_type:
 
                 # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
                 self.parent.parentApp.tmpEntry_change_type = False
                 new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
                     into='MultiplyEntry',
-                    entry_list=offerinvoice.get_entry_list(),
-                    wage=offerinvoice.get_wage(
+                    entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+                    wage=self.parent.parentApp.tmpInvoice.get_wage(
                         project=self.parent.parentApp.tmpProject
                     ),
                     project=self.parent.parentApp.tmpProject,
-                    round_price=offerinvoice.get_round_price()
+                    round_price=self.parent.parentApp.tmpInvoice.get_round_price()
                 )
 
             else:
@@ -99,15 +96,16 @@ class EntryChooseList(npyscreen.MultiLineAction):
             if self.parent.parentApp.tmpEntry_change_type:
 
                 # entry will be changed into other type
+                self.parent.parentApp.tmpEntry_new = False
                 self.parent.parentApp.tmpEntry_change_type = False
                 new_entry = self.parent.parentApp.tmpEntry.return_changed_type(
                     into='ConnectEntry',
-                    entry_list=offerinvoice.get_entry_list(),
-                    wage=offerinvoice.get_wage(
+                    entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+                    wage=self.parent.parentApp.tmpInvoice.get_wage(
                         project=self.parent.parentApp.tmpProject
                     ),
                     project=self.parent.parentApp.tmpProject,
-                    round_price=offerinvoice.get_round_price()
+                    round_price=self.parent.parentApp.tmpInvoice.get_round_price()
                 )
 
             else:
@@ -165,7 +163,7 @@ class EntryChooseForm(npyscreen.ActionPopup):
 
 
 class EntryList(npyscreen.MultiLineAction):
-    """List holding entries of the offer."""
+    """List holding entries of the invoice."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the class."""
@@ -186,7 +184,7 @@ class EntryList(npyscreen.MultiLineAction):
 
     def move_up(self, keypress=None):
         """Move selected entry up in the list."""
-        lis = self.parent.parentApp.tmpOffer.get_entry_list()
+        lis = self.parent.parentApp.tmpInvoice.get_entry_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
@@ -205,7 +203,7 @@ class EntryList(npyscreen.MultiLineAction):
 
     def move_down(self, keypress=None):
         """Move selected entry down in the list."""
-        lis = self.parent.parentApp.tmpOffer.get_entry_list()
+        lis = self.parent.parentApp.tmpInvoice.get_entry_list()
 
         # cancel if list is < 2
         if len(lis) < 2:
@@ -225,7 +223,7 @@ class EntryList(npyscreen.MultiLineAction):
     def update_values(self):
         """Update list and refresh."""
         # get values
-        self.values = self.parent.parentApp.tmpOffer.get_entry_list()
+        self.values = self.parent.parentApp.tmpInvoice.get_entry_list()
         self.display()
 
         # clear filter for not showing doubled entries (npyscreen bug?)
@@ -236,25 +234,25 @@ class EntryList(npyscreen.MultiLineAction):
         title = vl.title[:29]
         amount = vl.get_amount_str()[:14]
         time = str(vl.get_time_zero(
-            entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
+            entry_list=self.parent.parentApp.tmpInvoice.get_entry_list()
         ))
         price_com = self.parent.parentApp.S.defaults[
             self.parent.parentApp.tmpClient.language
         ].commodity
         price_amt = str(vl.get_price(
-            entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpOffer.get_wage(
+            entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+            wage=self.parent.parentApp.tmpInvoice.get_wage(
                 project=self.parent.parentApp.tmpProject,
             ),
-            round_price=self.parent.parentApp.tmpOffer.get_round_price()
+            round_price=self.parent.parentApp.tmpInvoice.get_round_price()
         ))
         price = '{} {}'.format(price_amt, price_com)
         price_tax_amt = str(vl.get_price_tax(
-            entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
-            wage=self.parent.parentApp.tmpOffer.get_wage(
+            entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+            wage=self.parent.parentApp.tmpInvoice.get_wage(
                 project=self.parent.parentApp.tmpProject,
             ),
-            round_price=self.parent.parentApp.tmpOffer.get_round_price()
+            round_price=self.parent.parentApp.tmpInvoice.get_round_price()
         ))
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
@@ -276,7 +274,7 @@ class EntryList(npyscreen.MultiLineAction):
         new_entry = self.values[self.cursor_line].copy(keep_id=False)
 
         # add the entry to the entry_list
-        self.parent.parentApp.tmpOffer.append(
+        self.parent.parentApp.tmpInvoice.append(
             entry=new_entry
         )
 
@@ -284,30 +282,30 @@ class EntryList(npyscreen.MultiLineAction):
         self.update_values()
 
     def add_entry(self, keypress=None):
-        """Add a new entry to the offer."""
+        """Add a new entry to the invoice."""
         self.parent.parentApp.tmpEntry_new = True
         self.parent.parentApp.setNextForm('EntryChoose')
         self.parent.parentApp.switchFormNow()
 
     def delete_entry(self, keypress=None):
-        """Delete the selected entry from the offer."""
-        # get the selected offer
-        offer = self.parent.parentApp.tmpOffer
+        """Delete the selected entry from the invoice."""
+        # get the selected invoice
+        invoice = self.parent.parentApp.tmpInvoice
 
         # cancel if entry list is empty
-        if len(offer.get_entry_list()) < 1:
+        if len(invoice.get_entry_list()) < 1:
             return False
 
-        entry = offer.get_entry_list()[self.cursor_line]
+        entry = invoice.get_entry_list()[self.cursor_line]
 
         really = npyscreen.notify_yes_no(
-            'Really delete entry "{}" from the offer?'.format(entry.title),
+            'Really delete entry "{}" from the invoice?'.format(entry.title),
             form_color='CRITICAL'
         )
 
         if really:
             # delete entry
-            self.parent.parentApp.tmpOffer.pop(self.cursor_line)
+            self.parent.parentApp.tmpInvoice.pop(self.cursor_line)
 
             # refresh widget list
             self.update_values()
@@ -315,10 +313,10 @@ class EntryList(npyscreen.MultiLineAction):
     def actionHighlighted(self, act_on_this, keypress=None):
         """Do something, because a key was pressed."""
         try:
-            # get the offer
+            # get the invoice
             self.parent.values_to_tmp()
 
-            # get the actual offer into temp offer
+            # get the actual invoice into temp invoice
             self.parent.parentApp.tmpEntry = act_on_this.copy()
             self.parent.parentApp.tmpEntry_new = False
             self.parent.parentApp.tmpEntry_index = self.cursor_line
@@ -397,12 +395,12 @@ class TitleMultiLineEdit(npyscreen.TitleText):
         self.entry_widget.full_reformat()
 
 
-class OfferForm(npyscreen.FormMultiPageActionWithMenus):
-    """Form for editing the offer."""
+class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
+    """Form for editing the invoice."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the class."""
-        super(OfferForm, self).__init__(*args, **kwargs)
+        super(InvoiceForm, self).__init__(*args, **kwargs)
 
         # set up key shortcuts
         self.add_handlers({
@@ -420,15 +418,15 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.entries_box.entry_widget.copy_entry()
 
     def del_entry(self):
-        """Delete an offer."""
+        """Delete an invoice."""
         self.entries_box.entry_widget.delete_entry()
 
     def replace_str(self):
         """Replace the strings."""
         self.values_to_tmp()
 
-        self.parentApp.tmpOffer = PresetOffer(
-            offer_preset=self.parentApp.tmpOffer,
+        self.parentApp.tmpInvoice = PresetInvoice(
+            invoice_preset=self.parentApp.tmpInvoice,
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
             client=self.parentApp.tmpClient,
@@ -438,52 +436,49 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.beforeEditing()
 
     def load_preset(self, keypress=None):
-        """Load offer from presets."""
+        """Load invoice from presets."""
         self.values_to_tmp()
-        self.parentApp.P_what = 'offer'
+        self.parentApp.P_what = 'invoice'
         self.parentApp.setNextForm('Presets')
         self.parentApp.switchFormNow()
 
     def save_preset(self):
-        """Save offer to presets."""
+        """Save invoice to presets."""
         self.values_to_tmp()
 
         really = npyscreen.notify_yes_no(
-            'Save this offer to the presets?'
+            'Save this invoice to the presets?'
         )
 
         if really:
-            added = self.parentApp.P.add_offer(
-                offer=self.parentApp.tmpOffer
+            added = self.parentApp.P.add_invoice(
+                invoice=self.parentApp.tmpInvoice
             )
 
             if not added:
                 npyscreen.notify_confirm(
-                    'Offer not added. It probably already exists.',
+                    'Invoice not added. It probably already exists.',
                     form_color='DANGER'
                 )
 
     def save(self):
-        """Save the offer / project."""
+        """Save the invoice / project."""
         allright = self.values_to_tmp(save=True)
 
         # check if it's allright
         if allright:
-            # get the selected project
-            project = self.parentApp.tmpProject
-
             # save the file
             self.parentApp.L.save_project_to_file(
-                project=project
+                project=self.parentApp.tmpProject
             )
         else:
             npyscreen.notify_confirm(
-                'Something went wrong while adding or modifying the offer!',
+                'Something went wrong while adding or modifying the invoice!',
                 form_color='WARNING'
             )
 
     def export(self):
-        """Export the offer."""
+        """Export the invoice."""
         self.values_to_tmp()
         self.parentApp.setNextForm('Export')
         self.parentApp.switchFormNow()
@@ -491,7 +486,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
-        self.parentApp.load_helptext('help_offer.txt')
+        self.parentApp.load_helptext('help_invoice.txt')
         self.parentApp.setNextForm('Help')
         self.parentApp.switchFormNow()
 
@@ -653,27 +648,27 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
     def update_info(self):
-        """Update info for the offer - summerize etc."""
+        """Update info for the invoice - summerize etc."""
         # get commodity for info text preparation
         price_com = self.parentApp.S.defaults[
             self.parentApp.tmpClient.language
         ].commodity
 
         # update info texts / summerizing stuff etc.
-        time = self.parentApp.tmpOffer.get_time_total()
+        time = self.parentApp.tmpInvoice.get_time_total()
 
-        price_val = self.parentApp.tmpOffer.get_price_total(
+        price_val = self.parentApp.tmpInvoice.get_price_total(
             project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            round_price=self.parentApp.tmpInvoice.get_round_price()
         )
         price = '{} {}'.format(
             price_val,
             price_com
         )
 
-        tax_val = self.parentApp.tmpOffer.get_price_tax_total(
+        tax_val = self.parentApp.tmpInvoice.get_price_tax_total(
             project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            round_price=self.parentApp.tmpInvoice.get_round_price()
         )
         tax = '({} {})'.format(
             tax_val,
@@ -685,23 +680,23 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             price_com
         )
 
-        date = self.parentApp.tmpOffer.get_finish_date(
+        date = self.parentApp.tmpInvoice.get_finish_date(
             project=self.parentApp.tmpProject
         ).strftime('%d.%m.%Y')
 
-        wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
+        wage_price_val = self.parentApp.tmpInvoice.get_hourly_wage(
             project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            round_price=self.parentApp.tmpInvoice.get_round_price()
         )
         wage_price = '{} {}'.format(
             wage_price_val,
             price_com
         )
 
-        wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
+        wage_tax_val = self.parentApp.tmpInvoice.get_hourly_wage(
             project=self.parentApp.tmpProject,
             tax=True,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            round_price=self.parentApp.tmpInvoice.get_round_price()
         )
         wage_tax = '({} {})'.format(
             wage_tax_val,
@@ -718,16 +713,18 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
     def beforeEditing(self):
         """Get values from temp object."""
-        self.parentApp.tmpEntry_offer_invoice = 'offer'
+        self.parentApp.tmpEntry_offer_invoice = 'invoice'
 
         self.entries_box.entry_widget.update_values()
-        self.title.value = self.parentApp.tmpOffer.title
-        self.comment.value = self.parentApp.tmpOffer.comment
+        self.title.value = self.parentApp.tmpInvoice.title
+        self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
-        self.date.value = self.parentApp.tmpOffer.get_date()
-        self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
-        self.wage.value = str(self.parentApp.tmpOffer.get_wage())
-        self.round_price.value = [0] if self.parentApp.tmpOffer.get_round_price() else []
+        self.date.value = self.parentApp.tmpInvoice.get_date()
+        self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
+        self.wage.value = str(self.parentApp.tmpInvoice.get_wage())
+        self.round_price.value = (
+            [0] if self.parentApp.tmpInvoice.get_round_price() else []
+        )
 
         self.update_info()
 
@@ -735,24 +732,24 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.name = '{} > {} > {}'.format(
             self.parentApp.tmpClient.fullname(),
             self.parentApp.tmpProject.title,
-            self.parentApp.tmpOffer.title
+            self.parentApp.tmpInvoice.title
         )
 
     def values_to_tmp(self, save=False):
         """Store values to temp variable."""
         # get values into tmp object
-        self.parentApp.tmpOffer.set_entry_list(
+        self.parentApp.tmpInvoice.set_entry_list(
             self.entries_box.entry_widget.values
         )
-        self.parentApp.tmpOffer.title = self.title.value
-        self.parentApp.tmpOffer.comment = self.comment.value.replace('\n', ' ')
-        self.parentApp.tmpOffer.set_date(self.date.value)
-        self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
-        self.parentApp.tmpOffer.set_wage(self.wage.value)
+        self.parentApp.tmpInvoice.title = self.title.value
+        self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
+        self.parentApp.tmpInvoice.set_date(self.date.value)
+        self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
+        self.parentApp.tmpInvoice.set_wage(self.wage.value)
         if self.round_price.value == [0]:
-            self.parentApp.tmpOffer.set_round_price(True)
+            self.parentApp.tmpInvoice.set_round_price(True)
         else:
-            self.parentApp.tmpOffer.set_round_price(False)
+            self.parentApp.tmpInvoice.set_round_price(False)
 
         # save or not?
         if not save:
@@ -761,31 +758,31 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         # get the selected project
         project = self.parentApp.tmpProject
 
-        # it is a new offer
-        if self.parentApp.tmpOffer_new:
-            # append the offer to this project
-            project.append_offer(
-                offer=self.parentApp.tmpOffer
+        # it is a new invoice
+        if self.parentApp.tmpInvoice_new:
+            # append the invoice to this project
+            project.append_invoice(
+                invoice=self.parentApp.tmpInvoice
             )
 
             # update the _new boolean and get the new index
-            self.parentApp.tmpOffer_new = False
-            self.parentApp.tmpOffer_index = len(project.get_offer_list()) - 1
+            self.parentApp.tmpInvoice_new = False
+            self.parentApp.tmpInvoice_index = len(project.get_invoice_list()) - 1
 
             return True
 
-        # existing offer just gets modified
+        # existing invoice just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpOffer_index < len(project.get_offer_list()):
-                project.get_offer_list()[
-                    self.parentApp.tmpOffer_index
-                ] = self.parentApp.tmpOffer
+            if self.parentApp.tmpInvoice_index < len(project.get_invoice_list()):
+                project.get_invoice_list()[
+                    self.parentApp.tmpInvoice_index
+                ] = self.parentApp.tmpInvoice
                 return True
             else:
-                # offer index is out of range
+                # invoice index is out of range
                 npyscreen.notify_confirm(
-                    'Offer was not found.',
+                    'Invoice was not found.',
                     form_color='WARNING'
                 )
                 return False
@@ -796,12 +793,9 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
         # check if it's allright and switch form then
         if allright:
-            # get the selected project
-            project = self.parentApp.tmpProject
-
             # save the file
             self.parentApp.L.save_project_to_file(
-                project=project
+                project=self.parentApp.tmpProject
             )
 
             # switch back
@@ -809,7 +803,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
-                'Something went wrong while adding or modifying the offer!',
+                'Something went wrong while adding or modifying the invoice!',
                 form_color='WARNING'
             )
 

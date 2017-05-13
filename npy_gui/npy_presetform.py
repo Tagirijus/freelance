@@ -2,6 +2,7 @@
 
 import curses
 from general.functions import PresetOffer
+from general.functions import PresetInvoice
 from general.functions import PresetBaseEntry
 from general.functions import PresetMultiplyEntry
 from general.functions import PresetConnectEntry
@@ -10,6 +11,7 @@ from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
 from offer.offerinvoice import Offer
+from offer.offerinvoice import Invoice
 
 
 class PresetList(npyscreen.MultiLineAction):
@@ -46,6 +48,18 @@ class PresetList(npyscreen.MultiLineAction):
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_date=False)
             self.parent.parentApp.setNextForm('Offer')
+            self.parent.parentApp.switchFormNow()
+
+        # it's an Invoice
+        elif type(entry) is Invoice:
+            self.parent.parentApp.tmpInvoice = PresetInvoice(
+                invoice_preset=entry,
+                settings=self.parent.parentApp.S,
+                global_list=self.parent.parentApp.L,
+                client=self.parent.parentApp.tmpClient,
+                project=self.parent.parentApp.tmpProject
+            ).copy(keep_date=False)
+            self.parent.parentApp.setNextForm('Invoice')
             self.parent.parentApp.switchFormNow()
 
         # it's a BaseEntry
@@ -103,6 +117,11 @@ class PresetList(npyscreen.MultiLineAction):
                     old_offer_title=entry.title,
                     new_offer_title=new_name
                 )
+            if self.is_invoice(entry):
+                renamed = self.parent.parentApp.P.rename_invoice(
+                    old_invoice_title=entry.title,
+                    new_invoice_title=new_name
+                )
             elif self.is_entry(entry):
                 renamed = self.parent.parentApp.P.rename_entry(
                     old_entry_title=entry.title,
@@ -135,6 +154,8 @@ class PresetList(npyscreen.MultiLineAction):
         if really:
             if self.is_offer(entry):
                 deleted = self.parent.parentApp.P.remove_offer(offer=entry)
+            elif self.is_invoice(entry):
+                deleted = self.parent.parentApp.P.remove_invoice(invoice=entry)
             elif self.is_entry(entry):
                 deleted = self.parent.parentApp.P.remove_entry(entry=entry)
             else:
@@ -156,6 +177,11 @@ class PresetList(npyscreen.MultiLineAction):
                 self.parent.parentApp.P.offer_list,
                 key=lambda x: x.title
             )
+        elif self.parent.parentApp.P_what == 'invoice':
+            self.values = sorted(
+                self.parent.parentApp.P.invoice_list,
+                key=lambda x: x.title
+            )
         else:
             self.values = sorted(
                 self.parent.parentApp.P.entry_list,
@@ -174,6 +200,10 @@ class PresetList(npyscreen.MultiLineAction):
     def is_offer(self, entry=None):
         """Check if entry is Offer."""
         return type(entry) is Offer
+
+    def is_invoice(self, entry=None):
+        """Check if entry is Invoice."""
+        return type(entry) is Invoice
 
     def is_entry(self, entry=None):
         """Check if entry is Entry."""

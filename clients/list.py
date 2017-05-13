@@ -685,11 +685,7 @@ class List(object):
         f.close()
 
     def save_project_list_to_file(self):
-        """
-        Save projects from project_list.
-
-        Save it to [data_path]/projects/[project_id].flproject.
-        """
+        """Save projects to [data_path]/projects/[project_id].flproject."""
         # cycle through projects and save each project into its own file
         for project in self.project_list:
             self.save_project_to_file(project=project)

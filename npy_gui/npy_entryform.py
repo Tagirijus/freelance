@@ -151,9 +151,14 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.price.value = str(self.parentApp.tmpEntry.get_price_raw())
 
         # get actual caption for form
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice_title = self.parentApp.tmpOffer.title
+        else:
+            offerinvoice_title = self.parentApp.tmpInvoice.title
+
         self.name = '{} > {} > Base entry ({})'.format(
             self.parentApp.tmpProject.title,
-            self.parentApp.tmpOffer.title,
+            offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
 
@@ -173,26 +178,29 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             return False
 
         # get the selected offer
-        offer = self.parentApp.tmpOffer
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice = self.parentApp.tmpOffer
+        else:
+            offerinvoice = self.parentApp.tmpInvoice
 
         # it is a new entry
         if self.parentApp.tmpEntry_new:
             # append the entry to this project
-            offer.append(
+            offerinvoice.append(
                 entry=self.parentApp.tmpEntry
             )
 
             # update the _new boolean and get the new index
             self.parentApp.tmpEntry_new = False
-            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+            self.parentApp.tmpEntry_index = len(offerinvoice.get_entry_list()) - 1
 
             return True
 
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
-                offer.get_entry_list()[
+            if self.parentApp.tmpEntry_index < len(offerinvoice.get_entry_list()):
+                offerinvoice.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True
@@ -219,8 +227,12 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             )
 
             # switch back
-            self.parentApp.setNextForm('Offer')
-            self.parentApp.switchFormNow()
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                self.parentApp.setNextForm('Offer')
+                self.parentApp.switchFormNow()
+            else:
+                self.parentApp.setNextForm('Invoice')
+                self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
                 'Something went wrong while adding or modifying the base entry!',
@@ -229,8 +241,12 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
 
     def on_cancel(self, keypress=None):
         """Cancel and switch form."""
-        self.parentApp.setNextForm('Offer')
-        self.parentApp.switchFormNow()
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            self.parentApp.setNextForm('Offer')
+            self.parentApp.switchFormNow()
+        else:
+            self.parentApp.setNextForm('Invoice')
+            self.parentApp.switchFormNow()
 
 
 class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
@@ -361,9 +377,13 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.hour_rate.value = str(self.parentApp.tmpEntry.get_hour_rate())
 
         # get actual caption for form
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice_title = self.parentApp.tmpOffer.title
+        else:
+            offerinvoice_title = self.parentApp.tmpInvoice.title
         self.name = '{} > {} > Multiply entry ({})'.format(
             self.parentApp.tmpProject.title,
-            self.parentApp.tmpOffer.title,
+            offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
 
@@ -382,26 +402,29 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             return False
 
         # get the selected offer
-        offer = self.parentApp.tmpOffer
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice = self.parentApp.tmpOffer
+        else:
+            offerinvoice = self.parentApp.tmpInvoice
 
         # it is a new entry
         if self.parentApp.tmpEntry_new:
             # append the entry to this project
-            offer.append(
+            offerinvoice.append(
                 entry=self.parentApp.tmpEntry
             )
 
             # update the _new boolean and get the new index
             self.parentApp.tmpEntry_new = False
-            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+            self.parentApp.tmpEntry_index = len(offerinvoice.get_entry_list()) - 1
 
             return True
 
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
-                offer.get_entry_list()[
+            if self.parentApp.tmpEntry_index < len(offerinvoice.get_entry_list()):
+                offerinvoice.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True
@@ -428,8 +451,12 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             )
 
             # switch back
-            self.parentApp.setNextForm('Offer')
-            self.parentApp.switchFormNow()
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                self.parentApp.setNextForm('Offer')
+                self.parentApp.switchFormNow()
+            else:
+                self.parentApp.setNextForm('Invoice')
+                self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
                 'Something went wrong while adding or modifying the multiply entry!',
@@ -438,8 +465,12 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
 
     def on_cancel(self, keypress=None):
         """Cancel and switch form."""
-        self.parentApp.setNextForm('Offer')
-        self.parentApp.switchFormNow()
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            self.parentApp.setNextForm('Offer')
+            self.parentApp.switchFormNow()
+        else:
+            self.parentApp.setNextForm('Invoice')
+            self.parentApp.switchFormNow()
 
 
 class ConnectEntryForm(npyscreen.ActionFormWithMenus):
@@ -610,9 +641,13 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
                 self.connected_entries.append(e)
 
         # get actual caption for form
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice_title = self.parentApp.tmpOffer.title
+        else:
+            offerinvoice_title = self.parentApp.tmpInvoice.title
         self.name = '{} > {} > Connect entry ({})'.format(
             self.parentApp.tmpProject.title,
-            self.parentApp.tmpOffer.title,
+            offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
 
@@ -637,8 +672,12 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         not_possible = []
         for i in self.connected.value:
             # connect the entry
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                entry_list = self.parentApp.tmpOffer.get_entry_list()
+            else:
+                entry_list = self.parentApp.tmpInvoice.get_entry_list()
             connected = self.parentApp.tmpEntry.connect_entry(
-                entry_list=self.parentApp.tmpOffer.get_entry_list(),
+                entry_list=entry_list,
                 entry_id=self.connected_entries[i].get_id()
             )
 
@@ -659,26 +698,29 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             )
 
         # get the selected offer
-        offer = self.parentApp.tmpOffer
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            offerinvoice = self.parentApp.tmpOffer
+        else:
+            offerinvoice = self.parentApp.tmpInvoice
 
         # it is a new entry
         if self.parentApp.tmpEntry_new:
             # append the entry to this project
-            offer.append(
+            offerinvoice.append(
                 entry=self.parentApp.tmpEntry
             )
 
             # update the _new boolean and get the new index
             self.parentApp.tmpEntry_new = False
-            self.parentApp.tmpEntry_index = len(offer.get_entry_list()) - 1
+            self.parentApp.tmpEntry_index = len(offerinvoice.get_entry_list()) - 1
 
             return True
 
         # existing entry just gets modified
         else:
             # get its id and modify it, if it exists
-            if self.parentApp.tmpEntry_index < len(offer.get_entry_list()):
-                offer.get_entry_list()[
+            if self.parentApp.tmpEntry_index < len(offerinvoice.get_entry_list()):
+                offerinvoice.get_entry_list()[
                     self.parentApp.tmpEntry_index
                 ] = self.parentApp.tmpEntry
                 return True
@@ -705,8 +747,12 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             )
 
             # switch back
-            self.parentApp.setNextForm('Offer')
-            self.parentApp.switchFormNow()
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                self.parentApp.setNextForm('Offer')
+                self.parentApp.switchFormNow()
+            else:
+                self.parentApp.setNextForm('Invoice')
+                self.parentApp.switchFormNow()
         else:
             npyscreen.notify_confirm(
                 'Something went wrong while adding or modifying the connect entry!',
@@ -715,5 +761,9 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
     def on_cancel(self, keypress=None):
         """Cancel and switch form."""
-        self.parentApp.setNextForm('Offer')
-        self.parentApp.switchFormNow()
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            self.parentApp.setNextForm('Offer')
+            self.parentApp.switchFormNow()
+        else:
+            self.parentApp.setNextForm('Invoice')
+            self.parentApp.switchFormNow()

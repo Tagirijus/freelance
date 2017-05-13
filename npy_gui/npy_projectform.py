@@ -2,6 +2,7 @@
 
 import curses
 from general.functions import NewOffer
+from general.functions import NewInvoice
 from general.functions import move_list_entry
 import npyscreen
 
@@ -17,6 +18,7 @@ class OfferList(npyscreen.MultiLineAction):
         self.add_handlers({
             curses.KEY_IC: self.add_offer,
             curses.KEY_DC: self.delete_offer,
+            curses.KEY_RIGHT: self.h_exit_right,  # switch to invoice list
             'c': self.copy_offer,
             '+': self.move_up,
             '-': self.move_down
@@ -80,7 +82,7 @@ class OfferList(npyscreen.MultiLineAction):
 
     def copy_offer(self, keypress=None):
         """Copy the selected offer."""
-        # cancel if there is nothign to copy
+        # cancel if there is nothing to copy
         if len(self.values) < 1:
             return False
 
@@ -104,7 +106,7 @@ class OfferList(npyscreen.MultiLineAction):
             settings=self.parent.parentApp.S,
             global_list=self.parent.parentApp.L,
             client=self.parent.parentApp.tmpClient,
-            project=self.prent.parentApp.tmpProject
+            project=self.parent.parentApp.tmpProject
         )
 
         # switch to offer form
@@ -136,7 +138,6 @@ class OfferList(npyscreen.MultiLineAction):
         try:
             # get the selected project
             self.parent.values_to_tmp()
-            project = self.parent.parentApp.tmpProject
 
             # get the actual offer into temp offer
             self.parent.parentApp.tmpOffer = act_on_this.copy()
@@ -155,9 +156,163 @@ class OfferList(npyscreen.MultiLineAction):
 
 
 class OfferListBox(npyscreen.BoxTitle):
-    """Box holding the OffeList."""
+    """Box holding the OfferList."""
 
     _contained_widget = OfferList
+
+
+class InvoiceList(npyscreen.MultiLineAction):
+    """List holding invoices for the chosen project."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the class."""
+        super(InvoiceList, self).__init__(*args, **kwargs)
+
+        # set up key shortcuts
+        self.add_handlers({
+            curses.KEY_IC: self.add_invoice,
+            curses.KEY_DC: self.delete_invoice,
+            curses.KEY_LEFT: self.h_exit_left,  # switch to offer list
+            'c': self.copy_invoice,
+            '+': self.move_up,
+            '-': self.move_down
+        })
+
+        # set up additional multiline options
+        self.slow_scroll = True
+        self.scroll_exit = True
+
+    def move_up(self, keypress=None):
+        """Move selected invoice up in the list."""
+        lis = self.parent.parentApp.tmpProject.get_invoice_list()
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
+
+    def move_down(self, keypress=None):
+        """Move selected invoice down in the list."""
+        lis = self.parent.parentApp.tmpProject.get_invoice_list()
+
+        # cancel if list is < 2
+        if len(lis) < 2:
+            return False
+
+        # move selected item up
+        new_index = move_list_entry(
+            lis=lis,
+            index=self.cursor_line,
+            direction=-1
+        )
+
+        # update view
+        self.update_values()
+        self.cursor_line = new_index
+
+    def update_values(self):
+        """Update list and refresh."""
+        # get values
+        self.values = self.parent.parentApp.tmpProject.get_invoice_list()
+        self.display()
+
+        # clear filter for not showing doubled entries (npyscreen bug?)
+        self.clear_filter()
+
+    def display_value(self, vl):
+        """Display the invoice."""
+        title = '[no title!]' if vl.title == '' else vl.title
+        return '{}'.format(title)
+
+    def copy_invoice(self, keypress=None):
+        """Copy the selected invoice."""
+        # cancel if there is nothing to copy
+        if len(self.values) < 1:
+            return False
+
+        # get copy of the selected invoice object
+        new_invoice = self.values[self.cursor_line].copy()
+
+        # add the invoice to the invoice_list
+        self.parent.parentApp.tmpProject.append_invoice(
+            invoice=new_invoice
+        )
+
+        # refresh
+        self.update_values()
+
+    def add_invoice(self, keypress=None):
+        """Add a new invoice to the project."""
+        # prepare tmpInvoice
+        self.parent.parentApp.tmpInvoice_new = True
+        self.parent.parentApp.tmpInvoice_index = self.cursor_line
+        self.parent.parentApp.tmpInvoice = NewInvoice(
+            settings=self.parent.parentApp.S,
+            global_list=self.parent.parentApp.L,
+            client=self.parent.parentApp.tmpClient,
+            project=self.parent.parentApp.tmpProject
+        )
+
+        # switch to invoice form
+        self.parent.parentApp.setNextForm('Invoice')
+        self.parent.parentApp.switchFormNow()
+
+    def delete_invoice(self, keypress=None):
+        """Delete the selected invoice from the project."""
+        # cancel if there are no values
+        if len(self.values) < 1:
+            return False
+
+        invoice = self.parent.parentApp.tmpProject.get_invoice_list()[self.cursor_line]
+
+        really = npyscreen.notify_yes_no(
+            'Really delete invoice "{}" from the project?'.format(invoice.title),
+            form_color='CRITICAL'
+        )
+
+        if really:
+            # delete invoice
+            self.parent.parentApp.tmpProject.pop_invoice(self.cursor_line)
+
+            # refresh widget list
+            self.update_values()
+
+    def actionHighlighted(self, act_on_this, keypress=None):
+        """Do something, because a key was pressed."""
+        try:
+            # get the selected project
+            self.parent.values_to_tmp()
+
+            # get the actual invoice into temp invoice
+            self.parent.parentApp.tmpInvoice = act_on_this.copy()
+            self.parent.parentApp.tmpInvoice_new = False
+            self.parent.parentApp.tmpInvoice_index = self.cursor_line
+
+            # switch to the client form
+            self.editing = False
+            self.parent.parentApp.setNextForm('Invoice')
+            self.parent.parentApp.switchFormNow()
+        except Exception:
+            npyscreen.notify_confirm(
+                'Something went wrong, sorry!',
+                form_color='WARNING'
+            )
+
+
+class InvoiceListBox(npyscreen.BoxTitle):
+    """Box holding the InvoiceList."""
+
+    _contained_widget = InvoiceList
 
 
 class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
@@ -184,6 +339,18 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
     def del_offer(self):
         """Delete an offer."""
         self.offers_box.entry_widget.delete_offer()
+
+    def add_invoice(self):
+        """Add an invoice."""
+        self.invoices_box.entry_widget.add_invoice()
+
+    def copy_invoice(self):
+        """Copy the selected invoice."""
+        self.invoices_box.entry_widget.copy_invoice()
+
+    def del_invoice(self):
+        """Delete an invoice."""
+        self.invoices_box.entry_widget.delete_invoice()
 
     def save(self):
         """Save the offer / project."""
@@ -224,6 +391,9 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Add offer', onSelect=self.add_offer, shortcut='o')
         self.m.addItem(text='Copy offer', onSelect=self.copy_offer, shortcut='c')
         self.m.addItem(text='Delete offer', onSelect=self.del_offer, shortcut='O')
+        self.m.addItem(text='Add invoice', onSelect=self.add_invoice, shortcut='i')
+        self.m.addItem(text='Copy invoice', onSelect=self.copy_invoice, shortcut='C')
+        self.m.addItem(text='Delete invoice', onSelect=self.del_invoice, shortcut='I')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
@@ -237,7 +407,16 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.offers_box = self.add_widget_intelligent(
             OfferListBox,
             name='Offers',
-            max_height=8
+            max_height=8,
+            max_width=41
+        )
+        self.invoices_box = self.add_widget_intelligent(
+            InvoiceListBox,
+            name='Invoices',
+            max_height=8,
+            max_width=41,
+            rely=3,
+            relx=43
         )
         self.wage = self.add_widget_intelligent(
             npyscreen.TitleText,
@@ -284,6 +463,7 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         """Get values from temp object."""
         self.title.value = self.parentApp.tmpProject.title
         self.offers_box.entry_widget.update_values()
+        self.invoices_box.entry_widget.update_values()
         self.wage.value = str(float(self.parentApp.tmpProject.get_wage()))
         self.hours_per_day.value = str(
             self.parentApp.tmpProject.get_hours_per_day()
@@ -298,13 +478,9 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.client_id_list = [
             c.client_id for c in self.parentApp.L.client_list
         ]
-        try:
-            self.client_id.value = [self.client_id_list.index(
-                self.parentApp.tmpProject_client.client_id
-            )]
-        except Exception:
-            pass
-
+        self.client_id.value = [self.client_id_list.index(
+            self.parentApp.tmpClient.client_id
+        )]
 
         self.name = '{} > {}'.format(
             self.parentApp.tmpClient.fullname(),
@@ -318,6 +494,9 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpProject.title = self.title.value
         self.parentApp.tmpProject.set_offer_list(
             self.offers_box.entry_widget.values
+        )
+        self.parentApp.tmpProject.set_invoice_list(
+            self.invoices_box.entry_widget.values
         )
         self.parentApp.tmpProject.set_wage(self.wage.value)
         self.parentApp.tmpProject.set_hours_per_day(self.hours_per_day.value)

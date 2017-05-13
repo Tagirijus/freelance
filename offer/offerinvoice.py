@@ -36,7 +36,7 @@ class OfferInvoice(object):
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
-        self._due_days = 7                  # set default
+        self._due_days = 14                 # set default
         self.set_due_days(due_days)         # try to set arguments value
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
@@ -333,10 +333,6 @@ class OfferInvoice(object):
             entry_list=entry_list
         )
 
-    def copy(self, keep_date=True):
-        """Copy the own offer into new offer object."""
-        return Offer().from_json(js=self.to_json(), keep_date=keep_date)
-
     def get_price_total(self, wage=None, project=None, tax=False, round_price=None):
         """Get prices of entries summerized."""
         if wage is None:
@@ -630,6 +626,14 @@ class OfferInvoice(object):
 class Offer(OfferInvoice):
     """The offer object."""
 
+    def copy(self, keep_date=True):
+        """Copy the own offer into new offer object."""
+        return Offer().from_json(js=self.to_json(), keep_date=keep_date)
+
 
 class Invoice(OfferInvoice):
     """The invoice object"""
+
+    def copy(self, keep_date=True):
+        """Copy the own offer into new offer object."""
+        return Invoice().from_json(js=self.to_json(), keep_date=keep_date)
