@@ -86,7 +86,7 @@ class DefaultsForm(npyscreen.ActionPopup):
 
 
 class TemplatesListAction(npyscreen.MultiLineAction):
-    """List holding the offer templates"""
+    """List holding the offer templates."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the class."""
@@ -98,9 +98,16 @@ class TemplatesListAction(npyscreen.MultiLineAction):
             curses.KEY_DC: self.delete_template
         })
 
+        # additional attributes
+        self.offerinvoice = ''
+
     def update_values(self):
         """Update values and refresh view."""
-        self.values = self.parent.parentApp.tmpDefault.get_templates_as_list()
+        if self.offerinvoice == 'offer':
+            self.values = self.parent.parentApp.tmpDefault.get_offer_templates_as_list()
+        else:
+            self.values = self.parent.parentApp.tmpDefault.get_invoice_templates_as_list()
+
         self.display()
         self.clear_filter()
 
@@ -116,9 +123,24 @@ class TemplatesListAction(npyscreen.MultiLineAction):
         )
 
         # add if name and not exists in dict
-        if name and not name in self.parent.parentApp.tmpDefault.get_templates():
-            self.parent.parentApp.tmpDefault.add_template(key=name, value=file)
-            self.update_values()
+        if self.offerinvoice == 'offer':
+            if (
+                name and
+                name not in self.parent.parentApp.tmpDefault.get_offer_templates()
+            ):
+                self.parent.parentApp.tmpDefault.add_offer_template(
+                    key=name, value=file
+                )
+        else:
+            if (
+                name and
+                name not in self.parent.parentApp.tmpDefault.get_invoice_templates()
+            ):
+                self.parent.parentApp.tmpDefault.add_invoice_template(
+                    key=name, value=file
+                )
+
+        self.update_values()
 
     def delete_template(self, keypress=None):
         """Delete template."""
@@ -133,7 +155,11 @@ class TemplatesListAction(npyscreen.MultiLineAction):
         )
 
         if really:
-            self.parent.parentApp.tmpDefault.del_template(key=selected)
+            if self.offerinvoice == 'offer':
+                self.parent.parentApp.tmpDefault.del_offer_template(key=selected)
+            else:
+                self.parent.parentApp.tmpDefault.del_invoice_template(key=selected)
+
             self.update_values()
 
     def display_value(self, vl):
@@ -162,8 +188,17 @@ class TemplatesListAction(npyscreen.MultiLineAction):
         )
 
         if name:
-            self.parent.parentApp.tmpDefault.del_template(key=old_key)
-            self.parent.parentApp.tmpDefault.add_template(key=name, value=file)
+            if self.offerinvoice == 'offer':
+                self.parent.parentApp.tmpDefault.del_offer_template(key=old_key)
+                self.parent.parentApp.tmpDefault.add_offer_template(
+                    key=name, value=file
+                )
+            else:
+                self.parent.parentApp.tmpDefault.del_invoice_template(key=old_key)
+                self.parent.parentApp.tmpDefault.add_invoice_template(
+                    key=name, value=file
+                )
+
             self.update_values()
 
 
@@ -221,8 +256,12 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
-        self.m.addItem(text='Add template', onSelect=self.add_temp, shortcut='t')
-        self.m.addItem(text='Delete template', onSelect=self.del_temp, shortcut='T')
+        # HIER NOCH ÄNDERN!!!
+        self.m.addItem(text='Add offer template', onSelect=self.add_temp, shortcut='o')
+        self.m.addItem(text='Del offer template', onSelect=self.del_temp, shortcut='O')
+        self.m.addItem(text='Add invoice template', onSelect=self.add_temp, shortcut='i')
+        self.m.addItem(text='Del invoice template', onSelect=self.del_temp, shortcut='I')
+        # HIER ^
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -230,63 +269,98 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.language = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Language:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
-        self.seperation = self.add_widget_intelligent(
+        self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False
         )
         self.offer_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer title:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.offer_comment = self.add_widget_intelligent(
             TitleMultiLineEdit,
             name='Offer comment:',
-            begin_entry_at=20,
+            begin_entry_at=26,
             max_height=2,
             value=''
         )
         self.offer_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer filename:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.offer_round_price = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
-            name='Off. round price:',
-            begin_entry_at=20,
+            name='Offer round price:',
+            begin_entry_at=26,
             max_height=2,
             scroll_exit=True,
             values=['enabled']
         )
-        self.templates = self.add_widget_intelligent(
+        self.offer_templates = self.add_widget_intelligent(
             TitleTemplatesList,
-            name='Templates:',
-            begin_entry_at=20,
+            name='Offer templates:',
+            begin_entry_at=26,
             max_height=3,
             scroll_exit=True
         )
+        self.offer_templates.entry_widget.offerinvoice = 'offer'
+        self.invoice_title = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Invoice title:',
+            begin_entry_at=26
+        )
+        self.invoice_comment = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Invoice comment:',
+            begin_entry_at=26,
+            max_height=2,
+            value=''
+        )
+        self.invoice_filename = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Invoice filename:',
+            begin_entry_at=26
+        )
+        self.invoice_round_price = self.add_widget_intelligent(
+            npyscreen.TitleMultiSelect,
+            name='Invoice round price:',
+            begin_entry_at=26,
+            max_height=2,
+            scroll_exit=True,
+            values=['enabled']
+        )
+        self.invoice_templates = self.add_widget_intelligent(
+            TitleTemplatesList,
+            name='Invoice templates:',
+            begin_entry_at=26,
+            max_height=3,
+            scroll_exit=True
+        )
+        self.invoice_templates.entry_widget.offerinvoice = 'invoice'
         self.date_fmt = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Date format:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.project_wage = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Wage:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.commodity = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Commodity:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
 
     def beforeEditing(self):
         """Get the values from the active tmpDefault variable."""
         self.language.value = self.parentApp.tmpDefault.language
+
         self.offer_title.value = self.parentApp.tmpDefault.offer_title
         self.offer_comment.value = self.parentApp.tmpDefault.offer_comment
         self.offer_comment.reformat()
@@ -294,7 +368,17 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.offer_round_price.value = (
             [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
         )
-        self.templates.entry_widget.update_values()
+        self.offer_templates.entry_widget.update_values()
+
+        self.invoice_title.value = self.parentApp.tmpDefault.invoice_title
+        self.invoice_comment.value = self.parentApp.tmpDefault.invoice_comment
+        self.invoice_comment.reformat()
+        self.invoice_filename.value = self.parentApp.tmpDefault.invoice_filename
+        self.invoice_round_price.value = (
+            [0] if self.parentApp.tmpDefault.get_invoice_round_price() else []
+        )
+        self.invoice_templates.entry_widget.update_values()
+
         self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
         self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
         self.commodity.value = self.parentApp.tmpDefault.commodity
@@ -319,6 +403,8 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
         # get stuff into tmpDefault
         self.parentApp.tmpDefault.language = language
+
+        # offer
         self.parentApp.tmpDefault.offer_title = self.offer_title.value
         self.parentApp.tmpDefault.offer_comment = self.offer_comment.value.replace(
             '\n', ' '
@@ -328,7 +414,21 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.tmpDefault.set_offer_round_price(True)
         else:
             self.parentApp.tmpDefault.set_offer_round_price(False)
-        self.parentApp.tmpDefault.set_templates(self.templates.values)
+        self.parentApp.tmpDefault.set_offer_templates(self.offer_templates.values)
+
+        # invoice
+        self.parentApp.tmpDefault.invoice_title = self.invoice_title.value
+        self.parentApp.tmpDefault.invoice_comment = self.invoice_comment.value.replace(
+            '\n', ' '
+        )
+        self.parentApp.tmpDefault.invoice_filename = self.invoice_filename.value
+        if self.invoice_round_price.value == [0]:
+            self.parentApp.tmpDefault.set_invoice_round_price(True)
+        else:
+            self.parentApp.tmpDefault.set_invoice_round_price(False)
+        self.parentApp.tmpDefault.set_invoice_templates(self.invoice_templates.values)
+
+        # other
         self.parentApp.tmpDefault.date_fmt = self.date_fmt.value
         self.parentApp.tmpDefault.set_project_wage(self.project_wage.value)
         self.parentApp.tmpDefault.commodity = self.commodity.value
@@ -445,47 +545,47 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.client_id = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client ID:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_company = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client company:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_salutation = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client salut.:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_name = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client name:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_family_name = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client fam. name:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_street = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client street:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_post_code = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client post code:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_city = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client city:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.client_tax_id = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client tax ID:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
@@ -494,17 +594,17 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.project_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project title:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.project_hours_per_day = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project h / d:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.project_work_days = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
             name='Project days:',
-            begin_entry_at=20,
+            begin_entry_at=26,
             max_height=7,
             scroll_exit=True,
             values=[
@@ -520,7 +620,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.project_minimum_days = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Project min days:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
 
     def beforeEditing(self):
@@ -627,32 +727,32 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.baseentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base title:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.baseentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base comment:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.baseentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base amount:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.baseentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base amount fmt:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.baseentry_time = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base time:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.baseentry_price = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base price:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.add_widget_intelligent(
             npyscreen.FixedText,
@@ -661,27 +761,27 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.multiplyentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi title:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.multiplyentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi comment:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.multiplyentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi amount:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.multiplyentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi amount fmt:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.multiplyentry_hour_rate = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi h-rate:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.add_widget_intelligent(
             npyscreen.FixedText,
@@ -690,32 +790,32 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.connectentry_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect title:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.connectentry_comment = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect comment:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.connectentry_amount = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect amount:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.connectentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Con. amount fmt:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.connectentry_multiplicator = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Connect multi:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.connectentry_is_time = self.add_widget_intelligent(
             npyscreen.TitleMultiSelect,
             name='Connect is_time:',
-            begin_entry_at=20,
+            begin_entry_at=26,
             max_height=2,
             scroll_exit=True,
             values=['True']

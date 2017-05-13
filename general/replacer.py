@@ -65,17 +65,24 @@ def replacer(
         # get all offers
         all_offers = set([off for o in all_projects for off in o.get_offer_list()])
 
+        # get all invoices
+        all_invoices = set([inv for i in all_projects for inv in i.get_invoice_list()])
+
         # count clients
         replace_me['CLIENT_COUNT'] = str(len(all_clients) + 1)
         replace_me['PROJECT_COUNT'] = str(len(all_projects) + 1)
         replace_me['OFFER_COUNT'] = str(
             settings.get_offer_count_offset() + len(all_offers) + 1
         )
+        replace_me['INVOICE_COUNT'] = str(
+            settings.get_invoice_count_offset() + len(all_invoices) + 1
+        )
 
     # project related
     if is_project:
         replace_me['PROJECT_TITLE'] = project.title
         replace_me['PROJECT_OFFER_COUNT'] = str(len(project.get_offer_list()) + 1)
+        replace_me['PROJECT_INVOICE_COUNT'] = str(len(project.get_invoice_list()) + 1)
 
     # client related
     if is_client:

@@ -8,9 +8,15 @@ class TemplateChooseList(npyscreen.MultiLineAction):
 
     def update_values(self):
         """Update values and refresh view."""
-        self.values = self.parent.parentApp.S.defaults[
-            self.parent.parentApp.tmpClient.language
-        ].get_templates_as_list()
+        if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
+            self.values = self.parent.parentApp.S.defaults[
+                self.parent.parentApp.tmpClient.language
+            ].get_offer_templates_as_list()
+        else:
+            self.values = self.parent.parentApp.S.defaults[
+                self.parent.parentApp.tmpClient.language
+            ].get_invoice_templates_as_list()
+
         self.display()
         self.clear_filter()
 
@@ -21,7 +27,7 @@ class TemplateChooseList(npyscreen.MultiLineAction):
     def actionHighlighted(self, act_on_this, keypress):
         """Do something, because a key was pressed."""
         # export offer with selected template
-        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+        if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
             exported = self.parent.parentApp.tmpOffer.export_to_openoffice(
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject,

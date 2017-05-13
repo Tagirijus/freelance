@@ -17,12 +17,13 @@ class Default(object):
         offer_comment=None,
         offer_filename=None,
         offer_round_price=None,
+        offer_templates=None,
         invoice_title=None,
         invoice_comment=None,
         invoice_filename=None,
         invoice_round_price=None,
         invoice_due_days=None,
-        templates=None,
+        invoice_templates=None,
         date_fmt=None,
         commodity=None,
         client_id=None,
@@ -66,6 +67,8 @@ class Default(object):
         self.offer_filename = '' if offer_filename is None else offer_filename
         self._offer_round_price = False                 # set default
         self.set_offer_round_price(offer_round_price)   # try to set arguments value
+        self._offer_templates = {}                      # set default
+        self.set_offer_templates(offer_templates)       # try to set arguments value
 
         self.invoice_title = '' if invoice_title is None else invoice_title
         self.invoice_comment = '' if invoice_comment is None else invoice_comment
@@ -74,9 +77,9 @@ class Default(object):
         self.set_invoice_round_price(invoice_round_price)   # try to set arguments value
         self._invoice_due_days = 14                         # set default
         self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
+        self._invoice_templates = {}                        # set default
+        self.set_invoice_templates(invoice_templates)       # try to set arguments value
 
-        self._templates = {}                             # set default
-        self.set_templates(templates)                     # try to set arguments value
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
 
@@ -141,32 +144,6 @@ class Default(object):
         if data_path is not None:
             self.load_settings_from_file(data_path)
 
-    def set_templates(self, value):
-        """Set templates."""
-        if type(value) is dict:
-            self._templates = value
-        elif type(value) is list:
-            self._templates = {}
-            for x in value:
-                self.add_template(x[0], x[1])
-
-    def get_templates_as_list(self):
-        """Get templates as list with tuples of key+value."""
-        return [(key, self._templates[key]) for key in self._templates]
-
-    def get_templates(self):
-        """Get templates as dict."""
-        return self._templates
-
-    def add_template(self, key, value):
-        """Add to templates."""
-        self._templates[key] = value
-
-    def del_template(self, key):
-        """Try to delete templates entry."""
-        if key in self._templates:
-            del self._templates[key]
-
     def set_offer_round_price(self, value):
         """Set offer_round_price."""
         self._offer_round_price = bool(value)
@@ -174,6 +151,32 @@ class Default(object):
     def get_offer_round_price(self):
         """Get offer_round_price."""
         return self._offer_round_price
+
+    def set_offer_templates(self, value):
+        """Set offer_templates."""
+        if type(value) is dict:
+            self._offer_templates = value
+        elif type(value) is list:
+            self._offer_templates = {}
+            for x in value:
+                self.add_offer_template(x[0], x[1])
+
+    def get_offer_templates_as_list(self):
+        """Get offer_templates as list with tuples of key+value."""
+        return [(key, self._offer_templates[key]) for key in self._offer_templates]
+
+    def get_offer_templates(self):
+        """Get offer_templates as dict."""
+        return self._offer_templates
+
+    def add_offer_template(self, key, value):
+        """Add to offer_templates."""
+        self._offer_templates[key] = value
+
+    def del_offer_template(self, key):
+        """Try to delete offer_templates entry."""
+        if key in self._offer_templates:
+            del self._offer_templates[key]
 
     def set_invoice_round_price(self, value):
         """Set invoice_round_price."""
@@ -193,6 +196,32 @@ class Default(object):
     def get_invoice_due_days(self):
         """Get invoice_due_days."""
         return self._invoice_due_days
+
+    def set_invoice_templates(self, value):
+        """Set invoice_templates."""
+        if type(value) is dict:
+            self._invoice_templates = value
+        elif type(value) is list:
+            self._invoice_templates = {}
+            for x in value:
+                self.add_invoice_template(x[0], x[1])
+
+    def get_invoice_templates_as_list(self):
+        """Get invoice_templates as list with tuples of key+value."""
+        return [(key, self._invoice_templates[key]) for key in self._invoice_templates]
+
+    def get_invoice_templates(self):
+        """Get invoice_templates as dict."""
+        return self._invoice_templates
+
+    def add_invoice_template(self, key, value):
+        """Add to invoice_templates."""
+        self._invoice_templates[key] = value
+
+    def del_invoice_template(self, key):
+        """Try to delete invoice_templates entry."""
+        if key in self._invoice_templates:
+            del self._invoice_templates[key]
 
     def set_project_hours_per_day(self, value):
         """Set set_project_hours_per_day."""
@@ -322,14 +351,15 @@ class Default(object):
         out['offer_comment'] = self.offer_comment
         out['offer_filename'] = self.offer_filename
         out['offer_round_price'] = self._offer_round_price
+        out['offer_templates'] = self._offer_templates
 
         out['invoice_title'] = self.invoice_title
         out['invoice_comment'] = self.invoice_comment
         out['invoice_filename'] = self.invoice_filename
         out['invoice_round_price'] = self._invoice_round_price
         out['invoice_due_days'] = self._invoice_due_days
+        out['invoice_templates'] = self._invoice_templates
 
-        out['templates'] = self._templates
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
@@ -401,6 +431,9 @@ class Default(object):
         if 'offer_round_price' in js.keys():
             self.set_offer_round_price(js['offer_round_price'])
 
+        if 'offer_templates' in js.keys():
+            self._offer_templates = js['offer_templates']
+
         if 'invoice_title' in js.keys():
             self.invoice_title = js['invoice_title']
 
@@ -416,8 +449,8 @@ class Default(object):
         if 'invoice_due_days' in js.keys():
             self.set_invoice_due_days(js['invoice_due_days'])
 
-        if 'templates' in js.keys():
-            self._templates = js['templates']
+        if 'invoice_templates' in js.keys():
+            self._invoice_templates = js['invoice_templates']
 
         if 'date_fmt' in js.keys():
             self.date_fmt = js['date_fmt']
@@ -560,12 +593,13 @@ class Default(object):
             offer_comment=self.offer_comment,
             offer_filename=self.offer_filename,
             offer_round_price=self._offer_round_price,
+            offer_templates=self._offer_templates,
             invoice_title=self.invoice_title,
             invoice_comment=self.invoice_comment,
             invoice_filename=self.invoice_filename,
             invoice_round_price=self._invoice_round_price,
             invoice_due_days=self._invoice_due_days,
-            templates=self._templates,
+            invoice_templates=self._invoice_templates,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
             client_id=self.client_id,

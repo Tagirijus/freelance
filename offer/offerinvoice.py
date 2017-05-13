@@ -539,7 +539,7 @@ class OfferInvoice(object):
         )
 
         price_total = self.get_price_total(
-            wage=replace_me['WAGE'],
+            wage=self.get_wage(project=project),
             project=project,
             round_price=self.get_round_price()
         )
@@ -549,7 +549,7 @@ class OfferInvoice(object):
         )
 
         tax_total = self.get_price_total(
-            wage=replace_me['WAGE'],
+            wage=self.get_wage(project=project),
             project=project,
             tax=True,
             round_price=self.get_round_price()
@@ -585,13 +585,13 @@ class OfferInvoice(object):
 
             price = e.get_price(
                 entry_list=self._entry_list,
-                wage=replace_me['WAGE'],
+                wage=self.get_wage(project=project),
                 round_price=self._round_price
             )
 
             tax = e.get_price_tax(
                 entry_list=self._entry_list,
-                wage=replace_me['WAGE'],
+                wage=self.get_wage(project=project),
                 round_price=self._round_price
             )
 
@@ -610,17 +610,23 @@ class OfferInvoice(object):
         # final endering
         engine = secretary.Renderer()
 
-        result = engine.render(
-            template,
-            entries=entries,
-            data=replace_me
-        )
+        # try to replace stuff in the template
+        try:
+            result = engine.render(
+                template,
+                entries=entries,
+                data=replace_me
+            )
 
-        output = open(file, 'wb')
-        output.write(result)
-        output.close()
+            output = open(file, 'wb')
+            output.write(result)
+            output.close()
 
-        return True
+            return True
+
+        except Exception:
+            print('TEMPLATE PROBABLY HAS INVALID VARIABLES')
+            return False
 
 
 class Offer(OfferInvoice):
@@ -632,7 +638,7 @@ class Offer(OfferInvoice):
 
 
 class Invoice(OfferInvoice):
-    """The invoice object"""
+    """The invoice object."""
 
     def copy(self, keep_date=True):
         """Copy the own offer into new offer object."""

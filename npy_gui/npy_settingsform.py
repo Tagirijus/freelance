@@ -170,32 +170,37 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         self.data_path = self.add(
             npyscreen.TitleFilename,
             name='Data path:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.inactive_dir = self.add(
             npyscreen.TitleText,
             name='Inactive dir:',
-            begin_entry_at=20
+            begin_entry_at=26
         )
         self.defaults = self.add(
             TitleDefaultsList,
             name='Defaults:',
-            begin_entry_at=20,
+            begin_entry_at=26,
             max_height=4,
             scroll_exit=True
         )
         self.def_language = self.add(
             npyscreen.TitleSelectOne,
             name='Default language:',
-            begin_entry_at=20,
+            begin_entry_at=26,
             max_height=4,
             scroll_exit=True,
             value=[0]
         )
         self.offer_count_offset = self.add(
             npyscreen.TitleText,
-            name='Offer count off.:',
-            begin_entry_at=20
+            name='Offer count offset:',
+            begin_entry_at=26
+        )
+        self.invoice_count_offset = self.add(
+            npyscreen.TitleText,
+            name='Invoice count offset:',
+            begin_entry_at=26
         )
 
     def beforeEditing(self):
@@ -208,6 +213,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.get_def_language()
         )
         self.offer_count_offset.value = str(self.parentApp.S.get_offer_count_offset())
+        self.invoice_count_offset.value = str(self.parentApp.S.get_invoice_count_offset())
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -216,6 +222,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         inactive_dir = self.inactive_dir.value
         def_language = self.def_language.values[self.def_language.value[0]]
         offer_count_offset = self.offer_count_offset.value
+        invoice_count_offset = self.invoice_count_offset.value
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
@@ -268,6 +275,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.inactive_dir = inactive_dir
             self.parentApp.S.set_def_language(def_language)
             self.parentApp.S.set_offer_count_offset(offer_count_offset)
+            self.parentApp.S.set_invoice_count_offset(invoice_count_offset)
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()
