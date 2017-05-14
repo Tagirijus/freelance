@@ -77,8 +77,7 @@ class OfferList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display the offers."""
-        title = '[no title!]' if vl.title == '' else vl.title
-        return '{}'.format(title)
+        return '[no title!]' if vl.title == '' else vl.title
 
     def copy_offer(self, keypress=None):
         """Copy the selected offer."""
@@ -231,8 +230,7 @@ class InvoiceList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display the invoice."""
-        title = '[no title!]' if vl.title == '' else vl.title
-        return '{}'.format(title)
+        return '[no title!]' if vl.title == '' else vl.title
 
     def copy_invoice(self, keypress=None):
         """Copy the selected invoice."""

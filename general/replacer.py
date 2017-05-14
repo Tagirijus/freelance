@@ -21,10 +21,10 @@ class ReplacementDict(dict):
 def replacer(
     text=None,
     settings=None,
+    global_list=None,
     client=None,
     project=None,
-    offerinvoice=None,
-    global_list=None
+    offerinvoice=None
 ):
     """
     Replace {...} inside text with stuff from client or project ... or the date.

@@ -203,7 +203,7 @@ class ProjectList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display values."""
-        return '{}'.format(vl.title)
+        return vl.title
 
     def add_project(self, keypress=None):
         """Add a new project."""
