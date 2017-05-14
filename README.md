@@ -16,5 +16,4 @@ Start the programm and open the menu with `Ctrl+X`. Then you have a help option 
 
 # To do
 
-- Example output templates
 - Ledger time track implementation for fully automated invoice creation
