@@ -554,6 +554,7 @@ class OfferInvoice(object):
         commodity = settings.defaults[client.language].commodity
 
         replace_me['TITLE'] = self.title
+        replace_me['ID'] = self.id
 
         replace_me['COMMENT'] = self.comment
 

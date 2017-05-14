@@ -15,7 +15,7 @@ class ReplacementDict(dict):
 
     def __missing__(self, key):
         """Return the key instead."""
-        return '{' + str(key) + '}'
+        return '{' + str(key).replace('#', '') + '}'
 
 
 def replacer(
@@ -68,7 +68,7 @@ def replacer(
         # get all invoices
         all_invoices = set([inv for i in all_projects for inv in i.get_invoice_list()])
 
-        # count clients
+        # count stuff
         replace_me['CLIENT_COUNT'] = str(len(all_clients) + 1)
         replace_me['PROJECT_COUNT'] = str(len(all_projects) + 1)
         replace_me['OFFER_COUNT'] = str(
