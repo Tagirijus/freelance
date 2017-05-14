@@ -231,14 +231,26 @@ class EntryList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display the entries."""
-        title = vl.title[:29]
-        amount = vl.get_amount_str()[:14]
-        time = str(vl.get_time_zero(
-            entry_list=self.parent.parentApp.tmpInvoice.get_entry_list()
-        ))
+        title = vl.title[:26]
+
         price_com = self.parent.parentApp.S.defaults[
             self.parent.parentApp.tmpClient.language
         ].commodity
+
+        unit_price = str(vl.get_unit_price(
+            entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
+            wage=self.parent.parentApp.tmpInvoice.get_wage(
+                project=self.parent.parentApp.tmpProject,
+            )
+        ))
+
+        unit = '{} {}'.format(
+            unit_price,
+            price_com
+        )[:14]
+
+        amount = vl.get_amount_str()[:11]
+
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
             wage=self.parent.parentApp.tmpInvoice.get_wage(
@@ -246,7 +258,9 @@ class EntryList(npyscreen.MultiLineAction):
             ),
             round_price=self.parent.parentApp.tmpInvoice.get_round_price()
         ))
+
         price = '{} {}'.format(price_amt, price_com)
+
         price_tax_amt = str(vl.get_price_tax(
             entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
             wage=self.parent.parentApp.tmpInvoice.get_wage(
@@ -254,12 +268,13 @@ class EntryList(npyscreen.MultiLineAction):
             ),
             round_price=self.parent.parentApp.tmpInvoice.get_round_price()
         ))
+
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
-        return '{:30} {:15} {:9} {:>11} {:>11}'.format(
+        return '{:30} {:9} {:15} {:>11} {:>11}'.format(
             title,
+            unit,
             amount,
-            time,
             price,
             price_tax
         )
@@ -511,10 +526,10 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # create the input widgets
-        entries_title = '{:—<27}{:—<16}{:—<14}{:—<13}{}'.format(
+        entries_title = '{:—<27}{:—<10}{:—<20}{:—<13}{}'.format(
             'Entries ',
+            ' Unit ',
             ' Amount ',
-            ' Time ',
             ' Price ',
             ' Tax'
         )
@@ -527,26 +542,25 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         # create the info text section
         row_a = 11
         row_b = 12
-        row_c = 13
-        row_d = 14
         col_a = 35
         col_b = 51
-        col_c = 61
+        col_c = 62
         col_d = 73
 
-        self.info_title = self.add_widget_intelligent(
+        self.info_total_title = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='Sum:',
+            value='Total:',
             editable=False,
             relx=col_a,
             rely=row_a
         )
-        self.info_time = self.add_widget_intelligent(
-            npyscreen.FixedText,
+        self.info_price_total = self.add_widget_intelligent(
+            npyscreen.TextTokens,
             editable=False,
             relx=col_b,
             rely=row_a
         )
+        self.info_price_total.important = True
         self.info_price = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
@@ -559,50 +573,24 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             relx=col_d,
             rely=row_a
         )
-        self.info_total_title = self.add_widget_intelligent(
-            npyscreen.FixedText,
-            value='Total:',
-            editable=False,
-            relx=col_a,
-            rely=row_a
-        )
-        self.info_price_total = self.add_widget_intelligent(
-            npyscreen.FixedText,
-            editable=False,
-            relx=col_c,
-            rely=row_b
-        )
-        self.info_finish_title = self.add_widget_intelligent(
-            npyscreen.FixedText,
-            value='Finish date:',
-            editable=False,
-            relx=col_a,
-            rely=row_c
-        )
-        self.info_date = self.add_widget_intelligent(
-            npyscreen.FixedText,
-            editable=False,
-            relx=col_b,
-            rely=row_c
-        )
         self.info_wage_title = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='Wage / h:',
             editable=False,
             relx=col_a,
-            rely=row_d
+            rely=row_b
         )
         self.info_wage = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_c,
-            rely=row_d
+            rely=row_b
         )
         self.info_wage_tax = self.add_widget_intelligent(
             npyscreen.FixedText,
             editable=False,
             relx=col_d,
-            rely=row_d
+            rely=row_b
         )
         self.seperation = self.add_widget_intelligent(
             npyscreen.FixedText,
@@ -628,6 +616,11 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             name='Date:',
             begin_entry_at=20
         )
+        self.due_date = self.add_widget_intelligent(
+            TitleDateComboRefresh,
+            name='Due date:',
+            begin_entry_at=20
+        )
         self.date_fmt = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Date fmt:',
@@ -646,6 +639,14 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True,
             values=['enabled']
         )
+        self.paid = self.add_widget_intelligent(
+            TitleMultiSelectRefresh,
+            name='Paid:',
+            begin_entry_at=20,
+            max_height=2,
+            scroll_exit=True,
+            values=['enabled']
+        )
 
     def update_info(self):
         """Update info for the invoice - summerize etc."""
@@ -655,11 +656,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         ].commodity
 
         # update info texts / summerizing stuff etc.
-        time = self.parentApp.tmpInvoice.get_time_total()
-
         price_val = self.parentApp.tmpInvoice.get_price_total(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpInvoice.get_round_price()
+            project=self.parentApp.tmpProject
         )
         price = '{} {}'.format(
             price_val,
@@ -667,8 +665,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         tax_val = self.parentApp.tmpInvoice.get_price_tax_total(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpInvoice.get_round_price()
+            project=self.parentApp.tmpProject
         )
         tax = '({} {})'.format(
             tax_val,
@@ -680,13 +677,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             price_com
         )
 
-        date = self.parentApp.tmpInvoice.get_finish_date(
-            project=self.parentApp.tmpProject
-        ).strftime('%d.%m.%Y')
-
         wage_price_val = self.parentApp.tmpInvoice.get_hourly_wage(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpInvoice.get_round_price()
+            project=self.parentApp.tmpProject
         )
         wage_price = '{} {}'.format(
             wage_price_val,
@@ -695,19 +687,16 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
 
         wage_tax_val = self.parentApp.tmpInvoice.get_hourly_wage(
             project=self.parentApp.tmpProject,
-            tax=True,
-            round_price=self.parentApp.tmpInvoice.get_round_price()
+            tax=True
         )
         wage_tax = '({} {})'.format(
             wage_tax_val,
             price_com
         )
 
-        self.info_time.value = time
         self.info_price.value = '{:>11}'.format(price[:11])
         self.info_tax.value = '{:>11}'.format(tax[:11])
         self.info_price_total.value = '{:>11}'.format(price_total[:11])
-        self.info_date.value = date
         self.info_wage.value = '{:>11}'.format(wage_price[:11])
         self.info_wage_tax.value = '{:>11}'.format(wage_tax[:11])
 
@@ -720,10 +709,14 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
         self.date.value = self.parentApp.tmpInvoice.get_date()
+        self.due_date.value = self.parentApp.tmpInvoice.get_due_date()
         self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
         self.wage.value = str(self.parentApp.tmpInvoice.get_wage())
         self.round_price.value = (
             [0] if self.parentApp.tmpInvoice.get_round_price() else []
+        )
+        self.paid.value = (
+            [0] if self.parentApp.tmpInvoice.get_paid() else []
         )
 
         self.update_info()
@@ -744,12 +737,17 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.title = self.title.value
         self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpInvoice.set_date(self.date.value)
+        self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
         self.parentApp.tmpInvoice.set_wage(self.wage.value)
         if self.round_price.value == [0]:
             self.parentApp.tmpInvoice.set_round_price(True)
         else:
             self.parentApp.tmpInvoice.set_round_price(False)
+        if self.paid.value == [0]:
+            self.parentApp.tmpInvoice.set_paid(True)
+        else:
+            self.parentApp.tmpInvoice.set_paid(False)
 
         # save or not?
         if not save:

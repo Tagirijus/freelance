@@ -25,7 +25,7 @@ class OfferInvoice(object):
         date=None,
         due_days=None,
         due_date=None,
-        due_remind=None,
+        paid=None,
         wage=None,
         round_price=None,
         entry_list=None
@@ -40,8 +40,8 @@ class OfferInvoice(object):
         self.set_due_days(due_days)         # try to set arguments value
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
-        self._due_remind = ddate.today()    # set default
-        self.set_due_remind(due_remind)     # try to set arguments value
+        self._paid = False                  # set default
+        self.set_paid(paid)                 # try to set arguments value
         self._round_price = False           # set default
         self.set_round_price(round_price)   # try to set arguments value
         self._wage = Decimal(0)             # set default
@@ -89,20 +89,16 @@ class OfferInvoice(object):
         """Get due_date."""
         return self._due_date
 
-    def set_due_remind(self, value):
-        """Set due_remind."""
-        if type(value) is ddate:
-            self._due_remind = value
-        else:
-            try:
-                self._due_remind = datetime.strptime(value, '%Y-%m-%d').date()
-            except Exception:
-                # calculate it with the due_days
-                self._due_remind = ddate.today() + timedelta(days=self._due_days)
+    def set_paid(self, value):
+        """Set paid."""
+        try:
+            self._paid = bool(value)
+        except Exception:
+            pass
 
-    def get_due_remind(self):
-        """Get due_remind."""
-        return self._due_remind
+    def get_paid(self):
+        """Get paid."""
+        return self._paid
 
     def set_wage(self, value):
         """Set wage."""
@@ -182,11 +178,7 @@ class OfferInvoice(object):
         except Exception:
             out['due_date'] = ddate.today().strftime('%Y-%m-%d')
 
-        try:
-            out['due_remind'] = self._due_remind.strftime('%Y-%m-%d')
-        except Exception:
-            out['due_remind'] = ddate.today().strftime('%Y-%m-%d')
-
+        out['paid'] = self._paid
         out['wage'] = float(self._wage)
         out['round_price'] = self._round_price
 
@@ -290,18 +282,15 @@ class OfferInvoice(object):
         else:
             due_date = None
 
-        if 'due_remind' in js.keys():
-            try:
-                due_remind = datetime.strptime(js['due_remind'], '%Y-%m-%d').date()
-            except Exception:
-                due_remind = None
-        else:
-            due_remind = None
-
         if not keep_date:
             date = None
             due_date = None
             due_remind = None
+
+        if 'paid' in js.keys():
+            paid = js['paid']
+        else:
+            paid = None
 
         if 'wage' in js.keys():
             wage = js['wage']
@@ -327,7 +316,7 @@ class OfferInvoice(object):
             date=date,
             due_days=due_days,
             due_date=due_date,
-            due_remind=due_remind,
+            paid=paid,
             wage=wage,
             round_price=round_price,
             entry_list=entry_list
@@ -447,6 +436,32 @@ class OfferInvoice(object):
             date += timedelta(days=1)
 
         return date
+
+    def get_project(self, global_list=None):
+        """Get project of this offer/invoice."""
+        if not check_objects.is_list(global_list):
+            return False
+
+        # iter through the projects
+        for project in global_list.project_list:
+            # offer found, return its project
+            if self in project.get_offer_list():
+                return project
+
+            # invoice found, return its project
+            if self in project.get_invoice_list():
+                return project
+
+    def get_client(self, global_list=None, project=None):
+        """Get client of this offer/invoice."""
+        if not check_objects.is_list(global_list):
+            return False
+
+        if project is None:
+            project = self.get_project(global_list=global_list)
+
+        return global_list.get_client_by_id(client_id=project.client_id)
+
 
     def export_to_openoffice(
         self,

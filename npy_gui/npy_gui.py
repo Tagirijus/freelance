@@ -25,6 +25,7 @@ from npy_gui.npy_invoiceform import InvoiceForm
 from npy_gui.npy_presetform import PresetForm
 from npy_gui.npy_projectform import ProjectForm
 from npy_gui.npy_settingsform import SettingsForm
+from npy_gui.npy_unpaidinvoiceform import UnpaidInvoiceForm
 from offer.entries import BaseEntry
 from offer.offerinvoice import Offer
 from offer.offerinvoice import Invoice
@@ -140,6 +141,12 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             InvoiceForm,
             name='Freelance > Project > Invoice',
             color='NO_EDIT'
+        )
+        self.addForm(
+            'UnpaidInvoice',
+            UnpaidInvoiceForm,
+            name='Freelance > Unpaid invoices',
+            color='DANGER'
         )
         self.addForm(
             'EntryChoose',

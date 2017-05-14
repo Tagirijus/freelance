@@ -743,3 +743,20 @@ class List(object):
                 client_dir=client_dir,
                 project_dir=project_dir
             )
+
+    def get_unpaid_invoices(self):
+        """Return list with unpaid invoices - sorted by due date."""
+        unpaid = []
+
+        # cycle through all (active) projects
+        for project in self.project_list:
+            # cycle through the invoices of the project
+            for invoice in project.get_invoice_list():
+                # append it, if it is not paid
+                if not invoice.get_paid():
+                    unpaid.append(invoice)
+
+        # sort the invoices by due date
+        unpaid = sorted(unpaid, key=lambda x: x.get_due_date())
+
+        return unpaid

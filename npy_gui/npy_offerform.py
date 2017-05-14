@@ -234,13 +234,17 @@ class EntryList(npyscreen.MultiLineAction):
     def display_value(self, vl):
         """Display the entries."""
         title = vl.title[:29]
-        amount = vl.get_amount_str()[:14]
-        time = str(vl.get_time_zero(
-            entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
-        ))
+
         price_com = self.parent.parentApp.S.defaults[
             self.parent.parentApp.tmpClient.language
         ].commodity
+
+        amount = vl.get_amount_str()[:14]
+
+        time = str(vl.get_time_zero(
+            entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
+        ))
+
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
             wage=self.parent.parentApp.tmpOffer.get_wage(
@@ -248,7 +252,9 @@ class EntryList(npyscreen.MultiLineAction):
             ),
             round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
+
         price = '{} {}'.format(price_amt, price_com)
+
         price_tax_amt = str(vl.get_price_tax(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list(),
             wage=self.parent.parentApp.tmpOffer.get_wage(
@@ -256,6 +262,7 @@ class EntryList(npyscreen.MultiLineAction):
             ),
             round_price=self.parent.parentApp.tmpOffer.get_round_price()
         ))
+
         price_tax = '({} {})'.format(price_tax_amt, price_com)
 
         return '{:30} {:15} {:9} {:>11} {:>11}'.format(
@@ -539,9 +546,9 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         col_c = 61
         col_d = 73
 
-        self.info_title = self.add_widget_intelligent(
+        self.info_total_title = self.add_widget_intelligent(
             npyscreen.FixedText,
-            value='Sum:',
+            value='Total:',
             editable=False,
             relx=col_a,
             rely=row_a
@@ -564,19 +571,13 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             relx=col_d,
             rely=row_a
         )
-        self.info_total_title = self.add_widget_intelligent(
-            npyscreen.FixedText,
-            value='Total:',
-            editable=False,
-            relx=col_a,
-            rely=row_a
-        )
         self.info_price_total = self.add_widget_intelligent(
-            npyscreen.FixedText,
+            npyscreen.TextTokens,
             editable=False,
             relx=col_c,
             rely=row_b
         )
+        self.info_price_total.important = True
         self.info_finish_title = self.add_widget_intelligent(
             npyscreen.FixedText,
             value='Finish date:',
@@ -663,8 +664,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         time = self.parentApp.tmpOffer.get_time_total()
 
         price_val = self.parentApp.tmpOffer.get_price_total(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            project=self.parentApp.tmpProject
         )
         price = '{} {}'.format(
             price_val,
@@ -672,8 +672,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         tax_val = self.parentApp.tmpOffer.get_price_tax_total(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            project=self.parentApp.tmpProject
         )
         tax = '({} {})'.format(
             tax_val,
@@ -690,8 +689,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         ).strftime('%d.%m.%Y')
 
         wage_price_val = self.parentApp.tmpOffer.get_hourly_wage(
-            project=self.parentApp.tmpProject,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            project=self.parentApp.tmpProject
         )
         wage_price = '{} {}'.format(
             wage_price_val,
@@ -700,8 +698,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
 
         wage_tax_val = self.parentApp.tmpOffer.get_hourly_wage(
             project=self.parentApp.tmpProject,
-            tax=True,
-            round_price=self.parentApp.tmpOffer.get_round_price()
+            tax=True
         )
         wage_tax = '({} {})'.format(
             wage_tax_val,

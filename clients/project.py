@@ -132,6 +132,15 @@ class Project(object):
         else:
             return self.client_id + '_' + title
 
+    def get_invoice_index(self, invoice=None):
+        """Get index of given invoice."""
+        if type(invoice) is not Invoice:
+            return False
+
+        for i,inv in enumerate(self.get_invoice_list()):
+            if inv == invoice:
+                return i
+
     def to_dict(self):
         """Convert object to dict."""
         out = {}

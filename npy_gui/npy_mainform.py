@@ -315,6 +315,11 @@ class ProjectListBox(npyscreen.BoxTitle):
 class MainForm(npyscreen.FormBaseNewWithMenus):
     """Main form."""
 
+    def unpaid_invoices(self):
+        """Show unpaid invoices."""
+        self.parentApp.setNextForm('UnpaidInvoice')
+        self.parentApp.switchFormNow()
+
     def add_client(self):
         """Add a client."""
         self.clients_box.entry_widget.add_client()
@@ -356,6 +361,9 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         """Initialize the form with its widgets."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(
+            text='Show unpaid invoices', onSelect=self.unpaid_invoices, shortcut='I'
+        )
         self.m.addItem(text='Add client', onSelect=self.add_client, shortcut='c')
         self.m.addItem(text='Deactivate client', onSelect=self.deact_client, shortcut='C')
         self.m.addItem(text='Add project', onSelect=self.add_project, shortcut='p')
