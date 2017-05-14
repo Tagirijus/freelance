@@ -13,8 +13,6 @@ from offer.offerinvoice import Offer
 from offer.offerinvoice import Invoice
 import os
 
-from general.debug import debug
-
 
 def can_be_dir(string):
     """
@@ -113,7 +111,6 @@ def NewProject(settings=None, global_list=None, client=None):
     is_client = type(client) is Client
 
     # return empty project if no valid settings or client  object is given
-    debug(is_settings, is_client)
     if not is_settings or not is_client:
         return Project()
 
