@@ -1,0 +1,3 @@
+curses
+datetime
+npyscreen
