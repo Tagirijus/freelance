@@ -3,6 +3,7 @@
 from clients.client import Client
 from clients.project import Project
 from datetime import date
+from datetime import timedelta
 from general.replacer import replacer
 from general.settings import Settings
 from offer.entries import BaseEntry
@@ -539,7 +540,9 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
 
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
-    due_days = settings.defaults[lang].get_invoice_due_days()
+    due_date = date.today() + timedelta(
+        days=settings.defaults[lang].get_invoice_due_days()
+    )
     round_price = settings.defaults[lang].get_invoice_round_price()
 
     # return new Invoice object
@@ -549,7 +552,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         comment=comment,
         date_fmt=date_fmt,
         date=date.today(),
-        due_days=due_days,
+        due_date=due_date,
         round_price=round_price
     )
 
@@ -598,7 +601,6 @@ def PresetInvoice(
     # get other values
     date_fmt = invoice_preset.date_fmt
     inv_date = invoice_preset.get_date()
-    due_days = invoice_preset.get_due_days()
     due_date = invoice_preset.get_due_date()
     wage = invoice_preset.get_wage()
     round_price = invoice_preset.get_round_price()
@@ -610,7 +612,6 @@ def PresetInvoice(
         id=id,
         comment=comment,
         date_fmt=date_fmt,
-        due_days=due_days,
         due_date=due_date,
         wage=wage,
         round_price=round_price,

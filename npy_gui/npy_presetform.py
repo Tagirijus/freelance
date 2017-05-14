@@ -47,6 +47,7 @@ class PresetList(npyscreen.MultiLineAction):
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_date=False)
+
             self.parent.parentApp.setNextForm('Offer')
             self.parent.parentApp.switchFormNow()
 
@@ -59,6 +60,15 @@ class PresetList(npyscreen.MultiLineAction):
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_date=False)
+
+            # also set the new due date
+            self.parent.parentApp.tmpInvoice.set_due_date(
+                None,
+                due_days=self.parent.parentApp.S.defaults[
+                    self.parent.parentApp.tmpClient.language
+                ].get_invoice_due_days()
+            )
+
             self.parent.parentApp.setNextForm('Invoice')
             self.parent.parentApp.switchFormNow()
 
@@ -71,6 +81,7 @@ class PresetList(npyscreen.MultiLineAction):
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
+
             self.parent.parentApp.setNextForm('BaseEntry')
             self.parent.parentApp.switchFormNow()
 
@@ -83,6 +94,7 @@ class PresetList(npyscreen.MultiLineAction):
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
+
             self.parent.parentApp.setNextForm('MultiplyEntry')
             self.parent.parentApp.switchFormNow()
 
@@ -95,6 +107,7 @@ class PresetList(npyscreen.MultiLineAction):
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
             ).copy(keep_id=False)
+
             self.parent.parentApp.setNextForm('ConnectEntry')
             self.parent.parentApp.switchFormNow()
 

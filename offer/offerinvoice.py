@@ -24,7 +24,6 @@ class OfferInvoice(object):
         comment=None,
         date_fmt=None,
         date=None,
-        due_days=None,
         due_date=None,
         paid=None,
         wage=None,
@@ -38,8 +37,6 @@ class OfferInvoice(object):
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
-        self._due_days = 14                 # set default
-        self.set_due_days(due_days)         # try to set arguments value
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
         self._paid = False                  # set default
@@ -64,17 +61,6 @@ class OfferInvoice(object):
     def get_date(self):
         """Get date."""
         return self._date
-
-    def set_due_days(self, value):
-        """Set due_days."""
-        try:
-            self._due_days = int(value)
-        except Exception:
-            pass
-
-    def get_due_days(self):
-        """Get due_days."""
-        return self._due_days
 
     def set_due_date(self, value, due_days=None):
         """Set due_date."""
@@ -177,8 +163,6 @@ class OfferInvoice(object):
         except Exception:
             out['date'] = ddate.today().strftime('%Y-%m-%d')
 
-        out['due_days'] = self._due_days
-
         try:
             out['due_date'] = self._due_date.strftime('%Y-%m-%d')
         except Exception:
@@ -238,7 +222,7 @@ class OfferInvoice(object):
         return entry_list
 
     @classmethod
-    def from_json(cls, js=None, keep_date=True):
+    def from_json(cls, js=None, keep_date=True, due_days=14):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -280,11 +264,6 @@ class OfferInvoice(object):
         else:
             date = None
 
-        if 'due_days' in js.keys():
-            due_days = js['due_days']
-        else:
-            due_days = None
-
         if 'due_date' in js.keys():
             try:
                 due_date = datetime.strptime(js['due_date'], '%Y-%m-%d').date()
@@ -296,7 +275,6 @@ class OfferInvoice(object):
         if not keep_date:
             date = None
             due_date = None
-            due_remind = None
 
         if 'paid' in js.keys():
             paid = js['paid']
@@ -326,7 +304,6 @@ class OfferInvoice(object):
             comment=comment,
             date_fmt=date_fmt,
             date=date,
-            due_days=due_days,
             due_date=due_date,
             paid=paid,
             wage=wage,
