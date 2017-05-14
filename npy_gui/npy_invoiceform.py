@@ -602,7 +602,15 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.title = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Title:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
+        )
+        self.id = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='ID:',
+            begin_entry_at=10,
+            relx=60,
+            rely=self.title.rely
         )
         self.comment = self.add_widget_intelligent(
             TitleMultiLineEdit,
@@ -706,6 +714,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
 
         self.entries_box.entry_widget.update_values()
         self.title.value = self.parentApp.tmpInvoice.title
+        self.id.value = self.parentApp.tmpInvoice.id
         self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
         self.date.value = self.parentApp.tmpInvoice.get_date()
@@ -735,6 +744,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             self.entries_box.entry_widget.values
         )
         self.parentApp.tmpInvoice.title = self.title.value
+        self.parentApp.tmpInvoice.id = self.id.value
         self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpInvoice.set_date(self.date.value)
         self.parentApp.tmpInvoice.set_due_date(self.due_date.value)

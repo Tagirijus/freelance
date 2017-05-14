@@ -20,6 +20,7 @@ class OfferInvoice(object):
     def __init__(
         self,
         title=None,
+        id=None,
         comment=None,
         date_fmt=None,
         date=None,
@@ -32,6 +33,7 @@ class OfferInvoice(object):
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
+        self.id = '' if id is None else str(id)
         self.comment = '' if comment is None else str(comment)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
@@ -163,6 +165,7 @@ class OfferInvoice(object):
         # fetch the variables
         out['type'] = self.__class__.__name__
         out['title'] = self.title
+        out['id'] = self.id
         out['comment'] = self.comment
         out['date_fmt'] = self.date_fmt
 
@@ -251,6 +254,11 @@ class OfferInvoice(object):
         else:
             title = None
 
+        if 'id' in js.keys():
+            id = js['id']
+        else:
+            id = None
+
         if 'comment' in js.keys():
             comment = js['comment']
         else:
@@ -311,6 +319,7 @@ class OfferInvoice(object):
         # return new object
         return cls(
             title=title,
+            id=id,
             comment=comment,
             date_fmt=date_fmt,
             date=date,

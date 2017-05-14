@@ -20,15 +20,18 @@ class UnpaidInvoiceList(npyscreen.MultiLineAction):
         self.parent.parentApp.tmpProject = act_on_this.get_project(
             global_list=self.parent.parentApp.L
         )
+        self.parent.parentApp.tmpProject_new = False
 
         # get client of actual invoice
         self.parent.parentApp.tmpClient = act_on_this.get_client(
             global_list=self.parent.parentApp.L,
             project=self.parent.parentApp.tmpProject
         )
+        self.parent.parentApp.tmpClient_new = False
 
         # get own
         self.parent.parentApp.tmpInvoice = act_on_this
+        self.parent.parentApp.tmpInvoice_new = False
         self.parent.parentApp.tmpInvoice_index = (
             self.parent.parentApp.tmpProject.get_invoice_index(
                 invoice=act_on_this
@@ -71,11 +74,11 @@ class UnpaidInvoiceList(npyscreen.MultiLineAction):
         # get due date
         due_date = vl.get_due_date().strftime('%Y-%m-%d')
 
-        return '{:2} {:>9} {:10} {:6} - {}'.format(
+        return '{:2} {:>9}   {:10}   {:6}  -  {}'.format(
             urgent,
             total,
             due_date,
-            '(' + 'INVOICE NUM' + ')',
+            '(' + vl.id + ')',
             project.title
         )
 

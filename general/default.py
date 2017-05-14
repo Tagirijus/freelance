@@ -19,6 +19,7 @@ class Default(object):
         offer_round_price=None,
         offer_templates=None,
         invoice_title=None,
+        invoice_id=None,
         invoice_comment=None,
         invoice_filename=None,
         invoice_round_price=None,
@@ -71,6 +72,7 @@ class Default(object):
         self.set_offer_templates(offer_templates)       # try to set arguments value
 
         self.invoice_title = '' if invoice_title is None else invoice_title
+        self.invoice_id = '' if invoice_id is None else invoice_id
         self.invoice_comment = '' if invoice_comment is None else invoice_comment
         self.invoice_filename = '' if invoice_filename is None else invoice_filename
         self._invoice_round_price = False                   # set default
@@ -354,6 +356,7 @@ class Default(object):
         out['offer_templates'] = self._offer_templates
 
         out['invoice_title'] = self.invoice_title
+        out['invoice_id'] = self.invoice_id
         out['invoice_comment'] = self.invoice_comment
         out['invoice_filename'] = self.invoice_filename
         out['invoice_round_price'] = self._invoice_round_price
@@ -436,6 +439,9 @@ class Default(object):
 
         if 'invoice_title' in js.keys():
             self.invoice_title = js['invoice_title']
+
+        if 'invoice_id' in js.keys():
+            self.invoice_id = js['invoice_id']
 
         if 'invoice_comment' in js.keys():
             self.invoice_comment = js['invoice_comment']
@@ -595,6 +601,7 @@ class Default(object):
             offer_round_price=self._offer_round_price,
             offer_templates=self._offer_templates,
             invoice_title=self.invoice_title,
+            invoice_id=self.invoice_id,
             invoice_comment=self.invoice_comment,
             invoice_filename=self.invoice_filename,
             invoice_round_price=self._invoice_round_price,

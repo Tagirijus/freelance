@@ -521,6 +521,14 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    id = replacer(
+        text=settings.defaults[lang].invoice_id,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     comment = replacer(
         text=settings.defaults[lang].invoice_comment,
         settings=settings,
@@ -537,6 +545,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
     # return new Invoice object
     return Invoice(
         title=title,
+        id=id,
         comment=comment,
         date_fmt=date_fmt,
         date=date.today(),

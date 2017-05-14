@@ -304,13 +304,18 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             TitleTemplatesList,
             name='Offer templates:',
             begin_entry_at=26,
-            max_height=3,
+            max_height=2,
             scroll_exit=True
         )
         self.offer_templates.entry_widget.offerinvoice = 'offer'
         self.invoice_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Invoice title:',
+            begin_entry_at=26
+        )
+        self.invoice_id = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Invoice ID:',
             begin_entry_at=26
         )
         self.invoice_comment = self.add_widget_intelligent(
@@ -337,7 +342,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             TitleTemplatesList,
             name='Invoice templates:',
             begin_entry_at=26,
-            max_height=3,
+            max_height=2,
             scroll_exit=True
         )
         self.invoice_templates.entry_widget.offerinvoice = 'invoice'
@@ -371,6 +376,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.offer_templates.entry_widget.update_values()
 
         self.invoice_title.value = self.parentApp.tmpDefault.invoice_title
+        self.invoice_id.value = self.parentApp.tmpDefault.invoice_id
         self.invoice_comment.value = self.parentApp.tmpDefault.invoice_comment
         self.invoice_comment.reformat()
         self.invoice_filename.value = self.parentApp.tmpDefault.invoice_filename
@@ -418,6 +424,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
 
         # invoice
         self.parentApp.tmpDefault.invoice_title = self.invoice_title.value
+        self.parentApp.tmpDefault.invoice_id = self.invoice_id.value
         self.parentApp.tmpDefault.invoice_comment = self.invoice_comment.value.replace(
             '\n', ' '
         )
