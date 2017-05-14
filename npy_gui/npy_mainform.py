@@ -66,9 +66,6 @@ class ClientList(npyscreen.MultiLineAction):
                 self.values[self.cursor_line].fullname()
             )
 
-            # update the client
-            self.parent.parentApp.tmpClient = self.values[self.cursor_line].copy()
-
             # update the display
             self.parent.projects_box.display()
 

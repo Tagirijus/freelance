@@ -461,6 +461,11 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
 
     def beforeEditing(self):
         """Get values from temp object."""
+        # get its client
+        self.parentApp.tmpClient = self.parentApp.L.get_client_by_id(
+            client_id=self.parentApp.tmpProject.client_id
+        )
+
         self.title.value = self.parentApp.tmpProject.title
         self.offers_box.entry_widget.update_values()
         self.invoices_box.entry_widget.update_values()
