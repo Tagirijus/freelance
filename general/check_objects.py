@@ -25,6 +25,14 @@ def is_offer(obj=None):
         return False
 
 
+def is_invoice(obj=None):
+    """Check object."""
+    try:
+        return obj.__class__.__name__ == 'Invoice'
+    except Exception:
+        return False
+
+
 def is_settings(obj=None):
     """Check object."""
     try:

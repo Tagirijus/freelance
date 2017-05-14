@@ -17,15 +17,45 @@ Client list / Project list:
 
 In the settings you can set up default texts and other settings. There are possible string replacements in the defaults and also in the most string inputs. For example you can set up a project name like "{YEAR}-{MONTH} " and when this becomes a preset, it will (e.g. on the 15th of octobre 1987) become "1987-10 " automatically. Just try these string replacement variables:
 
+Time:
 - {YEAR}: replaces with the year of the offer
 - {MONTH}: replaces with the month of the offer
 - {DAY}: replaces with the day of the offer
+
+Project:
 - {PROJECT_TITLE}: replaces with the project title of the connected project
 - {PROJECT_OFFER_COUNT}: replace with the count + 1 of offers for this project
+- {PROJECT_INVOICE_COUNT}: replace with the count + 1 of offers for this project
+
+Client:
 - {CLIENT_...}: replaces with the connected clients ..., possible entries:
 	CLIENT_COMPANY, _SALUT, _NAME,
 	_FAMILY, _FULLNAME, _STREET,
 	_POST_CODE,	_CITY, _TAX_ID
+
+Offer / invcoie:
+- {TITLE}: title
+- {COMMENT}: comment
+- {DATE}: date
+- {FINISH_DATE}: finishing date (mainly used in an offer)
+- {TIME_TOTAL}: total working time
+- {COMMODITY}: the commodity
+- {WAGE}: the hourly wage
+- {PRICE_TOTAL}: the total price without tax
+- {TAX_TOTAL}: the total tax only price
+- {PRICE_TAX_TOTAL}: the total price + tax
+
+Entries:
+These are keys for dictionary variables, which you can access inside the template via entries['KEY'].
+- {POSITION}: position of the entry
+- {TITLE}: title of the entry
+- {COMMENT}: its comment
+- {TIME}: its time
+- {AMOUNT}: its amount returned with the amount format string
+- {PRICE}: its price without tax
+- {UNIT_PRICE}: its price not multiplied by its amount
+- {TAX}: its price tax only
+- {TAX_UNIT}: its price tax only not multiplied by its amount
 
 
 Hope this programm will help some freelancers out there! (:

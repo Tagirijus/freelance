@@ -23,6 +23,7 @@ def replacer(
     settings=None,
     client=None,
     project=None,
+    offerinvoice=None,
     global_list=None
 ):
     """
@@ -34,6 +35,10 @@ def replacer(
     is_settings = check_objects.is_settings(settings)
     is_client = check_objects.is_client(client)
     is_project = check_objects.is_project(project)
+    is_offerinvoice = (
+        check_objects.is_offer(offerinvoice) or
+        check_objects.is_invoice(offerinvoice)
+    )
     is_global_list = check_objects.is_list(global_list)
 
     # replace stuff
@@ -68,7 +73,7 @@ def replacer(
         # get all invoices
         all_invoices = set([inv for i in all_projects for inv in i.get_invoice_list()])
 
-        # count stuff
+        # general count stuff
         replace_me['CLIENT_COUNT'] = str(len(all_clients) + 1)
         replace_me['PROJECT_COUNT'] = str(len(all_projects) + 1)
         replace_me['OFFER_COUNT'] = str(
@@ -106,6 +111,66 @@ def replacer(
         replace_me['CLIENT_POST_CODE'] = client.post_code
         replace_me['CLIENT_CITY'] = client.city
         replace_me['CLIENT_TAX_ID'] = client.tax_id
+
+    # offer / invoice related
+    if is_offerinvoice and is_project:
+        # general offer / invoice stuff
+        replace_me['TITLE'] = offerinvoice.title
+
+        replace_me['ID'] = offerinvoice.id
+
+        replace_me['COMMENT'] = offerinvoice.comment
+
+        # time related offer / invoice stuff
+        if offerinvoice.date_fmt != '':
+            replace_me['DATE'] = offerinvoice._date.strftime(offerinvoice.date_fmt)
+        else:
+            replace_me['DATE'] = offerinvoice._date
+
+        replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(project=project)
+
+        replace_me['TIME_TOTAL'] = offerinvoice.get_time_total()
+
+        # financial offer / invoice stuff
+        if is_client and is_settings:
+            commodity = settings.defaults[client.language].commodity
+        elif not is_client and is_settings:
+            commodity = settings.defaults['en'].commodity
+        else:
+            commodity = '$'
+
+        replace_me['COMMODITY'] = commodity
+
+        replace_me['WAGE'] = '{} {}/h'.format(
+            offerinvoice.get_wage(project=project),
+            commodity
+        )
+
+        price_total = offerinvoice.get_price_total(
+            wage=offerinvoice.get_wage(project=project),
+            project=project,
+            round_price=offerinvoice.get_round_price()
+        )
+        replace_me['PRICE_TOTAL'] = '{} {}'.format(
+            price_total,
+            commodity
+        )
+
+        tax_total = offerinvoice.get_price_total(
+            wage=offerinvoice.get_wage(project=project),
+            project=project,
+            tax=True,
+            round_price=offerinvoice.get_round_price()
+        )
+        replace_me['TAX_TOTAL'] = '{} {}'.format(
+            tax_total,
+            commodity
+        )
+
+        replace_me['PRICE_TAX_TOTAL'] = '{} {}'.format(
+            price_total + tax_total,
+            commodity
+        )
 
     if text is None:
         return replace_me

@@ -493,56 +493,9 @@ class OfferInvoice(object):
             settings=settings,
             client=client,
             project=project,
+            offerinvoice=self,
             global_list=global_list
         )
-
-        # get own data for this offer as well
-        commodity = settings.defaults[client.language].commodity
-
-        replace_me['TITLE'] = self.title
-        replace_me['ID'] = self.id
-
-        replace_me['COMMENT'] = self.comment
-
-        replace_me['WAGE'] = '{} {}/h'.format(
-            self.get_wage(project=project),
-            commodity
-        )
-
-        price_total = self.get_price_total(
-            wage=self.get_wage(project=project),
-            project=project,
-            round_price=self.get_round_price()
-        )
-        replace_me['PRICE_TOTAL'] = '{} {}'.format(
-            price_total,
-            commodity
-        )
-
-        tax_total = self.get_price_total(
-            wage=self.get_wage(project=project),
-            project=project,
-            tax=True,
-            round_price=self.get_round_price()
-        )
-        replace_me['TAX_TOTAL'] = '{} {}'.format(
-            tax_total,
-            commodity
-        )
-
-        replace_me['PRICE_TAX_TOTAL'] = '{} {}'.format(
-            price_total + tax_total,
-            commodity
-        )
-
-        if self.date_fmt != '':
-            replace_me['DATE'] = self._date.strftime(self.date_fmt)
-        else:
-            replace_me['DATE'] = self._date
-
-        replace_me['FINISH_DATE'] = self.get_finish_date(project=project)
-
-        replace_me['TIME_TOTAL'] = self.get_time_total()
 
         # get extension from template
         template_name, template_ext = os.path.splitext(template)
@@ -613,10 +566,10 @@ class OfferInvoice(object):
                     'COMMENT': e.comment,
                     'TIME': time,
                     'AMOUNT': e.get_amount_str(),
-                    'PRICE': '{} {}'.format(price, commodity),
-                    'UNIT_PRICE': '{} {}'.format(price_unit, commodity),
-                    'TAX': '{} {}'.format(tax, commodity),
-                    'UNIT_TAX': '{} {}'.format(tax_unit, commodity)
+                    'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
+                    'UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
+                    'TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
+                    'UNIT_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY'])
                 }
             )
 
