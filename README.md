@@ -13,3 +13,8 @@ To be honest: totally helpless here. I have installed my tweaked version of `npy
 # Usage
 
 Start the programm and open the menu with `Ctrl+X`. Then you have a help option for nearly every form of the progamm, which should help you.
+
+# To do
+
+- Example output templates
+- Ledger time track implementation for fully automated invoice creation
