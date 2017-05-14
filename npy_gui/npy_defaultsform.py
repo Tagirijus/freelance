@@ -346,6 +346,11 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True
         )
         self.invoice_templates.entry_widget.offerinvoice = 'invoice'
+        self.invoice_due_days = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Invoice due days:',
+            begin_entry_at=26
+        )
         self.date_fmt = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Date format:',
@@ -384,6 +389,9 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             [0] if self.parentApp.tmpDefault.get_invoice_round_price() else []
         )
         self.invoice_templates.entry_widget.update_values()
+        self.invoice_due_days.value = str(
+            self.parentApp.tmpDefault.get_invoice_due_days()
+        )
 
         self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
         self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
@@ -434,6 +442,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         else:
             self.parentApp.tmpDefault.set_invoice_round_price(False)
         self.parentApp.tmpDefault.set_invoice_templates(self.invoice_templates.values)
+        self.parentApp.tmpDefault.set_invoice_due_days(self.invoice_due_days.value)
 
         # other
         self.parentApp.tmpDefault.date_fmt = self.date_fmt.value

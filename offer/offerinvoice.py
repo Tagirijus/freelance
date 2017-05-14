@@ -76,7 +76,7 @@ class OfferInvoice(object):
         """Get due_days."""
         return self._due_days
 
-    def set_due_date(self, value):
+    def set_due_date(self, value, due_days=None):
         """Set due_date."""
         if type(value) is ddate:
             self._due_date = value
@@ -84,8 +84,11 @@ class OfferInvoice(object):
             try:
                 self._due_date = datetime.strptime(value, '%Y-%m-%d').date()
             except Exception:
-                # calculate it with the due_days
-                self._due_date = ddate.today() + timedelta(days=self._due_days)
+                try:
+                    # calculate it with the due_days
+                    self._due_date = ddate.today() + timedelta(days=due_days)
+                except Exception:
+                    pass
 
     def get_due_date(self):
         """Get due_date."""

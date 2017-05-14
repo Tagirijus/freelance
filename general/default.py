@@ -23,8 +23,8 @@ class Default(object):
         invoice_comment=None,
         invoice_filename=None,
         invoice_round_price=None,
-        invoice_due_days=None,
         invoice_templates=None,
+        invoice_due_days=None,
         date_fmt=None,
         commodity=None,
         client_id=None,
@@ -77,10 +77,10 @@ class Default(object):
         self.invoice_filename = '' if invoice_filename is None else invoice_filename
         self._invoice_round_price = False                   # set default
         self.set_invoice_round_price(invoice_round_price)   # try to set arguments value
-        self._invoice_due_days = 14                         # set default
-        self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
         self._invoice_templates = {}                        # set default
         self.set_invoice_templates(invoice_templates)       # try to set arguments value
+        self._invoice_due_days = 14                         # set default
+        self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
 
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
@@ -188,17 +188,6 @@ class Default(object):
         """Get invoice_round_price."""
         return self._invoice_round_price
 
-    def set_invoice_due_days(self, value):
-        """Set invoice_due_days."""
-        try:
-            self._invoice_due_days = int(value)
-        except Exception:
-            pass
-
-    def get_invoice_due_days(self):
-        """Get invoice_due_days."""
-        return self._invoice_due_days
-
     def set_invoice_templates(self, value):
         """Set invoice_templates."""
         if type(value) is dict:
@@ -224,6 +213,17 @@ class Default(object):
         """Try to delete invoice_templates entry."""
         if key in self._invoice_templates:
             del self._invoice_templates[key]
+
+    def set_invoice_due_days(self, value):
+        """Set invoice_due_days."""
+        try:
+            self._invoice_due_days = int(value)
+        except Exception:
+            pass
+
+    def get_invoice_due_days(self):
+        """Get invoice_due_days."""
+        return self._invoice_due_days
 
     def set_project_hours_per_day(self, value):
         """Set set_project_hours_per_day."""
@@ -360,9 +360,9 @@ class Default(object):
         out['invoice_comment'] = self.invoice_comment
         out['invoice_filename'] = self.invoice_filename
         out['invoice_round_price'] = self._invoice_round_price
-        out['invoice_due_days'] = self._invoice_due_days
         out['invoice_templates'] = self._invoice_templates
 
+        out['invoice_due_days'] = self._invoice_due_days
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
 
@@ -452,11 +452,11 @@ class Default(object):
         if 'invoice_round_price' in js.keys():
             self.set_invoice_round_price(js['invoice_round_price'])
 
-        if 'invoice_due_days' in js.keys():
-            self.set_invoice_due_days(js['invoice_due_days'])
-
         if 'invoice_templates' in js.keys():
             self._invoice_templates = js['invoice_templates']
+
+        if 'invoice_due_days' in js.keys():
+            self.set_invoice_due_days(js['invoice_due_days'])
 
         if 'date_fmt' in js.keys():
             self.date_fmt = js['date_fmt']
@@ -605,8 +605,8 @@ class Default(object):
             invoice_comment=self.invoice_comment,
             invoice_filename=self.invoice_filename,
             invoice_round_price=self._invoice_round_price,
-            invoice_due_days=self._invoice_due_days,
             invoice_templates=self._invoice_templates,
+            invoice_due_days=self._invoice_due_days,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
             client_id=self.client_id,
