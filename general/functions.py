@@ -579,6 +579,14 @@ def PresetInvoice(
         project=project
     )
 
+    id = replacer(
+        text=invoice_preset.id,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     comment = replacer(
         text=invoice_preset.comment,
         settings=settings,
@@ -592,7 +600,6 @@ def PresetInvoice(
     inv_date = invoice_preset.get_date()
     due_days = invoice_preset.get_due_days()
     due_date = invoice_preset.get_due_date()
-    due_remind = invoice_preset.get_due_remind()
     wage = invoice_preset.get_wage()
     round_price = invoice_preset.get_round_price()
     entry_list = invoice_preset.get_entry_list()
@@ -600,12 +607,11 @@ def PresetInvoice(
     # return new Invoice object
     return Invoice(
         title=title,
+        id=id,
         comment=comment,
         date_fmt=date_fmt,
         due_days=due_days,
         due_date=due_date,
-        due_remind=due_remind,
-        date=off_date,
         wage=wage,
         round_price=round_price,
         entry_list=entry_list

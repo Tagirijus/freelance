@@ -508,40 +508,6 @@ class OfferInvoice(object):
         if not os.path.isfile(template):
             return False
 
-        # get extension from template
-        template_name, template_ext = os.path.splitext(template)
-
-        # get accordingly extension for filename
-        if template_ext == '.ott' or template_ext == '.odt':
-            file_ext = '.odt'
-        elif template_ext == '.ots' or template_ext == '.ods':
-            file_ext = '.ods'
-        else:
-            # cancel if template is no openoffice template
-            return False
-
-        # get filename with replaced values, if file not empty
-        if file != '':
-            file = replacer(
-                text=file,
-                settings=settings,
-                client=client,
-                project=project,
-                global_list=global_list
-            ).replace(' ', '_')
-
-        # use the offer title as filename
-        else:
-            file = self.title.replace(' ', '_')
-
-        # check if output file exists and alter the name then
-        file_num = 2
-        file_new = file + file_ext
-        while os.path.isfile(file_new):
-            file_new = file + '_' + str(file_num) + file_ext
-            file_num += 1
-        file = file_new
-
         # get replacement dict
         replace_me = replacer(
             settings=settings,
@@ -597,6 +563,34 @@ class OfferInvoice(object):
         replace_me['FINISH_DATE'] = self.get_finish_date(project=project)
 
         replace_me['TIME_TOTAL'] = self.get_time_total()
+
+        # get extension from template
+        template_name, template_ext = os.path.splitext(template)
+
+        # get accordingly extension for filename
+        if template_ext == '.ott' or template_ext == '.odt':
+            file_ext = '.odt'
+        elif template_ext == '.ots' or template_ext == '.ods':
+            file_ext = '.ods'
+        else:
+            # cancel if template is no openoffice template
+            return False
+
+        # get filename with replaced values, if file not empty
+        if file != '':
+            file = file.format(**replace_me).replace(' ', '_')
+
+        # use the offer title as filename
+        else:
+            file = self.title.format(**replace_me).replace(' ', '_')
+
+        # check if output file exists and alter the name then
+        file_num = 2
+        file_new = file + file_ext
+        while os.path.isfile(file_new):
+            file_new = file + '_' + str(file_num) + file_ext
+            file_num += 1
+        file = file_new
 
         # get entries
         entries = []
