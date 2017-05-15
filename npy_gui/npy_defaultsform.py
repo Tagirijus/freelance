@@ -22,6 +22,30 @@ class DefaultChooseList(npyscreen.MultiLineAction):
             self.parent.parentApp.setNextForm('Defaults_general')
             self.parent.parentApp.switchFormNow()
 
+        # offer was chosen
+        elif act_on_this == 'Offer defaults':
+            # generate name for form
+            tit = 'Freelance > Settings > Defaults ({}) > Offer'
+            self.parent.parentApp.getForm('Defaults_offer').name = tit.format(
+                self.parent.parentApp.tmpDefault.language
+            )
+
+            # go to the Defaults_general form
+            self.parent.parentApp.setNextForm('Defaults_offer')
+            self.parent.parentApp.switchFormNow()
+
+        # invoice was chosen
+        elif act_on_this == 'Invoice defaults':
+            # generate name for form
+            tit = 'Freelance > Settings > Defaults ({}) > Invoice'
+            self.parent.parentApp.getForm('Defaults_invoice').name = tit.format(
+                self.parent.parentApp.tmpDefault.language
+            )
+
+            # go to the Defaults_general form
+            self.parent.parentApp.setNextForm('Defaults_invoice')
+            self.parent.parentApp.switchFormNow()
+
         # client and project was chosen
         elif act_on_this == 'Client and project defaults':
             # generate name for form
@@ -69,6 +93,8 @@ class DefaultsForm(npyscreen.ActionPopup):
             DefaultChooseList,
             values=[
                 'General defaults',
+                'Offer defaults',
+                'Invoice defaults',
                 'Client and project defaults',
                 'Entry defaults'
             ]
@@ -232,14 +258,6 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             '^Q': self.on_cancel
         })
 
-    def add_temp(self):
-        """Add template."""
-        self.templates.entry_widget.add_template()
-
-    def del_temp(self):
-        """Delete template."""
-        self.templates.entry_widget.delete_template()
-
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -256,12 +274,6 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
-        # HIER NOCH ÄNDERN!!!
-        self.m.addItem(text='Add offer template', onSelect=self.add_temp, shortcut='o')
-        self.m.addItem(text='Del offer template', onSelect=self.del_temp, shortcut='O')
-        self.m.addItem(text='Add invoice template', onSelect=self.add_temp, shortcut='i')
-        self.m.addItem(text='Del invoice template', onSelect=self.del_temp, shortcut='I')
-        # HIER ^
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -271,10 +283,175 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Language:',
             begin_entry_at=26
         )
-        self.add_widget_intelligent(
-            npyscreen.FixedText,
-            editable=False
+        self.date_fmt = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Date format:',
+            begin_entry_at=26
         )
+        self.project_wage = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Wage:',
+            begin_entry_at=26
+        )
+        self.commodity = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Commodity:',
+            begin_entry_at=26
+        )
+
+    def beforeEditing(self):
+        """Get the values from the active tmpDefault variable."""
+        self.language.value = self.parentApp.tmpDefault.language
+
+        self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
+        self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
+        self.commodity.value = self.parentApp.tmpDefault.commodity
+
+    def values_to_tmp(self, save=False):
+        """Store values to temp object."""
+        # get values in temp variables
+        lang_old = self.parentApp.tmpDefault.language
+
+        # prevent user from changing 'en' to another name
+        old_is_en = lang_old == 'en'
+        language = 'en' if old_is_en else self.language.value
+
+        # check if user really tried to change en and send message
+        lang_en_tried_to_change = old_is_en and self.language.value != 'en'
+        if lang_en_tried_to_change:
+            npyscreen.notify_confirm(
+                'Changed language name back to "en". ' +
+                'Please do not change it!',
+                form_color='WARNING'
+            )
+
+        # get stuff into tmpDefault
+        self.parentApp.tmpDefault.language = language
+
+        self.parentApp.tmpDefault.date_fmt = self.date_fmt.value
+        self.parentApp.tmpDefault.set_project_wage(self.project_wage.value)
+        self.parentApp.tmpDefault.commodity = self.commodity.value
+
+        # check things
+        lang_exists = language in self.parentApp.S.defaults.keys()
+        lang_equal_old = language == lang_old
+
+        # create cases
+        case_create_new = self.parentApp.tmpDefault_new and not lang_exists
+        case_modify_actual = not self.parentApp.tmpDefault_new and lang_equal_old
+        case_rename_actual = not self.parentApp.tmpDefault_new and not lang_equal_old
+
+        # save or not?
+        if not save:
+            return False
+
+        # check case
+        if case_create_new:
+            # try to create a new one
+            new_created = self.parentApp.S.new_default(language)
+            if new_created:
+                self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+                self.parentApp.tmpDefault_new = False
+                return True
+            else:
+                # did not work, go on editing
+                return False
+
+        elif case_modify_actual:
+            # simply modify the selected one - no name change
+            self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+            return True
+
+        elif case_rename_actual and not lang_exists:
+            # rename the selected one
+            renamed = self.parentApp.S.rename_default(
+                old_lang=lang_old,
+                new_lang=language,
+                client_list=self.parentApp.L.client_list
+            )
+
+            if renamed:
+                # worked, finish
+                return True
+            else:
+                # did not work, go on editing
+                return False
+        else:
+            # fallback: no case applies (should not happen)
+            return False
+
+    def on_ok(self, keypress=None):
+        """Check values and set them."""
+        allright = self.values_to_tmp(save=True)
+
+        # everything allright? then switch form!
+        if allright:
+            # get object and save files
+            lang = self.parentApp.tmpDefault.language
+            self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
+            self.parentApp.S.save_settings_to_file()
+            self.parentApp.L.save_client_list_to_file()
+
+            # switch back
+            self.parentApp.setNextForm('Defaults')
+            self.parentApp.switchFormNow()
+        else:
+            npyscreen.notify_confirm(
+                'Language name not possible. It already exists, ' +
+                'is empty or something else. Choose another one!',
+                form_color='WARNING'
+            )
+
+    def on_cancel(self, keypress=None):
+        """Go back without changing a thing."""
+        # switch back
+        self.parentApp.setNextForm('Defaults')
+        self.parentApp.switchFormNow()
+
+
+class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
+    """Form for editing the general defaults."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the class."""
+        super(DefaultsOfferForm, self).__init__(*args, **kwargs)
+
+        # set up key shortcuts
+        self.add_handlers({
+            '^O': self.on_ok,
+            '^Q': self.on_cancel
+        })
+
+    def add_temp(self):
+        """Add template."""
+        self.templates.entry_widget.add_template()
+
+    def del_temp(self):
+        """Delete template."""
+        self.templates.entry_widget.delete_template()
+
+    def switch_to_help(self):
+        """Switch to the help screen."""
+        self.values_to_tmp()
+        self.parentApp.load_helptext('help_defaults_offer.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
+
+    def exit(self):
+        """Exit the programm."""
+        self.parentApp.setNextForm(None)
+        self.parentApp.switchFormNow()
+
+    def create(self):
+        """Create the form."""
+        # create the menu
+        self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add offer template', onSelect=self.add_temp, shortcut='a')
+        self.m.addItem(text='Del offer template', onSelect=self.del_temp, shortcut='d')
+        self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
+        self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
+
+        # create the input widgets
         self.offer_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer title:',
@@ -308,6 +485,129 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True
         )
         self.offer_templates.entry_widget.offerinvoice = 'offer'
+
+    def beforeEditing(self):
+        """Get the values from the active tmpDefault variable."""
+        self.language = self.parentApp.tmpDefault.language
+        self.offer_title.value = self.parentApp.tmpDefault.offer_title
+        self.offer_comment.value = self.parentApp.tmpDefault.offer_comment
+        self.offer_comment.reformat()
+        self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
+        self.offer_round_price.value = (
+            [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
+        )
+        self.offer_templates.entry_widget.update_values()
+
+    def values_to_tmp(self, save=False):
+        """Store values to temp object."""
+        # get stuff into tmpDefault
+        self.parentApp.tmpDefault.offer_title = self.offer_title.value
+        self.parentApp.tmpDefault.offer_comment = self.offer_comment.value.replace(
+            '\n', ' '
+        )
+        self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
+        if self.offer_round_price.value == [0]:
+            self.parentApp.tmpDefault.set_offer_round_price(True)
+        else:
+            self.parentApp.tmpDefault.set_offer_round_price(False)
+        self.parentApp.tmpDefault.set_offer_templates(self.offer_templates.values)
+
+        # save or not?
+        if not save:
+            return False
+
+        language = self.parentApp.tmpDefault.language
+
+        # create new
+        if self.parentApp.tmpDefault_new:
+            # try to create a new one
+            new_created = self.parentApp.S.new_default(language)
+            if new_created:
+                self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+                self.parentApp.tmpDefault_new = False
+                return True
+            else:
+                # did not work, go on editing
+                return False
+
+        # modify actual
+        else:
+            # simply modify the selected one - no name change
+            self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+            return True
+
+    def on_ok(self, keypress=None):
+        """Check values and set them."""
+        allright = self.values_to_tmp(save=True)
+
+        # everything allright? then switch form!
+        if allright:
+            # get object and save files
+            lang = self.parentApp.tmpDefault.language
+            self.parentApp.S.defaults[lang] = self.parentApp.tmpDefault
+            self.parentApp.S.save_settings_to_file()
+            self.parentApp.L.save_client_list_to_file()
+
+            # switch back
+            self.parentApp.setNextForm('Defaults')
+            self.parentApp.switchFormNow()
+        else:
+            npyscreen.notify_confirm(
+                'Language name not possible. It already exists, ' +
+                'is empty or something else. Choose another one!',
+                form_color='WARNING'
+            )
+
+    def on_cancel(self, keypress=None):
+        """Go back without changing a thing."""
+        # switch back
+        self.parentApp.setNextForm('Defaults')
+        self.parentApp.switchFormNow()
+
+
+class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
+    """Form for editing the general defaults."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the class."""
+        super(DefaultsInvoiceForm, self).__init__(*args, **kwargs)
+
+        # set up key shortcuts
+        self.add_handlers({
+            '^O': self.on_ok,
+            '^Q': self.on_cancel
+        })
+
+    def add_temp(self):
+        """Add template."""
+        self.templates.entry_widget.add_template()
+
+    def del_temp(self):
+        """Delete template."""
+        self.templates.entry_widget.delete_template()
+
+    def switch_to_help(self):
+        """Switch to the help screen."""
+        self.values_to_tmp()
+        self.parentApp.load_helptext('help_defaults_invoice.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
+
+    def exit(self):
+        """Exit the programm."""
+        self.parentApp.setNextForm(None)
+        self.parentApp.switchFormNow()
+
+    def create(self):
+        """Create the form."""
+        # create the menu
+        self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add invoice template', onSelect=self.add_temp, shortcut='a')
+        self.m.addItem(text='Del invoice template', onSelect=self.del_temp, shortcut='d')
+        self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
+        self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
+
+        # create the input widgets
         self.invoice_title = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Invoice title:',
@@ -351,35 +651,9 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             name='Invoice due days:',
             begin_entry_at=26
         )
-        self.date_fmt = self.add_widget_intelligent(
-            npyscreen.TitleText,
-            name='Date format:',
-            begin_entry_at=26
-        )
-        self.project_wage = self.add_widget_intelligent(
-            npyscreen.TitleText,
-            name='Wage:',
-            begin_entry_at=26
-        )
-        self.commodity = self.add_widget_intelligent(
-            npyscreen.TitleText,
-            name='Commodity:',
-            begin_entry_at=26
-        )
 
     def beforeEditing(self):
         """Get the values from the active tmpDefault variable."""
-        self.language.value = self.parentApp.tmpDefault.language
-
-        self.offer_title.value = self.parentApp.tmpDefault.offer_title
-        self.offer_comment.value = self.parentApp.tmpDefault.offer_comment
-        self.offer_comment.reformat()
-        self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
-        self.offer_round_price.value = (
-            [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
-        )
-        self.offer_templates.entry_widget.update_values()
-
         self.invoice_title.value = self.parentApp.tmpDefault.invoice_title
         self.invoice_id.value = self.parentApp.tmpDefault.invoice_id
         self.invoice_comment.value = self.parentApp.tmpDefault.invoice_comment
@@ -393,44 +667,9 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.tmpDefault.get_invoice_due_days()
         )
 
-        self.date_fmt.value = self.parentApp.tmpDefault.date_fmt
-        self.project_wage.value = str(float(self.parentApp.tmpDefault.get_project_wage()))
-        self.commodity.value = self.parentApp.tmpDefault.commodity
-
     def values_to_tmp(self, save=False):
         """Store values to temp object."""
         # get values in temp variables
-        lang_old = self.parentApp.tmpDefault.language
-
-        # prevent user from changing 'en' to another name
-        old_is_en = lang_old == 'en'
-        language = 'en' if old_is_en else self.language.value
-
-        # check if user really tried to change en and send message
-        lang_en_tried_to_change = old_is_en and self.language.value != 'en'
-        if lang_en_tried_to_change:
-            npyscreen.notify_confirm(
-                'Changed language name back to "en". ' +
-                'Please do not change it!',
-                form_color='WARNING'
-            )
-
-        # get stuff into tmpDefault
-        self.parentApp.tmpDefault.language = language
-
-        # offer
-        self.parentApp.tmpDefault.offer_title = self.offer_title.value
-        self.parentApp.tmpDefault.offer_comment = self.offer_comment.value.replace(
-            '\n', ' '
-        )
-        self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
-        if self.offer_round_price.value == [0]:
-            self.parentApp.tmpDefault.set_offer_round_price(True)
-        else:
-            self.parentApp.tmpDefault.set_offer_round_price(False)
-        self.parentApp.tmpDefault.set_offer_templates(self.offer_templates.values)
-
-        # invoice
         self.parentApp.tmpDefault.invoice_title = self.invoice_title.value
         self.parentApp.tmpDefault.invoice_id = self.invoice_id.value
         self.parentApp.tmpDefault.invoice_comment = self.invoice_comment.value.replace(
@@ -444,57 +683,28 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.set_invoice_templates(self.invoice_templates.values)
         self.parentApp.tmpDefault.set_invoice_due_days(self.invoice_due_days.value)
 
-        # other
-        self.parentApp.tmpDefault.date_fmt = self.date_fmt.value
-        self.parentApp.tmpDefault.set_project_wage(self.project_wage.value)
-        self.parentApp.tmpDefault.commodity = self.commodity.value
-
-        # check things
-        lang_exists = language in self.parentApp.S.defaults.keys()
-        lang_equal_old = language == lang_old
-
-        # create cases
-        case_create_new = self.parentApp.tmpDefault_new and not lang_exists
-        case_modify_actual = not self.parentApp.tmpDefault_new and lang_equal_old
-        case_rename_actual = not self.parentApp.tmpDefault_new and not lang_equal_old
+        language = self.parentApp.tmpDefault.language
 
         # save or not?
         if not save:
             return False
 
         # check case
-        if case_create_new:
+        if self.parentApp.tmpDefault_new:
             # try to create a new one
             new_created = self.parentApp.S.new_default(language)
             if new_created:
                 self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
+                self.parentApp.tmpDefault_new = False
                 return True
             else:
                 # did not work, go on editing
                 return False
 
-        elif case_modify_actual:
+        else:
             # simply modify the selected one - no name change
             self.parentApp.S.defaults[language] = self.parentApp.tmpDefault.copy()
             return True
-
-        elif case_rename_actual and not lang_exists:
-            # rename the selected one
-            renamed = self.parentApp.S.rename_default(
-                old_lang=lang_old,
-                new_lang=language,
-                client_list=self.parentApp.L.client_list
-            )
-
-            if renamed:
-                # worked, finish
-                return True
-            else:
-                # did not work, go on editing
-                return False
-        else:
-            # fallback: no case applies (should not happen)
-            return False
 
     def on_ok(self, keypress=None):
         """Check values and set them."""

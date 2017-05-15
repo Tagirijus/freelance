@@ -1,0 +1,18 @@
+Offer title:
+The pattern for the default offer title.
+
+
+Offer comment:
+Pattern for the comment.
+
+
+Offer filename:
+The pattern for the default offer / invoice filename.
+
+
+Offer round price:
+ROund prices or not.
+
+
+Offer template:
+Path to the offer template file. Should be a valid open office file.

@@ -10,6 +10,8 @@ import npyscreen
 from npy_gui.npy_clientform import ClientForm
 from npy_gui.npy_defaultsform import DefaultsForm
 from npy_gui.npy_defaultsform import DefaultsGeneralForm
+from npy_gui.npy_defaultsform import DefaultsOfferForm
+from npy_gui.npy_defaultsform import DefaultsInvoiceForm
 from npy_gui.npy_defaultsform import DefaultsClientProjectForm
 from npy_gui.npy_defaultsform import DefaultsEntryForm
 from npy_gui.npy_entryform import BaseEntryForm
@@ -101,6 +103,16 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
             'Defaults_general',
             DefaultsGeneralForm,
             name='Freelance > Settings > Defaults > General'
+        )
+        self.addForm(
+            'Defaults_offer',
+            DefaultsOfferForm,
+            name='Freelance > Settings > Defaults > Offer'
+        )
+        self.addForm(
+            'Defaults_invoice',
+            DefaultsInvoiceForm,
+            name='Freelance > Settings > Defaults > Invoice'
         )
         self.addForm(
             'Defaults_clientproject',

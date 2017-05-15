@@ -2,34 +2,6 @@ Language:
 Enter short name for the language pack. It should not already exist, though!
 
 
-Offer / invoice title:
-The pattern for the default offer title.
-
-
-Offer / invoice comment:
-Pattern for the comment.
-
-
-Offer / invoice filename:
-The pattern for the default offer / invoice filename.
-
-
-Offer / invoice round price:
-ROund prices or not.
-
-
-Offer / invoice template:
-Path to the offer template file. Should be a valid open office file.
-
-
-Invoies ID:
-The invoice number / ID.
-
-
-Invoice due days:
-Default days which wil be added to the invoice date and thus become the due date for the invoice.
-
-
 Date format:
 The format how the date should be shown. Possible pattern variables are:
 
