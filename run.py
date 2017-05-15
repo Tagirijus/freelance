@@ -2,6 +2,8 @@
 A client and project management suite.
 
 You can organize clients, projects, write offers and invoices.
+
+Author: Manuel Senfft (www.tagirijus.de)
 """
 
 from npy_gui import npy_gui
