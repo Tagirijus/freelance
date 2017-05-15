@@ -9,10 +9,14 @@ Entries:
 
 
 Title:
-The title of the offer.
+The title of the invoice.
 
 
-Date:
+ID:
+The ID / number for the invoice.
+
+
+Date / due date:
 Choose a date form the date box.
 
 
@@ -33,6 +37,10 @@ Enter an individual wage for this offer. If this is set to 0, the projects wage 
 
 Round price:
 If enabled the prices will be rounded to a non-decimal number.
+
+
+Paid:
+Enable, if the invoice is paid.
 
 
 You can also load a preset from the menu.
