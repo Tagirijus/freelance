@@ -33,11 +33,8 @@ class Settings(object):
         self.data_path = (os.path.expanduser('~') + '/.tagirijus_freelance'
                           if data_path is None else data_path)
 
-        # cancel if given data_path is no dir or a file
-        is_dir = os.path.isdir(str(self.data_path))
-        is_file = os.path.isfile(str(self.data_path))
-        if not is_dir or is_file:
-            raise IOError
+        # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
+        self.generate_data_path()
 
         self.inactive_dir = '/inactive' if inactive_dir is None else inactive_dir
         self._languages = ['en']                # set default
@@ -48,9 +45,6 @@ class Settings(object):
         self.set_offer_count_offset(offer_count_offset)  # try to set arguments value
         self._invoice_count_offset = 0            # set default
         self.set_invoice_count_offset(invoice_count_offset)  # try to set arguments value
-
-        # generate freelance dir under ~/.tagirijus_freelance, if it does not exist
-        self.generate_data_path()
 
         # try to load settings from self.data_path/freelance.settings afterwards
         self.load_settings_from_file()
