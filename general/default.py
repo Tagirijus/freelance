@@ -66,8 +66,9 @@ class Default(object):
         self.offer_title = '' if offer_title is None else offer_title
         self.offer_comment = '' if offer_comment is None else offer_comment
         self.offer_filename = '' if offer_filename is None else offer_filename
-        self._offer_round_price = False                 # set default
-        self.set_offer_round_price(offer_round_price)   # try to set arguments value
+        self.set_offer_round_price(
+            False if offer_round_price is None else offer_round_price
+        )
         self._offer_templates = {}                      # set default
         self.set_offer_templates(offer_templates)       # try to set arguments value
 
@@ -75,8 +76,9 @@ class Default(object):
         self.invoice_id = '' if invoice_id is None else invoice_id
         self.invoice_comment = '' if invoice_comment is None else invoice_comment
         self.invoice_filename = '' if invoice_filename is None else invoice_filename
-        self._invoice_round_price = False                   # set default
-        self.set_invoice_round_price(invoice_round_price)   # try to set arguments value
+        self.set_invoice_round_price(
+            False if invoice_round_price is None else invoice_round_price
+        )
         self._invoice_templates = {}                        # set default
         self.set_invoice_templates(invoice_templates)       # try to set arguments value
         self._invoice_due_days = 14                         # set default
@@ -137,8 +139,9 @@ class Default(object):
         self._connectentry_amount = OfferAmountTime(connectentry_amount)
         self.connectentry_amount_format = ('' if connectentry_amount_format is None else
                                            connectentry_amount_format)
-        self._connectentry_is_time = True
-        self.set_connectentry_is_time(connectentry_is_time)
+        self.set_connectentry_is_time(
+            True if connectentry_is_time is None else connectentry_is_time
+        )
         self._connectentry_multiplicator = Decimal(0)
         self.set_connectentry_multiplicator(connectentry_multiplicator)
 

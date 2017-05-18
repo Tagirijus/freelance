@@ -39,10 +39,12 @@ class OfferInvoice(object):
         self.set_date(date)                 # try to set arguments value
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
-        self._paid = False                  # set default
-        self.set_paid(paid)                 # try to set arguments value
-        self._round_price = False           # set default
-        self.set_round_price(round_price)   # try to set arguments value
+        self.set_paid(
+            False if paid is None else paid
+        )
+        self.set_round_price(
+            False if round_price is None else round_price
+        )
         self._wage = Decimal(0)             # set default
         self.set_wage(wage)                 # try to set arguments value
         self._entry_list = []               # set default
