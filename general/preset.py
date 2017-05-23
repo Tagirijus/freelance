@@ -9,8 +9,6 @@ from offer.entries import ConnectEntry
 import os
 import shutil
 
-from general.debug import debug
-
 
 class Preset(object):
     """Preset class for loading and saving presets."""
