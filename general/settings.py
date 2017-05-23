@@ -16,7 +16,9 @@ class Settings(object):
         def_language=None,
         defaults=None,
         offer_count_offset=None,
-        invoice_count_offset=None
+        invoice_count_offset=None,
+        ledgeradd_command=None,
+        ledgeradd_receiving_account=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -45,6 +47,16 @@ class Settings(object):
         self.set_offer_count_offset(offer_count_offset)  # try to set arguments value
         self._invoice_count_offset = 0            # set default
         self.set_invoice_count_offset(invoice_count_offset)  # try to set arguments value
+
+        # ledgeradd integration
+        self.ledgeradd_command = (
+            '' if ledgeradd_command is None else str(ledgeradd_command)
+        )
+        self.ledgeradd_receiving_account = (
+            'account' if ledgeradd_receiving_account is None else str(
+                ledgeradd_receiving_account
+            )
+        )
 
         # try to load settings from self.data_path/freelance.settings afterwards
         self.load_settings_from_file()
@@ -186,6 +198,8 @@ class Settings(object):
         out['def_language'] = self._def_language
         out['offer_count_offset'] = self._offer_count_offset
         out['invoice_count_offset'] = self._invoice_count_offset
+        out['ledgeradd_command'] = self.ledgeradd_command
+        out['ledgeradd_receiving_account'] = self.ledgeradd_receiving_account
 
         # return the json
         return json.dumps(
@@ -225,6 +239,12 @@ class Settings(object):
 
         if 'invoice_count_offset' in js.keys():
             self.set_invoice_count_offset(js['invoice_count_offset'])
+
+        if 'ledgeradd_command' in js.keys():
+            self.ledgeradd_command = js['ledgeradd_command']
+
+        if 'ledgeradd_receiving_account' in js.keys():
+            self.ledgeradd_receiving_account = js['ledgeradd_receiving_account']
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

@@ -202,6 +202,16 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Invoice count offset:',
             begin_entry_at=26
         )
+        self.ledgeradd_command = self.add(
+            npyscreen.TitleText,
+            name='Ledgeradd command:',
+            begin_entry_at=26
+        )
+        self.ledgeradd_receiving_account = self.add(
+            npyscreen.TitleText,
+            name='Ledgeradd account:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get values from settings object."""
@@ -214,6 +224,10 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         )
         self.offer_count_offset.value = str(self.parentApp.S.get_offer_count_offset())
         self.invoice_count_offset.value = str(self.parentApp.S.get_invoice_count_offset())
+        self.ledgeradd_command.value = self.parentApp.S.ledgeradd_command
+        self.ledgeradd_receiving_account.value = (
+            self.parentApp.S.ledgeradd_receiving_account
+        )
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -223,6 +237,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         def_language = self.def_language.values[self.def_language.value[0]]
         offer_count_offset = self.offer_count_offset.value
         invoice_count_offset = self.invoice_count_offset.value
+        ledgeradd_command = self.ledgeradd_command.value
+        ledgeradd_receiving_account = self.ledgeradd_receiving_account.value
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
@@ -276,6 +292,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.set_def_language(def_language)
             self.parentApp.S.set_offer_count_offset(offer_count_offset)
             self.parentApp.S.set_invoice_count_offset(invoice_count_offset)
+            self.parentApp.S.ledgeradd_command = ledgeradd_command
+            self.parentApp.S.ledgeradd_receiving_account = ledgeradd_receiving_account
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()

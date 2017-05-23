@@ -26,3 +26,11 @@ Choose which default language should be used, when creating new stuff.
 
 Offer count offset:
 Set the offset for counting the offers (in case you had another database, but do not want to count from 0 again).
+
+
+Ledgeradd command:
+Command for the command line to start ledgeradd programm.
+
+
+Ledgeradd account:
+The receiving account for the ledgeradd integration.

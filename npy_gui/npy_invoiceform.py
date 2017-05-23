@@ -7,9 +7,12 @@ from general.functions import NewBaseEntry
 from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
 from general.functions import PresetInvoice
+from general.ledgeradd_command import generate_parameter
+from general.replacer import replacer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
+import os
 
 
 class EntryChooseList(npyscreen.MultiLineAction):
@@ -498,6 +501,46 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.setNextForm('Export')
         self.parentApp.switchFormNow()
 
+    def run_command(self):
+        """Try to run the command."""
+        self.values_to_tmp()
+
+        # generate parameters
+        parameter = generate_parameter(
+            settings=self.parentApp.S,
+            project=self.parentApp.tmpProject,
+            invoice=self.parentApp.tmpInvoice
+        )
+
+        if parameter is False:
+            npyscreen.notify_confirm(
+                'Cannot generate ledgeradd parameter.',
+                form_color='WARNING'
+            )
+            return False
+
+        parameter = replacer(
+            text=parameter,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=self.parentApp.tmpClient,
+            project=self.parentApp.tmpProject,
+            offerinvoice=self.parentApp.tmpInvoice
+        )
+
+        try:
+            os.system(
+                '{} {}'.format(
+                    self.parentApp.S.ledgeradd_command,
+                    parameter
+                )
+            )
+        except Exception:
+            npyscreen.notify_confirm(
+                'Command not runned!',
+                form_color='WARNING'
+            )
+
     def switch_to_help(self):
         """Switch to the help screen."""
         self.values_to_tmp()
@@ -522,6 +565,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Export', onSelect=self.export, shortcut='^X')
+        self.m.addItem(text='Run command', onSelect=self.run_command, shortcut='C')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -749,6 +793,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
         self.parentApp.tmpInvoice.set_wage(self.wage.value)
+
         if self.round_price.value == [0]:
             self.parentApp.tmpInvoice.set_round_price(True)
         else:
