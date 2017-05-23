@@ -168,7 +168,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
 
         # create input widgets
         self.data_path = self.add(
-            npyscreen.TitleFilename,
+            npyscreen.TitleFilenameCombo,
             name='Data path:',
             begin_entry_at=26
         )
