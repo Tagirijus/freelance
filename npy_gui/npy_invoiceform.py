@@ -622,7 +622,15 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.date = self.add_widget_intelligent(
             TitleDateComboRefresh,
             name='Date:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
+        )
+        self.paid_date = self.add_widget_intelligent(
+            TitleDateComboRefresh,
+            name='Paid:',
+            begin_entry_at=10,
+            relx=60,
+            rely=self.date.rely
         )
         self.due_date = self.add_widget_intelligent(
             TitleDateComboRefresh,
@@ -642,14 +650,6 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.round_price = self.add_widget_intelligent(
             TitleMultiSelectRefresh,
             name='Round price:',
-            begin_entry_at=20,
-            max_height=2,
-            scroll_exit=True,
-            values=['enabled']
-        )
-        self.paid = self.add_widget_intelligent(
-            TitleMultiSelectRefresh,
-            name='Paid:',
             begin_entry_at=20,
             max_height=2,
             scroll_exit=True,
@@ -718,14 +718,12 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
         self.date.value = self.parentApp.tmpInvoice.get_date()
+        self.paid_date.value = self.parentApp.tmpInvoice.get_paid_date()
         self.due_date.value = self.parentApp.tmpInvoice.get_due_date()
         self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
         self.wage.value = str(self.parentApp.tmpInvoice.get_wage())
         self.round_price.value = (
             [0] if self.parentApp.tmpInvoice.get_round_price() else []
-        )
-        self.paid.value = (
-            [0] if self.parentApp.tmpInvoice.get_paid() else []
         )
 
         self.update_info()
@@ -747,6 +745,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.id = self.id.value
         self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpInvoice.set_date(self.date.value)
+        self.parentApp.tmpInvoice.set_paid_date(self.paid_date.value)
         self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
         self.parentApp.tmpInvoice.set_wage(self.wage.value)
@@ -754,10 +753,6 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.tmpInvoice.set_round_price(True)
         else:
             self.parentApp.tmpInvoice.set_round_price(False)
-        if self.paid.value == [0]:
-            self.parentApp.tmpInvoice.set_paid(True)
-        else:
-            self.parentApp.tmpInvoice.set_paid(False)
 
         # save or not?
         if not save:

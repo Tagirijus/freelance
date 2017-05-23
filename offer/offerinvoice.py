@@ -25,7 +25,7 @@ class OfferInvoice(object):
         date_fmt=None,
         date=None,
         due_date=None,
-        paid=None,
+        paid_date=None,
         wage=None,
         round_price=None,
         entry_list=None
@@ -39,9 +39,8 @@ class OfferInvoice(object):
         self.set_date(date)                 # try to set arguments value
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
-        self.set_paid(
-            False if paid is None else paid
-        )
+        self._paid_date = None              # set default
+        self.set_paid_date(paid_date)       # try to set arguments value
         self.set_round_price(
             False if round_price is None else round_price
         )
@@ -82,16 +81,21 @@ class OfferInvoice(object):
         """Get due_date."""
         return self._due_date
 
-    def set_paid(self, value):
-        """Set paid."""
-        try:
-            self._paid = bool(value)
-        except Exception:
-            pass
+    def set_paid_date(self, value):
+        """Set paid_date."""
+        if type(value) is ddate:
+            self._paid_date = value
+        elif value == '':
+            self._paid_date = None
+        else:
+            try:
+                self._paid_date = datetime.strptime(value, '%Y-%m-%d').date()
+            except Exception:
+                pass
 
-    def get_paid(self):
-        """Get paid."""
-        return self._paid
+    def get_paid_date(self):
+        """Get paid_date."""
+        return self._paid_date
 
     def set_wage(self, value):
         """Set wage."""
@@ -170,7 +174,11 @@ class OfferInvoice(object):
         except Exception:
             out['due_date'] = ddate.today().strftime('%Y-%m-%d')
 
-        out['paid'] = self._paid
+        try:
+            out['paid_date'] = self._paid_date.strftime('%Y-%m-%d')
+        except Exception:
+            out['paid_date'] = None
+
         out['wage'] = float(self._wage)
         out['round_price'] = self._round_price
 
@@ -274,14 +282,18 @@ class OfferInvoice(object):
         else:
             due_date = None
 
+        if 'paid_date' in js.keys():
+            try:
+                paid_date = datetime.strptime(js['paid_date'], '%Y-%m-%d').date()
+            except Exception:
+                paid_date = None
+        else:
+            paid_date = None
+
         if not keep_date:
             date = None
             due_date = None
-
-        if 'paid' in js.keys():
-            paid = js['paid']
-        else:
-            paid = None
+            paid_date = None
 
         if 'wage' in js.keys():
             wage = js['wage']
@@ -307,7 +319,7 @@ class OfferInvoice(object):
             date_fmt=date_fmt,
             date=date,
             due_date=due_date,
-            paid=paid,
+            paid_date=paid_date,
             wage=wage,
             round_price=round_price,
             entry_list=entry_list
