@@ -29,8 +29,8 @@ Project:
 
 Client:
 - {CLIENT_...}: replaces with the connected clients ..., possible entries:
-	CLIENT_COMPANY, _SALUT, _NAME,
-	_FAMILY, _FULLNAME, _STREET,
+	CLIENT_COMPANY, _ATTN, _SALUT,
+	_NAME, _FAMILY, _FULLNAME, _STREET,
 	_POST_CODE,	_CITY, _TAX_ID
 
 Offer / invcoie:
