@@ -73,7 +73,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         )
         self.client_post_code = self.add(
             npyscreen.TitleText,
-            name='Post_code:',
+            name='Post code:',
             begin_entry_at=20
         )
         self.client_city = self.add(
