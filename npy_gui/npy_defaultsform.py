@@ -424,11 +424,11 @@ class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
 
     def add_temp(self):
         """Add template."""
-        self.templates.entry_widget.add_template()
+        self.offer_templates.entry_widget.add_template()
 
     def del_temp(self):
         """Delete template."""
-        self.templates.entry_widget.delete_template()
+        self.offer_templates.entry_widget.delete_template()
 
     def switch_to_help(self):
         """Switch to the help screen."""
@@ -580,11 +580,11 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
 
     def add_temp(self):
         """Add template."""
-        self.templates.entry_widget.add_template()
+        self.invoice_templates.entry_widget.add_template()
 
     def del_temp(self):
         """Delete template."""
-        self.templates.entry_widget.delete_template()
+        self.invoice_templates.entry_widget.delete_template()
 
     def switch_to_help(self):
         """Switch to the help screen."""
