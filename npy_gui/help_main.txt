@@ -37,6 +37,7 @@ Offer / invcoie:
 - {TITLE}: title
 - {COMMENT}: comment
 - {DATE}: date
+- {DUE_DATE}: due date
 - {FINISH_DATE}: finishing date (mainly used in an offer)
 - {TIME_TOTAL}: total working time
 - {COMMODITY}: the commodity

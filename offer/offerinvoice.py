@@ -404,7 +404,7 @@ class OfferInvoice(object):
 
     def get_finish_date(self, project=None):
         """Calculate and return the finish date."""
-        # if no projetc is given, return 1987-15-10
+        # if no project is given, return 1987-15-10
         # if not is_project(project):
         if not check_objects.is_project(project):
             return ddate(1987, 10, 15)

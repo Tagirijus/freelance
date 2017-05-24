@@ -122,14 +122,25 @@ def replacer(
 
         replace_me['COMMENT'] = offerinvoice.comment
 
-        # time related offer / invoice stuff
+        # dates
         if offerinvoice.date_fmt != '':
-            replace_me['DATE'] = offerinvoice._date.strftime(offerinvoice.date_fmt)
+            replace_me['DATE'] = offerinvoice.get_date().strftime(offerinvoice.date_fmt)
+            replace_me['DUE_DATE'] = offerinvoice.get_due_date().strftime(
+                offerinvoice.date_fmt
+            )
+            replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(
+                project=project
+            ).strftime(offerinvoice.date_fmt)
         else:
-            replace_me['DATE'] = offerinvoice._date
+            replace_me['DATE'] = offerinvoice.get_date()
+            replace_me['DUE_DATE'] = offerinvoice.get_due_date().strftime(
+                offerinvoice.date_fmt
+            )
+            replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(
+                project=project
+            )
 
-        replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(project=project)
-
+        # time related offer / invoice stuff
         replace_me['TIME_TOTAL'] = offerinvoice.get_time_total()
 
         # financial offer / invoice stuff
