@@ -92,7 +92,7 @@ def replacer(
         except Exception as e:
             replace_me['INVOICE_COUNT'] = str(
                 settings.get_invoice_count_offset() + len(all_invoices) + 1
-            ) + str(e)
+            )
 
     # project related
     if is_project:
