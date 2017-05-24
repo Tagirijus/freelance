@@ -14,6 +14,7 @@ class Client(object):
         self,
         client_id=None,
         company=None,
+        attention=None,
         salutation=None,
         name=None,
         family_name=None,
@@ -26,6 +27,7 @@ class Client(object):
         """Initialize the class."""
         self.client_id = 'no_id' if client_id is None else str(client_id)
         self.company = '' if company is None else str(company)
+        self.attention = '' if attention is None else str(attention)
         self.salutation = '' if salutation is None else str(salutation)
         self.name = '' if name is None else str(name)
         self.family_name = '' if family_name is None else str(family_name)
@@ -49,6 +51,7 @@ class Client(object):
         out['type'] = self.__class__.__name__
         out['client_id'] = self.client_id
         out['company'] = self.company
+        out['attention'] = self.attention
         out['salutation'] = self.salutation
         out['name'] = self.name
         out['family_name'] = self.family_name
@@ -93,6 +96,11 @@ class Client(object):
             company = js['company']
         else:
             company = None
+
+        if 'attention' in js.keys():
+            attention = js['attention']
+        else:
+            attention = None
 
         if 'salutation' in js.keys():
             salutation = js['salutation']
@@ -139,6 +147,7 @@ class Client(object):
             client_id=client_id,
             company=company,
             salutation=salutation,
+            attention=attention,
             name=name,
             family_name=family_name,
             street=street,

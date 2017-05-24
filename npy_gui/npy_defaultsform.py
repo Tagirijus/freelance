@@ -778,14 +778,14 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
             name='Client company:',
             begin_entry_at=26
         )
-        self.client_salutation = self.add_widget_intelligent(
-            npyscreen.TitleText,
-            name='Client salut.:',
-            begin_entry_at=26
-        )
         self.client_attention = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client attn.:',
+            begin_entry_at=26
+        )
+        self.client_salutation = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Client salut.:',
             begin_entry_at=26
         )
         self.client_name = self.add_widget_intelligent(
@@ -859,8 +859,8 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # simple strings
         self.client_id.value = self.parentApp.tmpDefault.client_id
         self.client_company.value = self.parentApp.tmpDefault.client_company
-        self.client_salutation.value = self.parentApp.tmpDefault.client_salutation
         self.client_attention.value = self.parentApp.tmpDefault.client_attention
+        self.client_salutation.value = self.parentApp.tmpDefault.client_salutation
         self.client_name.value = self.parentApp.tmpDefault.client_name
         self.client_family_name.value = self.parentApp.tmpDefault.client_family_name
         self.client_street.value = self.parentApp.tmpDefault.client_street
@@ -887,8 +887,8 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # get values into temp object
         self.parentApp.tmpDefault.client_id = self.client_id.value
         self.parentApp.tmpDefault.client_company = self.client_company.value
-        self.parentApp.tmpDefault.client_salutation = self.client_salutation.value
         self.parentApp.tmpDefault.client_attention = self.client_attention.value
+        self.parentApp.tmpDefault.client_salutation = self.client_salutation.value
         self.parentApp.tmpDefault.client_name = self.client_name.value
         self.parentApp.tmpDefault.client_family_name = self.client_family_name.value
         self.parentApp.tmpDefault.client_street = self.client_street.value

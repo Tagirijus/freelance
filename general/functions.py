@@ -95,6 +95,7 @@ def NewClient(settings=None, global_list=None):
         client_id=client_id,
         company=settings.defaults[lang].client_company,
         salutation=settings.defaults[lang].client_salutation,
+        attention=settings.defaults[lang].client_attention,
         name=settings.defaults[lang].client_name,
         family_name=settings.defaults[lang].client_family_name,
         street=settings.defaults[lang].client_street,
