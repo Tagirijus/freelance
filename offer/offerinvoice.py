@@ -565,6 +565,24 @@ class OfferInvoice(object):
         for e in self._entry_list:
             position += 1
 
+            title = replacer(
+                text=e.title,
+                settings=settings,
+                global_list=global_list,
+                client=client,
+                project=project,
+                offerinvoice=self
+            )
+
+            comment = replacer(
+                text=e.comment,
+                settings=settings,
+                global_list=global_list,
+                client=client,
+                project=project,
+                offerinvoice=self
+            )
+
             time = e.get_time(
                 entry_list=self._entry_list
             )
@@ -596,8 +614,8 @@ class OfferInvoice(object):
             entries.append(
                 {
                     'POSITION': position,
-                    'TITLE': e.title,
-                    'COMMENT': e.comment,
+                    'TITLE': title,
+                    'COMMENT': comment,
                     'TIME': time,
                     'AMOUNT': e.get_amount_str(),
                     'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
