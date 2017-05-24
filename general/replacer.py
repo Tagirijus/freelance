@@ -102,6 +102,7 @@ def replacer(
 
     # client related
     if is_client:
+        replace_me['CLIENT_ID'] = client.client_id
         replace_me['CLIENT_COMPANY'] = client.company
         replace_me['CLIENT_ATTN'] = client.attention
         replace_me['CLIENT_SALUT'] = client.salutation

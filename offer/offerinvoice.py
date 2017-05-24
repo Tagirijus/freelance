@@ -514,10 +514,10 @@ class OfferInvoice(object):
         # get replacement dict
         replace_me = replacer(
             settings=settings,
+            global_list=global_list,
             client=client,
             project=project,
-            offerinvoice=self,
-            global_list=global_list
+            offerinvoice=self
         )
 
         # get extension from template
@@ -547,6 +547,17 @@ class OfferInvoice(object):
             file_new = file + '_' + str(file_num) + file_ext
             file_num += 1
         file = file_new
+
+        # replace the replacer
+        for x in replace_me.keys():
+            replace_me[x] = replacer(
+                text=str(replace_me[x]),
+                settings=settings,
+                global_list=global_list,
+                client=client,
+                project=project,
+                offerinvoice=self
+            )
 
         # get entries
         entries = []
@@ -596,7 +607,7 @@ class OfferInvoice(object):
                 }
             )
 
-        # final endering
+        # final rendering
         engine = secretary.Renderer()
 
         # try to replace stuff in the template
