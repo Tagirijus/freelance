@@ -37,6 +37,7 @@ class Default(object):
         client_street=None,
         client_post_code=None,
         client_city=None,
+        client_country=None,
         client_tax_id=None,
         client_language=None,
         project_title=None,
@@ -101,6 +102,7 @@ class Default(object):
 
         self.client_post_code = '' if client_post_code is None else client_post_code
         self.client_city = '' if client_city is None else client_city
+        self.client_country = '' if client_country is None else client_country
         self.client_tax_id = '' if client_tax_id is None else client_tax_id
         self.client_language = 'en' if client_language is None else client_language
 
@@ -383,6 +385,7 @@ class Default(object):
         out['client_street'] = self.client_street
         out['client_post_code'] = self.client_post_code
         out['client_city'] = self.client_city
+        out['client_country'] = self.client_country
         out['client_tax_id'] = self.client_tax_id
         out['client_language'] = self.client_language
 
@@ -502,6 +505,9 @@ class Default(object):
 
         if 'client_city' in js.keys():
             self.client_city = js['client_city']
+
+        if 'client_country' in js.keys():
+            self.client_country = js['client_country']
 
         if 'client_tax_id' in js.keys():
             self.client_tax_id = js['client_tax_id']
@@ -634,6 +640,7 @@ class Default(object):
             client_street=self.client_street,
             client_post_code=self.client_post_code,
             client_city=self.client_city,
+            client_country=self.client_country,
             client_tax_id=self.client_tax_id,
             client_language=self.client_language,
             project_title=self.project_title,

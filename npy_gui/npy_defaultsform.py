@@ -820,6 +820,11 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
             name='Client city:',
             begin_entry_at=26
         )
+        self.client_country = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Client country:',
+            begin_entry_at=26
+        )
         self.client_tax_id = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client tax ID:',
@@ -873,6 +878,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.client_street.value = self.parentApp.tmpDefault.client_street
         self.client_post_code.value = self.parentApp.tmpDefault.client_post_code
         self.client_city.value = self.parentApp.tmpDefault.client_city
+        self.client_country.value = self.parentApp.tmpDefault.client_country
         self.client_tax_id.value = self.parentApp.tmpDefault.client_tax_id
 
         # another simple string or integers
@@ -901,6 +907,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.client_street = self.client_street.value
         self.parentApp.tmpDefault.client_post_code = self.client_post_code.value
         self.parentApp.tmpDefault.client_city = self.client_city.value
+        self.parentApp.tmpDefault.client_country = self.client_country.value
         self.parentApp.tmpDefault.client_tax_id = self.client_tax_id.value
         self.parentApp.tmpDefault.project_title = self.project_title.value
         self.parentApp.tmpDefault.set_project_hours_per_day(

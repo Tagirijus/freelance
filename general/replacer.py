@@ -111,6 +111,7 @@ def replacer(
         replace_me['CLIENT_STREET'] = client.street
         replace_me['CLIENT_POST_CODE'] = client.post_code
         replace_me['CLIENT_CITY'] = client.city
+        replace_me['CLIENT_COUNTRY'] = client.country
         replace_me['CLIENT_TAX_ID'] = client.tax_id
 
     # offer / invoice related

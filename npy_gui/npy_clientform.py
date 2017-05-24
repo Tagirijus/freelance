@@ -81,6 +81,11 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             name='City:',
             begin_entry_at=20
         )
+        self.client_country = self.add(
+            npyscreen.TitleText,
+            name='Country:',
+            begin_entry_at=20
+        )
         self.client_tax_id = self.add(
             npyscreen.TitleText,
             name='Tax ID:',
@@ -106,6 +111,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.client_street.value = self.parentApp.tmpClient.street
         self.client_post_code.value = self.parentApp.tmpClient.post_code
         self.client_city.value = self.parentApp.tmpClient.city
+        self.client_country.value = self.parentApp.tmpClient.country
         self.client_tax_id.value = self.parentApp.tmpClient.tax_id
 
         # handle languages
@@ -142,6 +148,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpClient.street = self.client_street.value
         self.parentApp.tmpClient.post_code = self.client_post_code.value
         self.parentApp.tmpClient.city = self.client_city.value
+        self.parentApp.tmpClient.country = self.client_country.value
         self.parentApp.tmpClient.tax_id = self.client_tax_id.value
         self.parentApp.tmpClient.language = self.client_language.values[
             self.client_language.value[0]

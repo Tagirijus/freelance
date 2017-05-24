@@ -21,6 +21,7 @@ class Client(object):
         street=None,
         post_code=None,
         city=None,
+        country=None,
         tax_id=None,
         language=None
     ):
@@ -34,6 +35,7 @@ class Client(object):
         self.street = '' if street is None else str(street)
         self.post_code = '' if post_code is None else str(post_code)
         self.city = '' if city is None else str(city)
+        self.country = '' if country is None else str(country)
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = 'en' if language is None else str(language)
 
@@ -58,6 +60,7 @@ class Client(object):
         out['street'] = self.street
         out['post_code'] = self.post_code
         out['city'] = self.city
+        out['country'] = self.country
         out['tax_id'] = self.tax_id
         out['language'] = self.language
 
@@ -132,6 +135,11 @@ class Client(object):
         else:
             city = None
 
+        if 'country' in js.keys():
+            country = js['country']
+        else:
+            country = None
+
         if 'tax_id' in js.keys():
             tax_id = js['tax_id']
         else:
@@ -153,6 +161,7 @@ class Client(object):
             street=street,
             post_code=post_code,
             city=city,
+            country=country,
             tax_id=tax_id,
             language=language
         )
