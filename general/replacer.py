@@ -139,6 +139,7 @@ def replacer(
             replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(
                 project=project
             )
+        replace_me['DELIVERY'] = offerinvoice.delivery
 
         # time related offer / invoice stuff
         replace_me['TIME_TOTAL'] = offerinvoice.get_time_total()

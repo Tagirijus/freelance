@@ -676,6 +676,11 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             relx=60,
             rely=self.date.rely
         )
+        self.delivery = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='Delivery:',
+            begin_entry_at=20
+        )
         self.due_date = self.add_widget_intelligent(
             TitleDateComboRefresh,
             name='Due date:',
@@ -762,6 +767,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
         self.date.value = self.parentApp.tmpInvoice.get_date()
+        self.delivery.value = self.parentApp.tmpInvoice.delivery
         self.paid_date.value = self.parentApp.tmpInvoice.get_paid_date()
         self.due_date.value = self.parentApp.tmpInvoice.get_due_date()
         self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
@@ -789,6 +795,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.id = self.id.value
         self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpInvoice.set_date(self.date.value)
+        self.parentApp.tmpInvoice.delivery = self.delivery.value
         self.parentApp.tmpInvoice.set_paid_date(self.paid_date.value)
         self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value

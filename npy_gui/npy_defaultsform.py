@@ -651,6 +651,11 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             name='Invoice due days:',
             begin_entry_at=26
         )
+        self.invoice_delivery = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Invoice delivery:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get the values from the active tmpDefault variable."""
@@ -666,6 +671,7 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.invoice_due_days.value = str(
             self.parentApp.tmpDefault.get_invoice_due_days()
         )
+        self.invoice_delivery.value = self.parentApp.tmpDefault.invoice_delivery
 
     def values_to_tmp(self, save=False):
         """Store values to temp object."""
@@ -682,6 +688,7 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.tmpDefault.set_invoice_round_price(False)
         self.parentApp.tmpDefault.set_invoice_templates(self.invoice_templates.values)
         self.parentApp.tmpDefault.set_invoice_due_days(self.invoice_due_days.value)
+        self.parentApp.tmpDefault.invoice_delivery = self.invoice_delivery.value
 
         language = self.parentApp.tmpDefault.language
 

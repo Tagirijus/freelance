@@ -202,7 +202,8 @@ def PresetOffer(
         settings=settings,
         global_list=global_list,
         client=client,
-        project=project
+        project=project,
+        offerinvoice=offer_preset
     )
 
     comment = replacer(
@@ -210,7 +211,8 @@ def PresetOffer(
         settings=settings,
         global_list=global_list,
         client=client,
-        project=project
+        project=project,
+        offerinvoice=offer_preset
     )
 
     # get other values
@@ -536,6 +538,14 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    delivery = replacer(
+        text=settings.defaults[lang].invoice_delivery,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
     due_date = date.today() + timedelta(
@@ -550,6 +560,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         comment=comment,
         date_fmt=date_fmt,
         date=date.today(),
+        delivery=delivery,
         due_date=due_date,
         round_price=round_price
     )
@@ -577,7 +588,8 @@ def PresetInvoice(
         settings=settings,
         global_list=global_list,
         client=client,
-        project=project
+        project=project,
+        offerinvoice=invoice_preset
     )
 
     id = replacer(
@@ -585,7 +597,8 @@ def PresetInvoice(
         settings=settings,
         global_list=global_list,
         client=client,
-        project=project
+        project=project,
+        offerinvoice=invoice_preset
     )
 
     comment = replacer(
@@ -593,12 +606,21 @@ def PresetInvoice(
         settings=settings,
         global_list=global_list,
         client=client,
-        project=project
+        project=project,
+        offerinvoice=invoice_preset
+    )
+
+    delivery = replacer(
+        text=invoice_preset.delivery,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project,
+        offerinvoice=invoice_preset
     )
 
     # get other values
     date_fmt = invoice_preset.date_fmt
-    inv_date = invoice_preset.get_date()
     due_date = invoice_preset.get_due_date()
     wage = invoice_preset.get_wage()
     round_price = invoice_preset.get_round_price()
@@ -610,6 +632,7 @@ def PresetInvoice(
         id=id,
         comment=comment,
         date_fmt=date_fmt,
+        delivery=delivery,
         due_date=due_date,
         wage=wage,
         round_price=round_price,

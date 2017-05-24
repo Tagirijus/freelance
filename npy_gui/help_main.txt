@@ -37,6 +37,7 @@ Offer / invcoie:
 - {TITLE}: title
 - {COMMENT}: comment
 - {DATE}: date
+- {DELIVERY}: delivery string
 - {DUE_DATE}: due date
 - {FINISH_DATE}: finishing date (mainly used in an offer)
 - {TIME_TOTAL}: total working time
@@ -57,6 +58,9 @@ These are keys for dictionary variables, which you can access inside the templat
 - {UNIT_PRICE}: its price not multiplied by its amount
 - {TAX}: its price tax only
 - {TAX_UNIT}: its price tax only not multiplied by its amount
+
+
+You can use replacements in the defaults as well. Write it like {#...} and it will be replaced in a new offer / invoice for example as {...} and only later replaced on export.
 
 
 Hope this programm will help some freelancers out there! (:

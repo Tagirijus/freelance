@@ -24,6 +24,7 @@ class OfferInvoice(object):
         comment=None,
         date_fmt=None,
         date=None,
+        delivery=None,
         due_date=None,
         paid_date=None,
         wage=None,
@@ -37,6 +38,7 @@ class OfferInvoice(object):
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
+        self.delivery = '' if delivery is None else str(delivery)
         self._due_date = ddate.today()      # set default
         self.set_due_date(due_date)         # try to set arguments value
         self._paid_date = None              # set default
@@ -169,6 +171,8 @@ class OfferInvoice(object):
         except Exception:
             out['date'] = ddate.today().strftime('%Y-%m-%d')
 
+        out['delivery'] = self.delivery
+
         try:
             out['due_date'] = self._due_date.strftime('%Y-%m-%d')
         except Exception:
@@ -274,6 +278,11 @@ class OfferInvoice(object):
         else:
             date = None
 
+        if 'delivery' in js.keys():
+            delivery = js['delivery']
+        else:
+            delivery = None
+
         if 'due_date' in js.keys():
             try:
                 due_date = datetime.strptime(js['due_date'], '%Y-%m-%d').date()
@@ -318,6 +327,7 @@ class OfferInvoice(object):
             comment=comment,
             date_fmt=date_fmt,
             date=date,
+            delivery=delivery,
             due_date=due_date,
             paid_date=paid_date,
             wage=wage,
@@ -464,7 +474,6 @@ class OfferInvoice(object):
             project = self.get_project(global_list=global_list)
 
         return global_list.get_client_by_id(client_id=project.client_id)
-
 
     def export_to_openoffice(
         self,
