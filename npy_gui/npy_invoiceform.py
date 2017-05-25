@@ -505,22 +505,26 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         """Try to run the command."""
         self.values_to_tmp()
 
-        # check if entries > 6
-        if len(self.parentApp.tmpInvoice.get_entry_list()) > 6:
+        # ask for summerizing
+        single_account = npyscreen.notify_input(
+            'Account:',
+            title='Summerize into one account? (empty if not)'
+        )
 
-            # then ask for name of the single transaction account
-            single_account = npyscreen.notify_input(
-                'Account:',
-                title='Too many entries. Please summerize into one account'
+        # check if entries > 6 or single_account
+        if (
+            len(self.parentApp.tmpInvoice.get_entry_list()) > 6
+            and single_account == ''
+        ):
+            npyscreen.notify_confirm(
+                'Too many entries. Enter a summerize-account for correct ledgeradd '
+                'integration! Canceling ...'
             )
+            return False
 
-            # cancel function, if user pressed cancel or entered nothing
-            if not single_account:
-                return False
-
-        # otherwise single_account is empty
-        else:
-            single_account = ''
+        # cancle on single_account is False
+        if single_account is False:
+            return False
 
         # generate parameters
         parameter = generate_parameter(
