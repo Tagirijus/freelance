@@ -611,6 +611,9 @@ class OfferInvoice(object):
                 round_price=self._round_price
             )
 
+            total = price + tax
+            total_unit = price_unit + tax_unit
+
             entries.append(
                 {
                     'POSITION': position,
@@ -620,8 +623,11 @@ class OfferInvoice(object):
                     'AMOUNT': e.get_amount_str(),
                     'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
                     'UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
-                    'TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
-                    'UNIT_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY'])
+                    'PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
+                    'PRICE_UNIT_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY']),
+                    'TOTAL': '{} {}'.format(total, replace_me['COMMODITY']),
+                    'TOTAL_UNIT': '{} {}'.format(total_unit, replace_me['COMMODITY']),
+                    'TAX_PERCENT': '{}'.format(e.get_tax_percent())
                 }
             )
 

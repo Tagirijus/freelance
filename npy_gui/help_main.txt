@@ -56,8 +56,11 @@ These are keys for dictionary variables, which you can access inside the templat
 - {AMOUNT}: its amount returned with the amount format string
 - {PRICE}: its price without tax
 - {UNIT_PRICE}: its price not multiplied by its amount
-- {TAX}: its price tax only
-- {TAX_UNIT}: its price tax only not multiplied by its amount
+- {PRICE_TAX}: its price tax only
+- {PRICE_TAX_UNIT}: its price tax only not multiplied by its amount
+- {TOTAL}: price with tax
+- {TOTAL_UNIT}: price with tax not multiplied by its amount
+- {TAX_PERCENT}: the tax percentage as a number
 
 
 You can use replacements in the defaults as well. Write it like {#...} and it will be replaced in a new offer / invoice for example as {...} and only later replaced on export.
