@@ -3,7 +3,7 @@
 from general import check_objects
 
 
-def generate_parameter(settings=None, project=None, invoice=None):
+def generate_parameter(single_account='', settings=None, project=None, invoice=None):
     """Generate parameter for ledgeradd according to given invoice."""
     is_settings = check_objects.is_settings(settings)
     is_project = check_objects.is_project(project)
@@ -14,11 +14,12 @@ def generate_parameter(settings=None, project=None, invoice=None):
 
     # also cancel if there are more than 4 entries, since the ledgeradd
     # programm can only handle 5 accounts and one has to be the receiving account
-    if len(invoice.get_entry_list()) > 4:
-        return False
-
     # of course: cancel if there are no entries at all, as well
-    if len(invoice.get_entry_list()) == 0:
+    # BUT NOT, if a single_account is given
+    if (
+        (len(invoice.get_entry_list()) > 4 or len(invoice.get_entry_list()) == 0)
+        and single_account == ''
+    ):
         return False
 
     # get all the data
@@ -45,17 +46,31 @@ def generate_parameter(settings=None, project=None, invoice=None):
     # the client account
     client_acc = project.client_id + ':'
 
-    # get name and price into list of tuples
+    # get name and price into list of tuples, if single_account == ''
     entries = []
-    for e in invoice.get_entry_list():
-        name = e.title
-        price = e.get_price(
-            entry_list=invoice.get_entry_list(),
-            wage=invoice.get_wage(project=project),
-            round_prive=invoice.get_round_price()
-        )
+    if single_account == '':
+        for e in invoice.get_entry_list():
+            name = e.title
+            price = e.get_price(
+                entry_list=invoice.get_entry_list(),
+                wage=invoice.get_wage(project=project),
+                round_prive=invoice.get_round_price()
+            )
 
-        entries.append((name, str(price)))
+            entries.append((name, str(price)))
+
+    # other wise get onle name from single_account and price of whole invoice
+    else:
+        entries.append(
+            (
+                single_account,
+                str(invoice.get_price_total(
+                    wage=invoice.get_wage(project=project),
+                    project=project,
+                    round_price=invoice.get_round_price()
+                ))
+            )
+        )
 
     # account A
     if len(entries) >= 1:
