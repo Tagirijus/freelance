@@ -17,7 +17,7 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
     # of course: cancel if there are no entries at all, as well
     # BUT NOT, if a single_account is given
     if (
-        (len(invoice.get_entry_list()) > 4 or len(invoice.get_entry_list()) == 0)
+        (len(invoice.get_entry_list()) > 6 or len(invoice.get_entry_list()) == 0)
         and single_account == ''
     ):
         return False
@@ -112,13 +112,33 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
     else:
         args.append('-D ""')
 
-    # account E (has to be receiving account)
-    args.append('-E "{}"'.format(settings.ledgeradd_receiving_account))
+    # account E
+    if len(entries) >= 5:
+        args.append('-E "{}{}" -Ea "-{}"'.format(
+            client_acc,
+            entries[4][0],
+            entries[4][1]
+        ))
+    else:
+        args.append('-E ""')
+
+    # account F
+    if len(entries) >= 6:
+        args.append('-F "{}{}" -Fa "-{}"'.format(
+            client_acc,
+            entries[5][0],
+            entries[5][1]
+        ))
+    else:
+        args.append('-F ""')
+
+    # account G (has to be receiving account)
+    args.append('-G "{}"'.format(settings.ledgeradd_receiving_account))
 
     # ledgeradd has to run in non-GUI, quiet and forced
     args.append('-n')
     args.append('-q')
-    args.append('-F')
+    args.append('-f')
 
     # return the mighty parameter as one string
     return ' '.join(args)

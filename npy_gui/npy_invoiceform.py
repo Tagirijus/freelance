@@ -505,8 +505,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         """Try to run the command."""
         self.values_to_tmp()
 
-        # check if entries > 4
-        if len(self.parentApp.tmpInvoice.get_entry_list()) > 4:
+        # check if entries > 6
+        if len(self.parentApp.tmpInvoice.get_entry_list()) > 6:
 
             # then ask for name of the single transaction account
             single_account = npyscreen.notify_input(
