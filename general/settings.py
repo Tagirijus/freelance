@@ -18,7 +18,8 @@ class Settings(object):
         offer_count_offset=None,
         invoice_count_offset=None,
         ledgeradd_command=None,
-        ledgeradd_receiving_account=None
+        ledgeradd_receiving_account=None,
+        ledgeradd_tax_account=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -55,6 +56,11 @@ class Settings(object):
         self.ledgeradd_receiving_account = (
             'account' if ledgeradd_receiving_account is None else str(
                 ledgeradd_receiving_account
+            )
+        )
+        self.ledgeradd_tax_account = (
+            'tax' if ledgeradd_tax_account is None else str(
+                ledgeradd_tax_account
             )
         )
 
@@ -200,6 +206,7 @@ class Settings(object):
         out['invoice_count_offset'] = self._invoice_count_offset
         out['ledgeradd_command'] = self.ledgeradd_command
         out['ledgeradd_receiving_account'] = self.ledgeradd_receiving_account
+        out['ledgeradd_tax_account'] = self.ledgeradd_tax_account
 
         # return the json
         return json.dumps(
@@ -245,6 +252,9 @@ class Settings(object):
 
         if 'ledgeradd_receiving_account' in js.keys():
             self.ledgeradd_receiving_account = js['ledgeradd_receiving_account']
+
+        if 'ledgeradd_tax_account' in js.keys():
+            self.ledgeradd_tax_account = js['ledgeradd_tax_account']
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

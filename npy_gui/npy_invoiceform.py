@@ -511,17 +511,6 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             title='Summerize into one account? (empty if not)'
         )
 
-        # check if entries > 6 or single_account
-        if (
-            len(self.parentApp.tmpInvoice.get_entry_list()) > 6
-            and single_account == ''
-        ):
-            npyscreen.notify_confirm(
-                'Too many entries. Enter a summerize-account for correct ledgeradd '
-                'integration! Canceling ...'
-            )
-            return False
-
         # cancle on single_account is False
         if single_account is False:
             return False
@@ -551,7 +540,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         try:
-            os.system(
+            feedback = os.system(
                 '{} {}'.format(
                     self.parentApp.S.ledgeradd_command,
                     parameter

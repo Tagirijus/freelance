@@ -212,6 +212,11 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Ledgeradd account:',
             begin_entry_at=26
         )
+        self.ledgeradd_tax_account = self.add(
+            npyscreen.TitleText,
+            name='Ledgeradd tax account:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get values from settings object."""
@@ -228,6 +233,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         self.ledgeradd_receiving_account.value = (
             self.parentApp.S.ledgeradd_receiving_account
         )
+        self.ledgeradd_tax_account.value = self.parentApp.S.ledgeradd_tax_account
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -239,6 +245,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         invoice_count_offset = self.invoice_count_offset.value
         ledgeradd_command = self.ledgeradd_command.value
         ledgeradd_receiving_account = self.ledgeradd_receiving_account.value
+        ledgeradd_tax_account = self.ledgeradd_tax_account.value
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
@@ -294,6 +301,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.set_invoice_count_offset(invoice_count_offset)
             self.parentApp.S.ledgeradd_command = ledgeradd_command
             self.parentApp.S.ledgeradd_receiving_account = ledgeradd_receiving_account
+            self.parentApp.S.ledgeradd_tax_account = ledgeradd_tax_account
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()

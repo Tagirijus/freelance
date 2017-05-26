@@ -12,14 +12,8 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
     if not is_settings or not is_project or not is_invoice:
         return False
 
-    # also cancel if there are more than 4 entries, since the ledgeradd
-    # programm can only handle 5 accounts and one has to be the receiving account
-    # of course: cancel if there are no entries at all, as well
-    # BUT NOT, if a single_account is given
-    if (
-        (len(invoice.get_entry_list()) > 6 or len(invoice.get_entry_list()) == 0)
-        and single_account == ''
-    ):
+    # cancel if there are no entries
+    if len(invoice.get_entry_list()) == 0:
         return False
 
     # get all the data
@@ -41,10 +35,13 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
     # get payee (project title)
     args.append('-p "{}"'.format(project.title))
 
-    # now generate the entries
+    # now generate the entries / postings / accounts
 
     # the client account
     client_acc = project.client_id + ':'
+
+    # the tax account
+    tax_acc = settings.ledgeradd_tax_account + ':'
 
     # get name and price into list of tuples, if single_account == ''
     entries = []
@@ -57,13 +54,45 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
                 round_prive=invoice.get_round_price()
             )
 
-            entries.append((name, str(price)))
+            entries.append(
+                (
+                    '{}{}'.format(
+                        client_acc,
+                        name
+                    ),
+                    str(price)
+                )
+            )
 
-    # other wise get onle name from single_account and price of whole invoice
+            # also add a posting for the tax, if it exists
+
+            tax = e.get_price_tax(
+                entry_list=invoice.get_entry_list(),
+                wage=invoice.get_wage(project=project),
+                round_prive=invoice.get_round_price()
+            )
+
+            if tax != 0:
+                # append a posting for tax as well
+                entries.append(
+                    (
+                        '{}{}{}'.format(
+                            client_acc,
+                            name,
+                            tax_acc
+                        ),
+                        str(tax)
+                    )
+                )
+
+    # otherwise get only name from single_account and price of whole invoice
     else:
         entries.append(
             (
-                single_account,
+                '{}{}'.format(
+                    client_acc,
+                    single_account
+                ),
                 str(invoice.get_price_total(
                     wage=invoice.get_wage(project=project),
                     project=project,
@@ -72,68 +101,32 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
             )
         )
 
-    # account A
-    if len(entries) >= 1:
-        args.append('-A "{}{}" -Aa "-{}"'.format(
-            client_acc,
-            entries[0][0],
-            entries[0][1]
-        ))
-    else:
-        args.append('-A ""')
+        # also add tax, if it exists
 
-    # account B
-    if len(entries) >= 2:
-        args.append('-B "{}{}" -Ba "-{}"'.format(
-            client_acc,
-            entries[1][0],
-            entries[1][1]
-        ))
-    else:
-        args.append('-B ""')
+        tax_total = invoice.get_price_total(
+            wage=invoice.get_wage(project=project),
+            project=project,
+            round_price=invoice.get_round_price()
+        )
 
-    # account C
-    if len(entries) >= 3:
-        args.append('-C "{}{}" -Ca "-{}"'.format(
-            client_acc,
-            entries[2][0],
-            entries[2][1]
-        ))
-    else:
-        args.append('-C ""')
+        if tax_total != 0:
+            entries.append(
+                (
+                    '{}{}{}'.format(
+                        client_acc,
+                        single_account,
+                        tax_acc
+                    ),
+                    str(tax_total)
+                )
+            )
 
-    # account D
-    if len(entries) >= 4:
-        args.append('-D "{}{}" -Da "-{}"'.format(
-            client_acc,
-            entries[3][0],
-            entries[3][1]
-        ))
-    else:
-        args.append('-D ""')
+    # append the parameter for the account
+    for e in entries:
+        args.append('-acc "{}" "{}"'.format(e[0], e[1]))
 
-    # account E
-    if len(entries) >= 5:
-        args.append('-E "{}{}" -Ea "-{}"'.format(
-            client_acc,
-            entries[4][0],
-            entries[4][1]
-        ))
-    else:
-        args.append('-E ""')
-
-    # account F
-    if len(entries) >= 6:
-        args.append('-F "{}{}" -Fa "-{}"'.format(
-            client_acc,
-            entries[5][0],
-            entries[5][1]
-        ))
-    else:
-        args.append('-F ""')
-
-    # account G (has to be receiving account)
-    args.append('-G "{}"'.format(settings.ledgeradd_receiving_account))
+    # append the receiving account
+    args.append('-acc "{}"'.format(settings.ledgeradd_receiving_account))
 
     # ledgeradd has to run in non-GUI, quiet and forced
     args.append('-n')
