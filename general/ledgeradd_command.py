@@ -41,7 +41,7 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
     client_acc = project.client_id + ':'
 
     # the tax account
-    tax_acc = settings.ledgeradd_tax_account + ':'
+    tax_acc = ':' + settings.ledgeradd_tax_account
 
     # get name and price into list of tuples, if single_account == ''
     entries = []
@@ -79,7 +79,7 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
                         '{}{}{}'.format(
                             client_acc,
                             name,
-                            tax_acc
+                            tax_acc.replace('{TAX_PERCENT}', str(e.get_tax_percent()))
                         ),
                         str(tax)
                     )
@@ -103,7 +103,7 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
 
         # also add tax, if it exists
 
-        tax_total = invoice.get_price_total(
+        tax_total = invoice.get_price_tax_total(
             wage=invoice.get_wage(project=project),
             project=project,
             round_price=invoice.get_round_price()
@@ -115,7 +115,7 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
                     '{}{}{}'.format(
                         client_acc,
                         single_account,
-                        tax_acc
+                        tax_acc.replace('{TAX_PERCENT}', '').strip()
                     ),
                     str(tax_total)
                 )

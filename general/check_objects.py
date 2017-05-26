@@ -47,3 +47,15 @@ def is_list(obj=None):
         return obj.__class__.__name__ == 'List'
     except Exception:
         return False
+
+
+def is_entry(obj=None):
+    """Check object."""
+    try:
+        return (
+            obj.__class__.__name__ == 'BaseEntry' or
+            obj.__class__.__name__ == 'MultiplyEntry' or
+            obj.__class__.__name__ == 'ConnectEntry'
+        )
+    except Exception:
+        return False

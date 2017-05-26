@@ -540,7 +540,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         try:
-            feedback = os.system(
+            os.system(
                 '{} {}'.format(
                     self.parentApp.S.ledgeradd_command,
                     parameter

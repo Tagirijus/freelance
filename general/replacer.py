@@ -33,13 +33,13 @@ def replacer(
     Otherwise the given text will be returned with replaced values.
     """
     is_settings = check_objects.is_settings(settings)
+    is_global_list = check_objects.is_list(global_list)
     is_client = check_objects.is_client(client)
     is_project = check_objects.is_project(project)
     is_offerinvoice = (
         check_objects.is_offer(offerinvoice) or
         check_objects.is_invoice(offerinvoice)
     )
-    is_global_list = check_objects.is_list(global_list)
 
     # replace stuff
     replace_me = ReplacementDict()
