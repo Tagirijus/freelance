@@ -31,7 +31,7 @@ Client:
 - {CLIENT_...}: replaces with the connected clients ..., possible entries:
 	CLIENT_COMPANY, _ATTN, _SALUT,
 	_NAME, _FAMILY, _FULLNAME, _STREET,
-	_POST_CODE,	_CITY, _TAX_ID
+	_POST_CODE,	_CITY, _COUNTRY, _TAX_ID
 
 Offer / invcoie:
 - {TITLE}: title
