@@ -624,9 +624,9 @@ class OfferInvoice(object):
                     'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
                     'UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
                     'PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
-                    'PRICE_UNIT_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY']),
+                    'UNIT_PRICE_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY']),
                     'TOTAL': '{} {}'.format(total, replace_me['COMMODITY']),
-                    'TOTAL_UNIT': '{} {}'.format(total_unit, replace_me['COMMODITY']),
+                    'UNIT_TOTAL': '{} {}'.format(total_unit, replace_me['COMMODITY']),
                     'TAX_PERCENT': '{}'.format(e.get_tax_percent())
                 }
             )

@@ -57,9 +57,9 @@ These are keys for dictionary variables, which you can access inside the templat
 - {PRICE}: its price without tax
 - {UNIT_PRICE}: its price not multiplied by its amount
 - {PRICE_TAX}: its price tax only
-- {PRICE_TAX_UNIT}: its price tax only not multiplied by its amount
+- {UNIT_PRICE_TAX}: its price tax only not multiplied by its amount
 - {TOTAL}: price with tax
-- {TOTAL_UNIT}: price with tax not multiplied by its amount
+- {UNIT_TOTAL}: price with tax not multiplied by its amount
 - {TAX_PERCENT}: the tax percentage as a number
 
 
