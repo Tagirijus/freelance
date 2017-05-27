@@ -46,6 +46,7 @@ Offer / invcoie:
 - {PRICE_TOTAL}: the total price without tax
 - {TAX_TOTAL}: the total tax only price
 - {PRICE_TAX_TOTAL}: the total price + tax
+- {HAS_TAX}: boolen if any tax exists
 
 Entries:
 These are keys for dictionary variables, which you can access inside the template via entries['KEY'].
@@ -61,7 +62,7 @@ These are keys for dictionary variables, which you can access inside the templat
 - {TOTAL}: price with tax
 - {UNIT_TOTAL}: price with tax not multiplied by its amount
 - {TAX_PERCENT}: the tax percentage as a number
-- {TAX}: boolean; true if entry has a tax percentage or value > 0
+- {HAS_TAX}: boolean; true if entry has a tax percentage or value > 0
 
 
 You can use replacements in the defaults as well. Write it like {#...} and it will be replaced in a new offer / invoice for example as {...} and only later replaced on export.
