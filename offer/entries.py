@@ -174,11 +174,6 @@ class BaseEntry(object):
 
     def get_unit_price(self, round_price=False, *args, **kwargs):
         """Get price / amount."""
-        if round_price:
-            rounder = 0
-        else:
-            rounder = 2
-
         # divide with amount, if its > 0
         if self._amount.get() > 0:
             return round(
@@ -187,7 +182,7 @@ class BaseEntry(object):
                     *args,
                     **kwargs
                 ) / self._amount.get(),
-                rounder
+                2
             )
 
         # fallback output: simple get_price
@@ -198,7 +193,7 @@ class BaseEntry(object):
                     *args,
                     **kwargs
                 ),
-                rounder
+                2
             )
 
     def get_price_raw(self):
