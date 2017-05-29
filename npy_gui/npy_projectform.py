@@ -98,6 +98,8 @@ class OfferList(npyscreen.MultiLineAction):
 
     def add_offer(self, keypress=None):
         """Add a new offer to the project."""
+        self.parent.values_to_tmp()
+
         # prepare tmpOffer
         self.parent.parentApp.tmpOffer_new = True
         self.parent.parentApp.tmpOffer_index = self.cursor_line
