@@ -205,54 +205,37 @@ class BaseEntry(object):
         """Get raw price value."""
         return self._price
 
-    def get_price_tax(self, round_price=False, *args, **kwargs):
+    def get_price_tax(self, *args, **kwargs):
         """Get tax of the price."""
-        if round_price:
-            rounder = 0
-        else:
-            rounder = 2
-
         return round(
             self._tax * self.get_price(
-                round_price=round_price,
                 *args,
                 **kwargs
             ),
-            rounder
+            2
         )
 
-    def get_unit_price_tax(self, round_price=False, *args, **kwargs):
+    def get_unit_price_tax(self, *args, **kwargs):
         """Get price_tax / amount."""
-        if round_price:
-            rounder = 0
-        else:
-            rounder = 2
-
         # divide with amount, if its > 0
         if self._amount.get() > 0:
             return round(
                 self.get_price_tax(
-                    round_price=round_price,
                     *args,
                     **kwargs
                 ) / self._amount.get(),
-                rounder
+                2
             )
 
-        # fallback output: simple get_price
+        # fallback output: simple get_price_tax
         else:
             return round(
                 self.get_price_tax(
-                    round_price=round_price,
                     *args,
                     **kwargs
                 ),
-                rounder
+                2
             )
-
-    def get_price_sum(self, *args, **kwargs):
-        """Get tax of price plus price without tax summerized."""
-        return self.get_price(*args, **kwargs) + self.get_price_tax(*args, **kwargs)
 
     def get_connected(self):
         """Get connected set."""

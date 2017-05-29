@@ -171,10 +171,9 @@ def replacer(
             commodity
         )
 
-        tax_total = offerinvoice.get_price_total(
+        tax_total = offerinvoice.get_price_tax_total(
             wage=offerinvoice.get_wage(project=project),
             project=project,
-            tax=True,
             round_price=offerinvoice.get_round_price()
         )
         replace_me['TAX_TOTAL'] = '{} {}'.format(

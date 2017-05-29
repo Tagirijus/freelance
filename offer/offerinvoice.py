@@ -353,11 +353,12 @@ class OfferInvoice(object):
                 wage=wage
             ) if not tax else e.get_price_tax(
                 entry_list=self._entry_list,
-                wage=wage
+                wage=wage,
+                round_price=round_price
             )
 
         # return it, check if rounded or not
-        if round_price:
+        if round_price and not tax:
             return round(out)
         else:
             return out
@@ -365,7 +366,10 @@ class OfferInvoice(object):
     def get_price_tax_total(self, wage=None, project=None, round_price=None):
         """Get summerized total tax prices form entry_list."""
         return self.get_price_total(
-            wage=wage, project=project, tax=True, round_price=round_price
+            wage=wage,
+            project=project,
+            tax=True,
+            round_price=round_price
         )
 
     def get_time_total(self):
