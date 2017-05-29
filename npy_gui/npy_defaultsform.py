@@ -1140,10 +1140,10 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             self.baseentry_amount_format.value
         )
         self.parentApp.tmpDefault.set_baseentry_time(
-            float(self.baseentry_time.value)
+            self.baseentry_time.value
         )
         self.parentApp.tmpDefault.set_baseentry_price(
-            float(self.baseentry_price.value)
+            self.baseentry_price.value
         )
         self.parentApp.tmpDefault.multiplyentry_title = self.multiplyentry_title.value
         self.parentApp.tmpDefault.multiplyentry_comment = (
@@ -1151,27 +1151,27 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         self.parentApp.tmpDefault.set_multiplyentry_amount(
-            float(self.multiplyentry_amount.value)
+            self.multiplyentry_amount.value
         )
         self.parentApp.tmpDefault.multiplyentry_amount_format = (
             self.multiplyentry_amount_format.value
         )
 
         self.parentApp.tmpDefault.set_multiplyentry_hour_rate(
-            float(self.multiplyentry_hour_rate.value)
+            self.multiplyentry_hour_rate.value
         )
         self.parentApp.tmpDefault.connectentry_title = self.connectentry_title.value
         self.parentApp.tmpDefault.connectentry_comment = self.connectentry_comment.value
 
         self.parentApp.tmpDefault.set_connectentry_amount(
-            float(self.connectentry_amount.value)
+            self.connectentry_amount.value
         )
         self.parentApp.tmpDefault.connectentry_amount_format = (
             self.connectentry_amount_format.value
         )
 
         self.parentApp.tmpDefault.set_connectentry_multiplicator(
-            float(self.connectentry_multiplicator.value)
+            self.connectentry_multiplicator.value
         )
         self.parentApp.tmpDefault.set_connectentry_is_time(
             self.connectentry_is_time.value
