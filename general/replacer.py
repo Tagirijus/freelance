@@ -182,7 +182,7 @@ def replacer(
             commodity
         )
 
-        replace_me['HAS_TAX'] = tax_total > 0
+        replace_me['HAS_TAX'] = str(tax_total > 0)
 
         replace_me['PRICE_TAX_TOTAL'] = '{} {}'.format(
             price_total + tax_total,
