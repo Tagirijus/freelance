@@ -130,9 +130,15 @@ class TemplatesListAction(npyscreen.MultiLineAction):
     def update_values(self):
         """Update values and refresh view."""
         if self.offerinvoice == 'offer':
-            self.values = self.parent.parentApp.tmpDefault.get_offer_templates_as_list()
+            self.values = sorted(
+                self.parent.parentApp.tmpDefault.get_offer_templates_as_list(),
+                key=lambda x: x[0].lower()
+            )
         else:
-            self.values = self.parent.parentApp.tmpDefault.get_invoice_templates_as_list()
+            self.values = sorted(
+                self.parent.parentApp.tmpDefault.get_invoice_templates_as_list(),
+                key=lambda x: x[0].lower()
+            )
 
         self.display()
         self.clear_filter()
