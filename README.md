@@ -14,6 +14,10 @@ To be honest: totally helpless here. I have installed my tweaked version of `npy
 
 Start the programm and open the menu with `Ctrl+X`. Then you have a help option for nearly every form of the progamm, which should help you.
 
+# Client database converter
+
+`general/convert_clients.py` is a simple command line programm to convert your old client database to the Freelance format and vice versa. Start the programm with `-h` or `--help` to see how it works.
+
 # To do
 
 - Ledger time track implementation for fully automated invoice creation

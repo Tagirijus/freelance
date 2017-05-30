@@ -5,3 +5,5 @@
 /*.sublime-project
 /*.sublime-workspace
 *.pyc
+*.csv
+/TEST
