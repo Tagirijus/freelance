@@ -791,6 +791,11 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
             name='Client company:',
             begin_entry_at=26
         )
+        self.client_company_b = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Client company B:',
+            begin_entry_at=26
+        )
         self.client_attention = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Client attn.:',
@@ -877,6 +882,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # simple strings
         self.client_id.value = self.parentApp.tmpDefault.client_id
         self.client_company.value = self.parentApp.tmpDefault.client_company
+        self.client_company_b.value = self.parentApp.tmpDefault.client_company_b
         self.client_attention.value = self.parentApp.tmpDefault.client_attention
         self.client_salutation.value = self.parentApp.tmpDefault.client_salutation
         self.client_name.value = self.parentApp.tmpDefault.client_name
@@ -906,6 +912,7 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # get values into temp object
         self.parentApp.tmpDefault.client_id = self.client_id.value
         self.parentApp.tmpDefault.client_company = self.client_company.value
+        self.parentApp.tmpDefault.client_company_b = self.client_company_b.value
         self.parentApp.tmpDefault.client_attention = self.client_attention.value
         self.parentApp.tmpDefault.client_salutation = self.client_salutation.value
         self.parentApp.tmpDefault.client_name = self.client_name.value

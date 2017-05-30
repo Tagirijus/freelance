@@ -46,6 +46,11 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             name='Company:',
             begin_entry_at=20
         )
+        self.client_company_b = self.add(
+            npyscreen.TitleText,
+            name='Company B:',
+            begin_entry_at=20
+        )
         self.client_attention = self.add(
             npyscreen.TitleText,
             name='Attention:',
@@ -104,6 +109,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         """Get values."""
         self.client_id.value = self.parentApp.tmpClient.client_id
         self.client_company.value = self.parentApp.tmpClient.company
+        self.client_company_b.value = self.parentApp.tmpClient.company_b
         self.client_attention.value = self.parentApp.tmpClient.attention
         self.client_salutation.value = self.parentApp.tmpClient.salutation
         self.client_name.value = self.parentApp.tmpClient.name
@@ -141,6 +147,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         old_client = self.parentApp.tmpClient.copy()
         self.parentApp.tmpClient.client_id = self.client_id.value
         self.parentApp.tmpClient.company = self.client_company.value
+        self.parentApp.tmpClient.company_b = self.client_company_b.value
         self.parentApp.tmpClient.attention = self.client_attention.value
         self.parentApp.tmpClient.salutation = self.client_salutation.value
         self.parentApp.tmpClient.name = self.client_name.value

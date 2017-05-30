@@ -30,6 +30,7 @@ class Default(object):
         commodity=None,
         client_id=None,
         client_company=None,
+        client_company_b=None,
         client_attention=None,
         client_salutation=None,
         client_name=None,
@@ -94,6 +95,7 @@ class Default(object):
         # client default values
         self.client_id = '{CLIENT_COUNT}' if client_id is None else client_id
         self.client_company = '' if client_company is None else client_company
+        self.client_company_b = '' if client_company_b is None else client_company_b
         self.client_attention = 'Attn.' if client_attention is None else client_attention
         self.client_salutation = '' if client_salutation is None else client_salutation
         self.client_name = '' if client_name is None else client_name
@@ -378,6 +380,7 @@ class Default(object):
 
         out['client_id'] = self.client_id
         out['client_company'] = self.client_company
+        out['client_company_b'] = self.client_company_b
         out['client_attention'] = self.client_attention
         out['client_salutation'] = self.client_salutation
         out['client_name'] = self.client_name
@@ -484,6 +487,9 @@ class Default(object):
 
         if 'client_company' in js.keys():
             self.client_company = js['client_company']
+
+        if 'client_company_b' in js.keys():
+            self.client_company_b = js['client_company_b']
 
         if 'client_attention' in js.keys():
             self.client_attention = js['client_attention']
@@ -633,6 +639,7 @@ class Default(object):
             commodity=self.commodity,
             client_id=self.client_id,
             client_company=self.client_company,
+            client_company_b=self.client_company_b,
             client_attention=self.client_attention,
             client_salutation=self.client_salutation,
             client_name=self.client_name,

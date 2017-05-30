@@ -104,6 +104,7 @@ def replacer(
     if is_client:
         replace_me['CLIENT_ID'] = client.client_id
         replace_me['CLIENT_COMPANY'] = client.company
+        replace_me['CLIENT_COMPANY_B'] = client.company_b
         replace_me['CLIENT_ATTN'] = client.attention
         replace_me['CLIENT_SALUT'] = client.salutation
         replace_me['CLIENT_NAME'] = client.name
