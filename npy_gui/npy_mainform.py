@@ -116,6 +116,9 @@ class ClientList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
+        # get selected client
+        self.parent.parentApp.tmpClient = self.values[self.cursor_line].copy()
+
         client_str = '"{}: {}"'.format(
             self.parent.parentApp.tmpClient.client_id,
             self.parent.parentApp.tmpClient.fullname()
@@ -128,7 +131,7 @@ class ClientList(npyscreen.MultiLineAction):
         # yepp, deactivate it
         if really:
             worked = self.parent.parentApp.L.deactivate_client(
-                client=self.values[self.cursor_line],
+                client=self.parent.parentApp.tmpClient,
                 inactive_dir=self.parent.parentApp.S.inactive_dir
             )
 
@@ -248,7 +251,9 @@ class ProjectList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
+        # get selected project
         project = self.values[self.cursor_line]
+
         project_str = '"{}: {}"'.format(project.client_id, project.title)
         really = npyscreen.notify_yes_no(
             'Really deactivate the project {}?'.format(project_str),
