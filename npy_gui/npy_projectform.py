@@ -253,6 +253,8 @@ class InvoiceList(npyscreen.MultiLineAction):
 
     def add_invoice(self, keypress=None):
         """Add a new invoice to the project."""
+        self.parent.values_to_tmp()
+
         # prepare tmpInvoice
         self.parent.parentApp.tmpInvoice_new = True
         self.parent.parentApp.tmpInvoice_index = self.cursor_line
