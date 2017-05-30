@@ -511,13 +511,30 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             title='Summerize into one account? (empty if not)'
         )
 
-        # cancle on single_account is False
-        if single_account is False:
+        # ask for payee
+        payee = npyscreen.notify_input(
+            'Payee:',
+            title='Summerize into one account? (empty = project title)'
+        )
+
+        # cancle on single_account is False or payee is False
+        if single_account is False or payee is False:
             return False
+
+        # get payee replaced
+        payee = replacer(
+            text=payee,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=self.parentApp.tmpClient,
+            project=self.parentApp.tmpProject,
+            offerinvoice=self.parentApp.tmpInvoice
+        )
 
         # generate parameters
         parameter = generate_parameter(
             single_account=single_account,
+            payee=payee,
             settings=self.parentApp.S,
             project=self.parentApp.tmpProject,
             invoice=self.parentApp.tmpInvoice

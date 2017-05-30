@@ -3,7 +3,13 @@
 from general import check_objects
 
 
-def generate_parameter(single_account='', settings=None, project=None, invoice=None):
+def generate_parameter(
+    single_account='',
+    payee='',
+    settings=None,
+    project=None,
+    invoice=None
+):
     """Generate parameter for ledgeradd according to given invoice."""
     is_settings = check_objects.is_settings(settings)
     is_project = check_objects.is_project(project)
@@ -33,7 +39,10 @@ def generate_parameter(single_account='', settings=None, project=None, invoice=N
         args.append('-c "{}"'.format(invoice.id))
 
     # get payee (project title)
-    args.append('-p "{}"'.format(project.title))
+    if payee == '':
+        args.append('-p "{}"'.format(project.title))
+    else:
+        args.append('-p "{}"'.format(payee))
 
     # now generate the entries / postings / accounts
 
