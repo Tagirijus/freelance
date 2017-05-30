@@ -623,8 +623,14 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.connected_entries = []
         connected_list = self.parentApp.tmpEntry.get_connected()
 
+        # check if offer or invoice and get its entry_list
+        if self.parentApp.tmpEntry_offer_invoice == 'offer':
+            entry_list = self.parentApp.tmpOffer.get_entry_list()
+        else:
+            entry_list = self.parentApp.tmpInvoice.get_entry_list()
+
         # iterate through all entries
-        for e in self.parentApp.tmpOffer.get_entry_list():
+        for e in entry_list:
             # only append it, if it's not its own id
             if e.get_id() != self.parentApp.tmpEntry.get_id():
                 # append to the widget
@@ -639,6 +645,9 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
 
                 # append original entry also to temp list
                 self.connected_entries.append(e)
+
+        # clear filter to not show double entries (npyscreen bug)
+        self.connected.entry_widget.clear_filter()
 
         # get actual caption for form
         if self.parentApp.tmpEntry_offer_invoice == 'offer':
