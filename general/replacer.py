@@ -79,20 +79,21 @@ def replacer(
         replace_me['OFFER_COUNT'] = str(
             settings.get_offer_count_offset() + len(all_offers) + 1
         )
+        replace_me['INVOICE_COUNT'] = str(
+            settings.get_invoice_count_offset() + len(all_invoices) + 1
+        )
 
-        # try to get highest invoice id, if it's number
-        try:
-            ids = [0 if inv.id == '' else int(inv.id) for inv in all_invoices]
-            highest = max(ids)
-            replace_me['INVOICE_COUNT'] = str(
-                highest + 1
-            )
+        # try to get highest invoice id from existing ID strings
+        got_ids = [0]
+        for inv_id in [inv.id for inv in all_invoices]:
+            try:
+                got_ids.append(int(inv_id))
+            except Exception:
+                pass
 
-        # otherwise just calculate it with the settings invoice count offset
-        except Exception as e:
-            replace_me['INVOICE_COUNT'] = str(
-                settings.get_invoice_count_offset() + len(all_invoices) + 1
-            )
+        replace_me['INVOICE_COUNT_B'] = str(
+            max(got_ids) + 1
+        )
 
     # project related
     if is_project:

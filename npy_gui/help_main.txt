@@ -17,10 +17,15 @@ Client list / Project list:
 
 In the settings you can set up default texts and other settings. There are possible string replacements in the defaults and also in the most string inputs. For example you can set up a project name like "{YEAR}-{MONTH} " and when this becomes a preset, it will (e.g. on the 15th of octobre 1987) become "1987-10 " automatically. Just try these string replacement variables:
 
-Time:
+Global:
 - {YEAR}: replaces with the year of the offer
 - {MONTH}: replaces with the month of the offer
 - {DAY}: replaces with the day of the offer
+- {CLIENT_COUNT}: count of all clients (also inactive!)
+- {PROJECT_COUNT}: count of all projects (also inactive!)
+- {OFFER_COUNT}: count of all offers (also inactive!)
+- {INVOICE_COUNT}: count of all invoices (also inactive!)
+- {INVOICE_COUNT_B}: tries to get the highest to integer convertable invoice id + 1
 
 Project:
 - {PROJECT_TITLE}: replaces with the project title of the connected project
