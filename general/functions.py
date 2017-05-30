@@ -621,6 +621,7 @@ def PresetInvoice(
 
     # get other values
     date_fmt = invoice_preset.date_fmt
+    date = invoice_preset.get_date()
     due_date = invoice_preset.get_due_date()
     wage = invoice_preset.get_wage()
     round_price = invoice_preset.get_round_price()
@@ -632,6 +633,7 @@ def PresetInvoice(
         id=id,
         comment=comment,
         date_fmt=date_fmt,
+        date=date,
         delivery=delivery,
         due_date=due_date,
         wage=wage,
