@@ -22,6 +22,7 @@ class Default(object):
         invoice_title=None,
         invoice_id=None,
         invoice_comment=None,
+        invoice_comment_b=None,
         invoice_filename=None,
         invoice_round_price=None,
         invoice_templates=None,
@@ -81,6 +82,7 @@ class Default(object):
         self.invoice_title = '' if invoice_title is None else invoice_title
         self.invoice_id = '' if invoice_id is None else invoice_id
         self.invoice_comment = '' if invoice_comment is None else invoice_comment
+        self.invoice_comment_b = '' if invoice_comment_b is None else invoice_comment_b
         self.invoice_filename = '' if invoice_filename is None else invoice_filename
         self.set_invoice_round_price(
             False if invoice_round_price is None else invoice_round_price
@@ -372,6 +374,7 @@ class Default(object):
         out['invoice_title'] = self.invoice_title
         out['invoice_id'] = self.invoice_id
         out['invoice_comment'] = self.invoice_comment
+        out['invoice_comment_b'] = self.invoice_comment_b
         out['invoice_filename'] = self.invoice_filename
         out['invoice_round_price'] = self._invoice_round_price
         out['invoice_templates'] = self._invoice_templates
@@ -466,6 +469,9 @@ class Default(object):
 
         if 'invoice_comment' in js.keys():
             self.invoice_comment = js['invoice_comment']
+
+        if 'invoice_comment_b' in js.keys():
+            self.invoice_comment_b = js['invoice_comment_b']
 
         if 'invoice_filename' in js.keys():
             self.invoice_filename = js['invoice_filename']
@@ -637,6 +643,7 @@ class Default(object):
             invoice_title=self.invoice_title,
             invoice_id=self.invoice_id,
             invoice_comment=self.invoice_comment,
+            invoice_comment_b=self.invoice_comment_b,
             invoice_filename=self.invoice_filename,
             invoice_round_price=self._invoice_round_price,
             invoice_templates=self._invoice_templates,
