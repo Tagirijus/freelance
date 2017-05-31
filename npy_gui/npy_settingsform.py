@@ -217,6 +217,16 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Ledgeradd tax account:',
             begin_entry_at=26
         )
+        self.ledger_alias_file = self.add(
+            npyscreen.TitleFilenameCombo,
+            name='Ledger alias file:',
+            begin_entry_at=26
+        )
+        self.ledger_alias_default_account = self.add(
+            npyscreen.TitleText,
+            name='Ledger alias def. acc.:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get values from settings object."""
@@ -234,6 +244,10 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.ledgeradd_receiving_account
         )
         self.ledgeradd_tax_account.value = self.parentApp.S.ledgeradd_tax_account
+        self.ledger_alias_file.value = self.parentApp.S.ledger_alias_file
+        self.ledger_alias_default_account.value = (
+            self.parentApp.S.ledger_alias_default_account
+        )
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -246,6 +260,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         ledgeradd_command = self.ledgeradd_command.value
         ledgeradd_receiving_account = self.ledgeradd_receiving_account.value
         ledgeradd_tax_account = self.ledgeradd_tax_account.value
+        ledger_alias_file = self.ledger_alias_file.value
+        ledger_alias_default_account = self.ledger_alias_default_account.value
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
@@ -272,7 +288,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
                 )
             else:
                 message_text = (
-                    'Somethign is not right with the folder names ...'
+                    'Something is not right with the folder names ...'
                 )
 
             # show the message
@@ -302,6 +318,8 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.ledgeradd_command = ledgeradd_command
             self.parentApp.S.ledgeradd_receiving_account = ledgeradd_receiving_account
             self.parentApp.S.ledgeradd_tax_account = ledgeradd_tax_account
+            self.parentApp.S.ledger_alias_file = ledger_alias_file
+            self.parentApp.S.ledger_alias_default_account = ledger_alias_default_account
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()

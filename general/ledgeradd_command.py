@@ -1,6 +1,7 @@
 """Module for generating a proper ledgeradd command line output with given invoice."""
 
 from general import check_objects
+import os
 
 
 def generate_parameter(
@@ -144,3 +145,16 @@ def generate_parameter(
 
     # return the mighty parameter as one string
     return ' '.join(args)
+
+
+def add_ledger_alias(
+    ledgerfile=None,
+    alias=None,
+    string=None
+):
+    """Append the alias with the string to the ledgerfile."""
+    with open(str(ledgerfile), 'a') as f:
+        f.write('\nalias {}={}'.format(
+            alias,
+            string
+        ))

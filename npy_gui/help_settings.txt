@@ -33,4 +33,26 @@ Command for the command line to start ledgeradd programm.
 
 
 Ledgeradd account:
-The receiving account for the ledgeradd integration.
+The receiving account for the ledgeradd integration. See "Ledger alias file" below for more information about the ledgeradd formatting.
+
+
+Ledgeradd tax account:
+The sub account holding the tax, the client paid.
+
+
+Ledger alias file & ledger alias default account:
+The file with only the aliases for the ledger journal. The ledgeradd command adds transactions to the journal in this format:
+
+	1987-10-15 * (100) Project title here
+	 [CLIENT_ID]:Entry or single account  $ 500,00
+	 [ledgeradd receiving account]
+
+[CLIENT_ID] will be replaced by the clients id. Thus you could need an alias in your ledger journal to replace such a client ID with something more specific. Such an alias could look like this in your ledger journal:
+
+	alias PCJD01=Income:Clients:Pattern Company:John Doe
+
+The middle part is the "Ledger alias default account" here. You can make this dynamic as well. The above example default account string could look like this, when dynamic:
+
+	Income:Clients:{CLIENT_COMPANY}:{CLIENT_FULLNAME}
+
+It's just a default string. When running the ledger alias command in the client form you will still be asked what string exactly you would like to be added.

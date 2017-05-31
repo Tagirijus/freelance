@@ -19,7 +19,9 @@ class Settings(object):
         invoice_count_offset=None,
         ledgeradd_command=None,
         ledgeradd_receiving_account=None,
-        ledgeradd_tax_account=None
+        ledgeradd_tax_account=None,
+        ledger_alias_file=None,
+        ledger_alias_default_account=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -62,6 +64,18 @@ class Settings(object):
             'tax' if ledgeradd_tax_account is None else str(
                 ledgeradd_tax_account
             )
+        )
+
+        # ledger stuff
+        self.ledger_alias_file = (
+            self.data_path + '/LEDGER_ALIAS_FILE.journal'
+            if ledger_alias_file is None
+            else str(ledger_alias_file)
+        )
+        self.ledger_alias_default_account = (
+            'Income:{CLIENT_FULLNAME}'
+            if ledger_alias_default_account is None
+            else str(ledger_alias_default_account)
         )
 
         # try to load settings from self.data_path/freelance.settings afterwards
@@ -207,6 +221,8 @@ class Settings(object):
         out['ledgeradd_command'] = self.ledgeradd_command
         out['ledgeradd_receiving_account'] = self.ledgeradd_receiving_account
         out['ledgeradd_tax_account'] = self.ledgeradd_tax_account
+        out['ledger_alias_file'] = self.ledger_alias_file
+        out['ledger_alias_default_account'] = self.ledger_alias_default_account
 
         # return the json
         return json.dumps(
@@ -255,6 +271,12 @@ class Settings(object):
 
         if 'ledgeradd_tax_account' in js.keys():
             self.ledgeradd_tax_account = js['ledgeradd_tax_account']
+
+        if 'ledger_alias_file' in js.keys():
+            self.ledger_alias_file = js['ledger_alias_file']
+
+        if 'ledger_alias_default_account' in js.keys():
+            self.ledger_alias_default_account = js['ledger_alias_default_account']
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""

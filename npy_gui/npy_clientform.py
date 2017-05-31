@@ -1,5 +1,7 @@
 """Form for the clients."""
 
+from general.replacer import replacer
+from general.ledgeradd_command import add_ledger_alias
 import npyscreen
 
 
@@ -15,6 +17,52 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             '^O': self.on_ok,
             '^Q': self.on_cancel
         })
+
+    def add_alias(self):
+        """Add the alias for the client to the ledger alias file."""
+        # get default account string
+        default_account = replacer(
+            text=self.parentApp.S.ledger_alias_default_account,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=self.parentApp.tmpClient
+        )
+
+        # ask for the account replacement string
+        account = npyscreen.notify_input(
+            'Account string:',
+            pre_text=default_account
+        )
+
+        # user canceled
+        if account is False:
+            return False
+
+        # generate check text
+        file = self.parentApp.S.ledger_alias_file
+        adder = 'alias {}={}'.format(
+            self.parentApp.tmpClient.client_id,
+            account
+        )
+
+        check_text = '{}\n---\n{}\n---\n{}'.format(
+            'Really add this alias to the file?',
+            file,
+            adder
+        )
+
+        # ask user to really add this alias
+        really = npyscreen.notify_yes_no(
+            check_text
+        )
+
+        # add if user chose yes
+        if really:
+            add_ledger_alias(
+                ledgerfile=self.parentApp.S.ledger_alias_file,
+                alias=self.parentApp.tmpClient.client_id,
+                string=account
+            )
 
     def switch_to_help(self):
         """Switch to the help screen."""
@@ -32,6 +80,7 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Add alias', onSelect=self.add_alias, shortcut='a')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
