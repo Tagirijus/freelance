@@ -439,8 +439,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
             client=self.parentApp.tmpClient,
-            project=self.parentApp.tmpProject,
-            keep_date=True
+            project=self.parentApp.tmpProject
         )
 
         self.beforeEditing()

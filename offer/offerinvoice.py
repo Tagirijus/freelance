@@ -67,7 +67,7 @@ class OfferInvoice(object):
         """Get date."""
         return self._date
 
-    def set_due_date(self, value, due_days=None):
+    def set_due_date(self, value=None, due_days=None):
         """Set due_date."""
         if type(value) is ddate:
             self._due_date = value
@@ -678,6 +678,14 @@ class Offer(OfferInvoice):
 class Invoice(OfferInvoice):
     """The invoice object."""
 
-    def copy(self, keep_date=True):
+    def copy(self, keep_date=True, due_days=None):
         """Copy the own offer into new offer object."""
-        return Invoice().from_json(js=self.to_json(), keep_date=keep_date)
+        # handle the thing with the due date
+        invoice_copy = Invoice().from_json(js=self.to_json(), keep_date=keep_date)
+        if not keep_date and due_days is not None:
+            try:
+                invoice_copy.set_due_date(due_days=int(due_days))
+            except Exception:
+                pass
+
+        return invoice_copy
