@@ -63,13 +63,14 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         """Save entry to presets."""
         self.values_to_tmp()
 
-        really = npyscreen.notify_yes_no(
-            'Save this entry to the presets?'
+        name = npyscreen.notify_input(
+            'Name for the entry preset:'
         )
 
-        if really:
+        if name:
             added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry
+                entry=self.parentApp.tmpEntry.copy(),
+                name=name
             )
 
             if not added:
@@ -96,8 +97,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
-        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
-        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='p')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='P')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -295,13 +296,14 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         """Save entry to presets."""
         self.values_to_tmp()
 
-        really = npyscreen.notify_yes_no(
-            'Save this entry to the presets?'
+        name = npyscreen.notify_input(
+            'Name for the entry preset:'
         )
 
-        if really:
+        if name:
             added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry
+                entry=self.parentApp.tmpEntry.copy(),
+                name=name
             )
 
             if not added:
@@ -328,8 +330,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
-        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
-        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='p')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='P')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
@@ -519,13 +521,14 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         """Save entry to presets."""
         self.values_to_tmp()
 
-        really = npyscreen.notify_yes_no(
-            'Save this entry to the presets?'
+        name = npyscreen.notify_input(
+            'Name for the entry preset:'
         )
 
-        if really:
+        if name:
             added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry
+                entry=self.parentApp.tmpEntry.copy(),
+                name=name
             )
 
             if not added:
@@ -552,8 +555,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(text='Change type', onSelect=self.change_type, shortcut='t')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
-        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
-        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='p')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='P')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 

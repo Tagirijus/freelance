@@ -36,7 +36,7 @@ class PresetList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
-        entry = act_on_this
+        entry = act_on_this['item']
 
         # it's an Offer
         if type(entry) is Offer:
@@ -117,28 +117,28 @@ class PresetList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
-        entry = self.values[self.cursor_line]
+        old_name = self.values[self.cursor_line]['name']
 
         new_name = npyscreen.notify_input(
             'Enter name for preset:',
-            pre_text=entry.title
+            pre_text=old_name
         )
 
         if new_name:
             if self.is_offer(entry):
                 renamed = self.parent.parentApp.P.rename_offer(
-                    old_offer_title=entry.title,
-                    new_offer_title=new_name
+                    old_name=old_name,
+                    new_name=new_name
                 )
-            if self.is_invoice(entry):
+            elif self.is_invoice(entry):
                 renamed = self.parent.parentApp.P.rename_invoice(
-                    old_invoice_title=entry.title,
-                    new_invoice_title=new_name
+                    old_name=old_name,
+                    new_name=new_name
                 )
             elif self.is_entry(entry):
                 renamed = self.parent.parentApp.P.rename_entry(
-                    old_entry_title=entry.title,
-                    new_entry_title=new_name
+                    old_name=old_name,
+                    new_name=new_name
                 )
             else:
                 renamed = False
@@ -157,7 +157,8 @@ class PresetList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
-        entry = self.values[self.cursor_line]
+        entry = self.values[self.cursor_line]['item']
+        name = self.values[self.cursor_line]['name']
 
         really = npyscreen.notify_yes_no(
             'Really delete the entry "{}"?'.format(entry.title),
@@ -166,11 +167,11 @@ class PresetList(npyscreen.MultiLineAction):
 
         if really:
             if self.is_offer(entry):
-                deleted = self.parent.parentApp.P.remove_offer(offer=entry)
+                deleted = self.parent.parentApp.P.remove_offer(name=name)
             elif self.is_invoice(entry):
-                deleted = self.parent.parentApp.P.remove_invoice(invoice=entry)
+                deleted = self.parent.parentApp.P.remove_invoice(name=name)
             elif self.is_entry(entry):
-                deleted = self.parent.parentApp.P.remove_entry(entry=entry)
+                deleted = self.parent.parentApp.P.remove_entry(name=name)
             else:
                 deleted = False
 
@@ -180,7 +181,6 @@ class PresetList(npyscreen.MultiLineAction):
                     form_color='WARNING'
                 )
             else:
-                self.parent.parentApp.P.save_all()
                 self.update_values()
 
     def update_values(self):
@@ -188,17 +188,17 @@ class PresetList(npyscreen.MultiLineAction):
         if self.parent.parentApp.P_what == 'offer':
             self.values = sorted(
                 self.parent.parentApp.P.offer_list,
-                key=lambda x: x.title
+                key=lambda x: x['name']
             )
         elif self.parent.parentApp.P_what == 'invoice':
             self.values = sorted(
                 self.parent.parentApp.P.invoice_list,
-                key=lambda x: x.title
+                key=lambda x: x['name']
             )
         else:
             self.values = sorted(
                 self.parent.parentApp.P.entry_list,
-                key=lambda x: x.title
+                key=lambda x: x['name']
             )
 
         self.display()
@@ -208,7 +208,7 @@ class PresetList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display values."""
-        return '{}: {}'.format(vl.__class__.__name__, vl.title)
+        return '{}'.format(vl['name'])
 
     def is_offer(self, entry=None):
         """Check if entry is Offer."""

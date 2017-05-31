@@ -330,14 +330,12 @@ def test_entry_tax_price():
 
     assert blubb.get_price(wage=wage) == Decimal('100')
     assert blubb.get_price_tax(wage=wage) == Decimal('0')
-    assert blubb.get_price_sum(wage=wage) == Decimal('100')
 
     # set tax to 19 %
     blubb.set_tax(19)
 
     assert blubb.get_price(wage=wage) == Decimal('100')
     assert blubb.get_price_tax(wage=wage) == Decimal('19')
-    assert blubb.get_price_sum(wage=wage) == Decimal('119')
 
     assert blubb.get_tax_percent() == Decimal('19')
 

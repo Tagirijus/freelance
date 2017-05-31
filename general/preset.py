@@ -40,330 +40,188 @@ class Preset(object):
 
         self.invoice_dir = invoice_dir
         self.invoice_list = (self.load_invoice_list_from_file() if invoice_list is None
-                           else invoice_list)
+                             else invoice_list)
 
-    def load_offer_list_from_file(self):
-        """Load the offers from file and return offer_list."""
-        path = self.data_path + self.offer_dir
-
-        # check if the data_path/offer_presets directory exists and cancel otherwise
-        if not os.path.isdir(str(path)):
-            return []
-
-        # cycle through the files and append them converted from json to the list
-        out = []
-        for file in sorted(os.listdir(path)):
-            if file.endswith('.floffer'):
-                # load the file
-                f = open(path + '/' + file, 'r')
-                load = f.read()
-                f.close()
-
-                # convert file content to offer object and append it
-                out.append(Offer().from_json(js=load))
-
-        return out
-
-    def load_invoice_list_from_file(self):
-        """Load the invoices from file and return invoice_list."""
-        path = self.data_path + self.invoice_dir
-
-        # check if the data_path/invoice_presets directory exists and cancel otherwise
-        if not os.path.isdir(str(path)):
-            return []
-
-        # cycle through the files and append them converted from json to the list
-        out = []
-        for file in sorted(os.listdir(path)):
-            if file.endswith('.flinvoice'):
-                # load the file
-                f = open(path + '/' + file, 'r')
-                load = f.read()
-                f.close()
-
-                # convert file content to invoice object and append it
-                out.append(Invoice().from_json(js=load))
-
-        return out
-
-    def add_offer(self, offer=None):
+    def add_offer(self, offer=None, name=None):
         """Add an offer preset."""
-        is_offer = type(offer) is Offer
-        title_exists = offer.title in [o.title for o in self.offer_list]
-        title_empty = offer.title == ''
+        added = self.add_item(
+            item_list=self.offer_list,
+            item=offer,
+            name=name
+        )
 
-        # cancel if it's no offer or the title already exists in the presets
-        if not is_offer or title_exists or title_empty:
-            return False
+        if added:
+            return self.save_offer_to_file(name=name)
+        else:
+            return added
 
-        # add the offer
-        self.offer_list.append(offer)
-        self.save_offer_to_file(offer=offer)
-        return True
-
-    def save_offer_to_file(self, offer=None):
+    def save_offer_to_file(self, name=None):
         """Save single offer to file."""
-        if type(offer) is not Offer:
-            return False
+        return self.save_item_to_file(
+            item_list=self.offer_list,
+            path=self.data_path + self.offer_dir,
+            ending='.floffer',
+            name=name
+        )
 
-        path = self.data_path + self.offer_dir
-
-        # create dir if it does not exist
-        is_dir = os.path.isdir(str(path))
-        is_file = os.path.isfile(str(path))
-        if not is_dir and not is_file:
-            os.mkdir(path)
-
-        # generate filenames
-        filename = path + '/' + self.us(offer.title) + '.floffer'
-        filename_bu = path + '/' + self.us(offer.title) + '.floffer_bu'
-
-        # if it exists, delete
-        if os.path.isfile(filename):
-            shutil.copy2(filename, filename_bu)
-
-        # write the file
-        f = open(filename, 'w')
-        f.write(offer.to_json(indent=2))
-        f.close()
-
-    def delete_offer_file(self, offer=None):
+    def delete_offer_file(self, name=None):
         """Delete single offer file."""
-        is_offer = type(offer) is Offer
+        return self.delete_item_file(
+            item_list=self.offer_list,
+            path=self.data_path + self.offer_dir,
+            ending='.floffer',
+            name=name
+        )
 
-        if not is_offer:
-            return False
-
-        path = self.data_path + self.offer_dir
-
-        # generate filenames
-        filename = path + '/' + self.us(offer.title) + '.floffer'
-
-        # if it exists, delete
-        if os.path.isfile(filename):
-            os.remove(filename)
-            return True
-        else:
-            return False
-
-    def remove_offer(self, offer=None):
+    def remove_offer(self, name=None):
         """Remove offer, if it exists."""
-        is_offer = type(offer) is Offer
-        title_exists = offer.title in [o.title for o in self.offer_list]
+        return self.remove_item(
+            item_list=self.offer_list,
+            path=self.data_path + self.offer_dir,
+            ending='.floffer',
+            name=name
+        )
 
-        # cancel if it's no offer or its title does not exist
-        if not is_offer or not title_exists:
-            return False
-
-        # try to remove the offer
-        try:
-            self.offer_list.pop(self.offer_list.index(offer))
-            self.delete_offer_file(offer=offer)
-            return True
-        except Exception:
-            return False
-
-    def rename_offer(self, old_offer_title=None, new_offer_title=None):
+    def rename_offer(self, old_name=None, new_name=None):
         """Try to rename the offer with the given title."""
-        offer_found = old_offer_title in [o.title for o in self.offer_list]
+        return self.rename_item(
+            item_list=self.offer_list,
+            old_item_name=old_name,
+            new_item_name=new_name
+        )
 
-        if not offer_found:
-            return False
-
-        # get copy of offer object
-        offer_old = None
-        offer_copy = None
-        for o in self.offer_list:
-            if o.title == old_offer_title:
-                offer_old = o
-                offer_copy = o.copy()
-                break
-
-        # rename it and try to add it
-        offer_copy.title = new_offer_title
-
-        added = self.add_offer(offer=offer_copy)
-
-        if not added:
-            return False
-
-        # delete the old one
-        self.remove_offer(offer=offer_old)
-
-        return True
-
-    def load_entry_list_from_file(self):
-        """Load the entrys from file and return entry_list."""
-        path = self.data_path + self.entry_dir
-
-        # check if the data_path/entry_presets directory exists and cancel otherwise
-        if not os.path.isdir(str(path)):
-            return []
-
-        # cycle through the files and append them converted from json to the list
-        out = []
-        for file in sorted(os.listdir(path)):
-            if file.endswith('.flentry'):
-                # load the file
-                f = open(path + '/' + file, 'r')
-                load = f.read()
-                f.close()
-
-                # check entry type and append it
-                js_tmp = json.loads(load)
-
-                if 'type' in js_tmp.keys():
-                    # it's BaseEntry - convert it from json and append it
-                    if js_tmp['type'] == 'BaseEntry':
-                        out.append(BaseEntry().from_json(js=js_tmp))
-
-                    # it's MultiplyEntry - convert it from json and append it
-                    elif js_tmp['type'] == 'MultiplyEntry':
-                        out.append(MultiplyEntry().from_json(js=js_tmp))
-
-                    # it's ConnectEntry - convert it from json and append it
-                    elif js_tmp['type'] == 'ConnectEntry':
-                        out.append(ConnectEntry().from_json(js=js_tmp))
-
-        return out
-
-    def add_entry(self, entry=None):
+    def add_entry(self, entry=None, name=None):
         """Add an entry preset."""
-        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
-                    type(entry) is ConnectEntry)
-        title_exists = entry.title in [e.title for e in self.entry_list]
-        title_empty = entry.title == ''
+        added = self.add_item(
+            item_list=self.entry_list,
+            item=entry,
+            name=name
+        )
 
-        # cancel if it's no entry or the title already exists in the presets
-        if not is_entry or title_exists or title_empty:
-            return False
-
-        # clear connected list, since it's just supposed to be a preset for this entry
-        if type(entry) is ConnectEntry:
-            entry.disconnect_all_entries()
-
-        # add the entry
-        self.entry_list.append(entry)
-        self.save_entry_to_file(entry=entry)
-        return True
-
-    def save_entry_to_file(self, entry=None):
-        """Save single entry to file."""
-        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
-                    type(entry) is ConnectEntry)
-
-        if not is_entry:
-            return False
-
-        path = self.data_path + self.entry_dir
-
-        # create dir if it does not exist
-        is_dir = os.path.isdir(str(path))
-        is_file = os.path.isfile(str(path))
-        if not is_dir and not is_file:
-            os.mkdir(path)
-
-        # generate filenames
-        filename = path + '/' + self.us(entry.title) + '.flentry'
-        filename_bu = path + '/' + self.us(entry.title) + '.flentry_bu'
-
-        # if it already exists, save a backup
-        if os.path.isfile(filename):
-            shutil.copy2(filename, filename_bu)
-
-        # write the file
-        f = open(filename, 'w')
-        f.write(entry.to_json())
-        f.close()
-
-    def delete_entry_file(self, entry=None):
-        """Delete single entry file."""
-        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
-                    type(entry) is ConnectEntry)
-
-        if not is_entry:
-            return False
-
-        path = self.data_path + self.entry_dir
-
-        # generate filenames
-        filename = path + '/' + self.us(entry.title) + '.flentry'
-
-        # if it exists, delete
-        if os.path.isfile(filename):
-            os.remove(filename)
-            return True
+        if added:
+            return self.save_entry_to_file(name=name)
         else:
-            return False
+            return added
 
-    def remove_entry(self, entry=None):
+    def save_entry_to_file(self, name=None):
+        """Save single entry to file."""
+        return self.save_item_to_file(
+            item_list=self.entry_list,
+            path=self.data_path + self.entry_dir,
+            ending='.flentry',
+            name=name
+        )
+
+    def delete_entry_file(self, name=None):
+        """Delete single entry file."""
+        return self.delete_item_file(
+            item_list=self.entry_list,
+            path=self.data_path + self.entry_dir,
+            ending='.flentry',
+            name=name
+        )
+
+    def remove_entry(self, name=None):
         """Remove entry, if it exists."""
-        is_entry = (type(entry) is BaseEntry or type(entry) is MultiplyEntry or
-                    type(entry) is ConnectEntry)
-        title_exists = entry.title in [e.title for e in self.entry_list]
+        return self.remove_item(
+            item_list=self.entry_list,
+            path=self.data_path + self.entry_dir,
+            ending='.flentry',
+            name=name
+        )
 
-        # cancel if it's no entry or its title does not exist
-        if not is_entry or not title_exists:
-            return False
-
-        # try to remove the entry
-        try:
-            self.entry_list.pop(self.entry_list.index(entry))
-            self.delete_entry_file(entry=entry)
-            return True
-        except Exception:
-            return False
-
-    def rename_entry(self, old_entry_title=None, new_entry_title=None):
+    def rename_entry(self, old_name=None, new_name=None):
         """Try to rename the entry with the given title."""
-        entry_found = old_entry_title in [e.title for e in self.entry_list]
+        return self.rename_item(
+            item_list=self.entry_list,
+            old_item_name=old_name,
+            new_item_name=new_name
+        )
 
-        if not entry_found:
-            return False
-
-        # get copy of entry object
-        entry_old = None
-        entry_copy = None
-        for e in self.entry_list:
-            if e.title == old_entry_title:
-                entry_old = e
-                entry_copy = e.copy()
-                break
-
-        # rename it and try to add it
-        entry_copy.title = new_entry_title
-
-        added = self.add_entry(entry=entry_copy)
-
-        if not added:
-            return False
-
-        # delete the old one
-        self.remove_entry(entry=entry_old)
-
-        return True
-
-    def add_invoice(self, invoice=None):
+    def add_invoice(self, invoice=None, name=None):
         """Add an invoice preset."""
-        is_invoice = type(invoice) is Invoice
-        title_exists = invoice.title in [o.title for o in self.invoice_list]
-        title_empty = invoice.title == ''
+        added = self.add_item(
+            item_list=self.invoice_list,
+            item=invoice,
+            name=name
+        )
+
+        if added:
+            return self.save_invoice_to_file(name=name)
+        else:
+            return added
+
+    def save_invoice_to_file(self, name=None):
+        """Save single invoice to file."""
+        return self.save_item_to_file(
+            item_list=self.invoice_list,
+            path=self.data_path + self.invoice_dir,
+            ending='.flinvoice',
+            name=name
+        )
+
+    def delete_invoice_file(self, name=None):
+        """Delete single invoice file."""
+        return self.delete_item_file(
+            item_list=self.invoice_list,
+            path=self.data_path + self.invoice_dir,
+            ending='.flinvoice',
+            name=name
+        )
+
+    def remove_invoice(self, name=None):
+        """Remove invoice, if it exists."""
+        return self.remove_item(
+            item_list=self.invoice_list,
+            path=self.data_path + self.invoice_dir,
+            ending='.flinvoice',
+            name=name
+        )
+
+    def rename_invoice(self, old_name=None, new_name=None):
+        """Try to rename the invoice with the given title."""
+        return self.rename_item(
+            item_list=self.invoice_list,
+            old_item_name=old_name,
+            new_item_name=new_name
+        )
+
+    def add_item(self, item_list=None, item=None, name=None):
+        """Add an invoice preset."""
+        is_item = (
+            type(item) is Offer or
+            type(item) is Invoice or
+            type(item) is BaseEntry or
+            type(item) is MultiplyEntry or
+            type(item) is ConnectEntry
+        )
+
+        name_exists = str(name) in [i['name'] for i in item_list]
 
         # cancel if it's no invoice or the title already exists in the presets
-        if not is_invoice or title_exists or title_empty:
+        if not is_item or name_exists:
             return False
 
-        # add the invoice
-        self.invoice_list.append(invoice)
-        self.save_invoice_to_file(invoice=invoice)
+        # add the item
+        item_list.append({
+            'item': item,
+            'name': str(name)
+        })
+
         return True
 
-    def save_invoice_to_file(self, invoice=None):
-        """Save single invoice to file."""
-        if type(invoice) is not Invoice:
+    def save_item_to_file(self, item_list=None, path=None, ending=None, name=None):
+        """Save the item to the file."""
+        # try to get item or cancel
+        try:
+            for i in item_list:
+                # found the name
+                if i['name'] == str(name):
+                    # assign the item to the variable
+                    item = i
+                    break
+        except Exception:
             return False
-
-        path = self.data_path + self.invoice_dir
 
         # create dir if it does not exist
         is_dir = os.path.isdir(str(path))
@@ -372,97 +230,216 @@ class Preset(object):
             os.mkdir(path)
 
         # generate filenames
-        filename = path + '/' + self.us(invoice.title) + '.flinvoice'
-        filename_bu = path + '/' + self.us(invoice.title) + '.flinvoice_bu'
+        filename = path + '/' + self.us(str(name)) + ending
+        filename_bu = path + '/' + self.us(str(name)) + ending + '_bu'
 
         # if it already exists, save a backup
         if os.path.isfile(filename):
             shutil.copy2(filename, filename_bu)
 
-        # write the file
-        f = open(filename, 'w')
-        f.write(invoice.to_json(indent=2))
-        f.close()
+        try:
+            # generate file content
+            content = item.copy()
+            content['item'] = content['item'].to_dict()
 
-    def delete_invoice_file(self, invoice=None):
-        """Delete single invoice file."""
-        is_invoice = type(invoice) is Offer
+            # write the file
+            with open(filename, 'w') as f:
+                f.write(json.dumps(content, indent=2))
 
-        if not is_invoice:
+            return True
+        except Exception:
             return False
 
-        path = self.data_path + self.invoice_dir
+    def load_item_from_file(self, filename=None):
+        """Load the item from the file."""
+        filename = str(filename)
+
+        # cancel if the file does not exist
+        if not os.path.isfile(filename):
+            return False
+
+        # try to load the file
+        try:
+            with open(filename, 'r') as f:
+                dic = json.load(f)
+        except Exception:
+            return False
+
+        # get type
+        typ = False
+        if 'item' in dic.keys():
+            if 'type' in dic['item'].keys():
+                typ = dic['item']['type']
+
+        # has no type, so cancel
+        if not typ:
+            return False
+
+        # convert item json to Offer
+        if typ == 'Offer':
+            dic['item'] = Offer().from_json(js=dic['item'])
+
+        # convert item json to Invoice
+        elif typ == 'Invoice':
+            dic['item'] = Invoice().from_json(js=dic['item'])
+
+        # convert item json to BaseEntry
+        elif typ == 'BaseEntry':
+            dic['item'] = BaseEntry().from_json(js=dic['item'])
+
+        # convert item json to MultiplyEntry
+        elif typ == 'MultiplyEntry':
+            dic['item'] = MultiplyEntry().from_json(js=dic['item'])
+
+        # convert item json to ConnectEntry
+        elif typ == 'ConnectEntry':
+            dic['item'] = ConnectEntry().from_json(js=dic['item'])
+
+        # otherwise cancel
+        else:
+            return False
+
+        return dic
+
+    def delete_item_file(self, item_list=None, path=None, ending=None, name=None):
+        """Delete single offer file."""
+        # cancel if name does not exist in list
+        try:
+            if str(name) not in [i['name'] for i in item_list]:
+                return False
+        except Exception:
+            return False
 
         # generate filenames
-        filename = path + '/' + self.us(invoice.title) + '.flinvoice'
+        filename = path + '/' + self.us(str(name)) + ending
+        filename_bu = path + '/' + self.us(str(name)) + ending + '_bu'
 
-        # if it already exists, save a backup
+        # if it exists, backup and delete
         if os.path.isfile(filename):
+            shutil.copy2(filename, filename_bu)
             os.remove(filename)
             return True
         else:
             return False
 
-    def remove_invoice(self, invoice=None):
-        """Remove invoice, if it exists."""
-        is_invoice = type(invoice) is Invoice
-        title_exists = invoice.title in [o.title for o in self.invoice_list]
-
-        # cancel if it's no invoice or its title does not exist
-        if not is_invoice or not title_exists:
-            return False
-
-        # try to remove the invoice
+    def remove_item(self, item_list=None, path=None, ending=None, name=None):
+        """Remove item from list and delete file."""
+        # get index or cancel if name does not exist
         try:
-            self.invoice_list.pop(self.invoice_list.index(invoice))
-            self.delete_invoice_file(invoice=invoice)
-            return True
+            index = -1
+            for i, n in enumerate(item_list):
+                if n['name'] == str(name):
+                    index = i
+                    break
+            if index < 0:
+                return False
         except Exception:
             return False
 
-    def rename_invoice(self, old_invoice_title=None, new_invoice_title=None):
-        """Try to rename the invoice with the given title."""
-        invoice_found = old_invoice_title in [o.title for o in self.invoice_list]
+        # try to remove the item
+        try:
+            # delete its file
+            check = self.delete_item_file(
+                item_list=item_list,
+                path=path,
+                ending=ending,
+                name=name
+            )
 
-        if not invoice_found:
+            # pop it from the list
+            item_list.pop(index)
+
+            # return if it went ok or not
+            return check
+
+        # fallback canceling
+        except Exception:
             return False
 
-        # get copy of invoice object
-        invoice_old = None
-        invoice_copy = None
-        for o in self.invoice_list:
-            if o.title == old_invoice_title:
-                invoice_old = o
-                invoice_copy = o.copy()
-                break
+    def rename_item(self, item_list=None, old_item_name=None, new_item_name=None):
+        """Try to rename the item with the given name."""
+        # get index of original or cancel
+        try:
+            index = -1
+            for i, item in enumerate(item_list):
+                if str(old_item_name) == item['name']:
+                    index = i
+                    break
+            if index < 0:
+                return False
+        except Exception:
+            return False
 
-        # rename it and try to add it
-        invoice_copy.title = new_invoice_title
+        # add a new preset with the old item
+        added = self.add_item(
+            item_list=item_list,
+            item=item_list[index]['item'],
+            name=str(new_item_name)
+        )
 
-        added = self.add_invoice(invoice=invoice_copy)
-
+        # could not add it, since it already exists
         if not added:
             return False
 
-        # delete the old one
-        self.remove_invoice(invoice=invoice_old)
+        # added, now remove the old one
+        return self.remove_item(
+            item_list=item_list,
+            name=old_item_name
+        )
 
-        return True
+    def load_item_list_from_file(self, path=None, ending=None):
+        """Load item list from file and return list."""
+        # check if the directory exists and cancel otherwise
+        if not os.path.isdir(str(path)):
+            return []
+
+        # cycle through the files and append them converted from json to the list
+        out = []
+        for file in sorted(os.listdir(path)):
+            if file.endswith(ending):
+                # load and convert file content to item and append it
+                out.append(
+                    self.load_item_from_file(filename=os.path.join(path, file))
+                )
+
+        # return filtered list - filter out the failed loaded data
+        return list(filter(lambda x: x is not False, out))
 
     def save_offer_list_to_file(self):
         """Save offer list to file."""
-        for offer in self.offer_list:
-            self.save_offer_to_file(offer=offer)
+        for i in self.offer_list:
+            self.save_offer_to_file(name=i['name'])
+
+    def load_offer_list_from_file(self):
+        """Load the offers from file and return offer_list."""
+        return self.load_item_list_from_file(
+            path=self.data_path + self.offer_dir,
+            ending='.floffer'
+        )
 
     def save_entry_list_to_file(self):
         """Save entry list to file."""
-        for entry in self.entry_list:
-            self.save_entry_to_file(entry=entry)
+        for i in self.entry_list:
+            self.save_entry_to_file(name=i['name'])
+
+    def load_entry_list_from_file(self):
+        """Load the entrys from file and return entry_list."""
+        return self.load_item_list_from_file(
+            path=self.data_path + self.entry_dir,
+            ending='.flentry'
+        )
 
     def save_invoice_list_to_file(self):
         """Save invoice list to file."""
-        for invoice in self.invoice_list:
-            self.save_invoice_to_file(invoice=invoice)
+        for i in self.invoice_list:
+            self.save_invoice_to_file(name=i['name'])
+
+    def load_invoice_list_from_file(self):
+        """Load the invoices from file and return invoice_list."""
+        return self.load_item_list_from_file(
+            path=self.data_path + self.invoice_dir,
+            ending='.flinvoice'
+        )
 
     def save_all(self):
         """Save all presets."""

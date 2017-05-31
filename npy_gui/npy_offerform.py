@@ -439,7 +439,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
             client=self.parentApp.tmpClient,
-            project=self.parentApp.tmpProject
+            project=self.parentApp.tmpProject,
+            keep_date=True
         )
 
         self.beforeEditing()
@@ -455,14 +456,17 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         """Save offer to presets."""
         self.values_to_tmp()
 
-        really = npyscreen.notify_yes_no(
-            'Save this offer to the presets?'
+        name = npyscreen.notify_input(
+            'Name for the offer preset:'
         )
 
-        if really:
+        if name is not False:
             added = self.parentApp.P.add_offer(
-                offer=self.parentApp.tmpOffer
+                offer=self.parentApp.tmpOffer.copy(),
+                name=name
             )
+
+            npyscreen.notify_confirm(str(self.parentApp.P.offer_list))
 
             if not added:
                 npyscreen.notify_confirm(
@@ -515,8 +519,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
         self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
         self.m.addItem(text='Replace strings', onSelect=self.replace_str, shortcut='r')
-        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='l')
-        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='p')
+        self.m.addItem(text='Load preset', onSelect=self.load_preset, shortcut='p')
+        self.m.addItem(text='Save as preset', onSelect=self.save_preset, shortcut='P')
         self.m.addItem(text='Save', onSelect=self.save, shortcut='s')
         self.m.addItem(text='Export', onSelect=self.export, shortcut='^X')
         self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
