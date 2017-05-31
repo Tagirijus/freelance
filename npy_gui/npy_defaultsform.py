@@ -470,6 +470,13 @@ class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
             max_height=2,
             value=''
         )
+        self.offer_comment_b = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Offer comment B:',
+            begin_entry_at=26,
+            max_height=2,
+            value=''
+        )
         self.offer_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Offer filename:',
@@ -498,6 +505,8 @@ class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.offer_title.value = self.parentApp.tmpDefault.offer_title
         self.offer_comment.value = self.parentApp.tmpDefault.offer_comment
         self.offer_comment.reformat()
+        self.offer_comment_b.value = self.parentApp.tmpDefault.offer_comment_b
+        self.offer_comment_b.reformat()
         self.offer_filename.value = self.parentApp.tmpDefault.offer_filename
         self.offer_round_price.value = (
             [0] if self.parentApp.tmpDefault.get_offer_round_price() else []
@@ -509,6 +518,9 @@ class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
         # get stuff into tmpDefault
         self.parentApp.tmpDefault.offer_title = self.offer_title.value
         self.parentApp.tmpDefault.offer_comment = self.offer_comment.value.replace(
+            '\n', ' '
+        )
+        self.parentApp.tmpDefault.offer_comment_b = self.offer_comment_b.value.replace(
             '\n', ' '
         )
         self.parentApp.tmpDefault.offer_filename = self.offer_filename.value
@@ -631,6 +643,13 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             max_height=2,
             value=''
         )
+        self.invoice_comment_b = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Invoice comment B:',
+            begin_entry_at=26,
+            max_height=2,
+            value=''
+        )
         self.invoice_filename = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Invoice filename:',
@@ -669,6 +688,8 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.invoice_id.value = self.parentApp.tmpDefault.invoice_id
         self.invoice_comment.value = self.parentApp.tmpDefault.invoice_comment
         self.invoice_comment.reformat()
+        self.invoice_comment_b.value = self.parentApp.tmpDefault.invoice_comment_b
+        self.invoice_comment_b.reformat()
         self.invoice_filename.value = self.parentApp.tmpDefault.invoice_filename
         self.invoice_round_price.value = (
             [0] if self.parentApp.tmpDefault.get_invoice_round_price() else []
@@ -686,6 +707,9 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.invoice_id = self.invoice_id.value
         self.parentApp.tmpDefault.invoice_comment = self.invoice_comment.value.replace(
             '\n', ' '
+        )
+        self.parentApp.tmpDefault.invoice_comment_b = (
+            self.invoice_comment_b.value.replace('\n', ' ')
         )
         self.parentApp.tmpDefault.invoice_filename = self.invoice_filename.value
         if self.invoice_round_price.value == [0]:

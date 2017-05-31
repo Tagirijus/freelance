@@ -125,6 +125,7 @@ def replacer(
         replace_me['ID'] = offerinvoice.id
 
         replace_me['COMMENT'] = offerinvoice.comment
+        replace_me['COMMENT_B'] = offerinvoice.comment_b
 
         # dates
         if offerinvoice.date_fmt != '':

@@ -629,15 +629,25 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
             max_height=2,
             value=''
         )
+        self.comment_b = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Comment B:',
+            begin_entry_at=20,
+            max_height=2,
+            value=''
+        )
         self.date = self.add_widget_intelligent(
             TitleDateComboRefresh,
             name='Date:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
         )
         self.date_fmt = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Date fmt:',
-            begin_entry_at=20
+            begin_entry_at=12,
+            relx=60,
+            rely=self.date.rely
         )
         self.wage = self.add_widget_intelligent(
             TitleTextRefresh,
@@ -721,6 +731,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.title.value = self.parentApp.tmpOffer.title
         self.comment.value = self.parentApp.tmpOffer.comment
         self.comment.reformat()
+        self.comment_b.value = self.parentApp.tmpOffer.comment_b
+        self.comment_b.reformat()
         self.date.value = self.parentApp.tmpOffer.get_date()
         self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
         self.wage.value = str(self.parentApp.tmpOffer.get_wage())
@@ -743,6 +755,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.parentApp.tmpOffer.title = self.title.value
         self.parentApp.tmpOffer.comment = self.comment.value.replace('\n', ' ')
+        self.parentApp.tmpOffer.comment_b = self.comment_b.value.replace('\n', ' ')
         self.parentApp.tmpOffer.set_date(self.date.value)
         self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
         self.parentApp.tmpOffer.set_wage(self.wage.value)

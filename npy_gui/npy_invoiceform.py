@@ -691,32 +691,42 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             max_height=2,
             value=''
         )
+        self.comment_b = self.add_widget_intelligent(
+            TitleMultiLineEdit,
+            name='Comment B:',
+            begin_entry_at=20,
+            max_height=2,
+            value=''
+        )
         self.date = self.add_widget_intelligent(
             TitleDateComboRefresh,
             name='Date:',
             begin_entry_at=20,
             max_width=59
         )
-        self.paid_date = self.add_widget_intelligent(
-            TitleDateComboRefresh,
-            name='Paid:',
-            begin_entry_at=10,
+        self.date_fmt = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='Date fmt:',
+            begin_entry_at=12,
             relx=60,
             rely=self.date.rely
         )
         self.delivery = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Delivery:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
         )
         self.due_date = self.add_widget_intelligent(
             TitleDateComboRefresh,
             name='Due date:',
-            begin_entry_at=20
+            begin_entry_at=12,
+            relx=60,
+            rely=self.delivery.rely
         )
-        self.date_fmt = self.add_widget_intelligent(
-            TitleTextRefresh,
-            name='Date fmt:',
+        self.paid_date = self.add_widget_intelligent(
+            TitleDateComboRefresh,
+            name='Paid:',
             begin_entry_at=20
         )
         self.wage = self.add_widget_intelligent(
@@ -794,6 +804,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.id.value = self.parentApp.tmpInvoice.id
         self.comment.value = self.parentApp.tmpInvoice.comment
         self.comment.reformat()
+        self.comment_b.value = self.parentApp.tmpInvoice.comment_b
+        self.comment_b.reformat()
         self.date.value = self.parentApp.tmpInvoice.get_date()
         self.delivery.value = self.parentApp.tmpInvoice.delivery
         self.paid_date.value = self.parentApp.tmpInvoice.get_paid_date()
@@ -822,6 +834,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.title = self.title.value
         self.parentApp.tmpInvoice.id = self.id.value
         self.parentApp.tmpInvoice.comment = self.comment.value.replace('\n', ' ')
+        self.parentApp.tmpInvoice.comment_b = self.comment_b.value.replace('\n', ' ')
         self.parentApp.tmpInvoice.set_date(self.date.value)
         self.parentApp.tmpInvoice.delivery = self.delivery.value
         self.parentApp.tmpInvoice.set_paid_date(self.paid_date.value)

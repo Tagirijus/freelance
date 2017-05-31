@@ -15,6 +15,7 @@ class Default(object):
         language=None,
         offer_title=None,
         offer_comment=None,
+        offer_comment_b=None,
         offer_filename=None,
         offer_round_price=None,
         offer_templates=None,
@@ -69,6 +70,7 @@ class Default(object):
 
         self.offer_title = '' if offer_title is None else offer_title
         self.offer_comment = '' if offer_comment is None else offer_comment
+        self.offer_comment_b = '' if offer_comment_b is None else offer_comment_b
         self.offer_filename = '' if offer_filename is None else offer_filename
         self.set_offer_round_price(
             False if offer_round_price is None else offer_round_price
@@ -362,6 +364,7 @@ class Default(object):
 
         out['offer_title'] = self.offer_title
         out['offer_comment'] = self.offer_comment
+        out['offer_comment_b'] = self.offer_comment_b
         out['offer_filename'] = self.offer_filename
         out['offer_round_price'] = self._offer_round_price
         out['offer_templates'] = self._offer_templates
@@ -442,6 +445,9 @@ class Default(object):
 
         if 'offer_comment' in js.keys():
             self.offer_comment = js['offer_comment']
+
+        if 'offer_comment_b' in js.keys():
+            self.offer_comment_b = js['offer_comment_b']
 
         if 'offer_filename' in js.keys():
             self.offer_filename = js['offer_filename']
@@ -624,6 +630,7 @@ class Default(object):
             language=self.language,
             offer_title=self.offer_title,
             offer_comment=self.offer_comment,
+            offer_comment_b=self.offer_comment_b,
             offer_filename=self.offer_filename,
             offer_round_price=self._offer_round_price,
             offer_templates=self._offer_templates,

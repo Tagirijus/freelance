@@ -22,6 +22,7 @@ class OfferInvoice(object):
         title=None,
         id=None,
         comment=None,
+        comment_b=None,
         date_fmt=None,
         date=None,
         delivery=None,
@@ -35,6 +36,7 @@ class OfferInvoice(object):
         self.title = '' if title is None else str(title)
         self.id = '' if id is None else str(id)
         self.comment = '' if comment is None else str(comment)
+        self.comment_b = '' if comment_b is None else str(comment_b)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self._date = ddate.today()          # set default
         self.set_date(date)                 # try to set arguments value
@@ -164,6 +166,7 @@ class OfferInvoice(object):
         out['title'] = self.title
         out['id'] = self.id
         out['comment'] = self.comment
+        out['comment_b'] = self.comment_b
         out['date_fmt'] = self.date_fmt
 
         try:
@@ -265,6 +268,11 @@ class OfferInvoice(object):
         else:
             comment = None
 
+        if 'comment_b' in js.keys():
+            comment_b = js['comment_b']
+        else:
+            comment_b = None
+
         if 'date_fmt' in js.keys():
             date_fmt = js['date_fmt']
         else:
@@ -325,6 +333,7 @@ class OfferInvoice(object):
             title=title,
             id=id,
             comment=comment,
+            comment_b=comment_b,
             date_fmt=date_fmt,
             date=date,
             delivery=delivery,

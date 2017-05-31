@@ -41,6 +41,7 @@ Client:
 Offer / invcoie:
 - {TITLE}: title
 - {COMMENT}: comment
+- {COMMENT_B}: comment b
 - {DATE}: date
 - {DELIVERY}: delivery string
 - {DUE_DATE}: due date

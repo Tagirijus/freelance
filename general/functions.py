@@ -166,6 +166,14 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    comment_b = replacer(
+        text=settings.defaults[lang].offer_comment_b,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
     round_price = settings.defaults[lang].get_offer_round_price()
@@ -174,6 +182,7 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
     return Offer(
         title=title,
         comment=comment,
+        comment_b=comment_b,
         date_fmt=date_fmt,
         date=date.today(),
         round_price=round_price
@@ -215,6 +224,15 @@ def PresetOffer(
         offerinvoice=offer_preset
     )
 
+    comment_b = replacer(
+        text=offer_preset.comment_b,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project,
+        offerinvoice=offer_preset
+    )
+
     # get other values
     date_fmt = offer_preset.date_fmt
     off_date = offer_preset.get_date()
@@ -226,6 +244,7 @@ def PresetOffer(
     return Offer(
         title=title,
         comment=comment,
+        comment_b=comment_b,
         date_fmt=date_fmt,
         date=off_date,
         wage=wage,
@@ -538,6 +557,14 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    comment_b = replacer(
+        text=settings.defaults[lang].invoice_comment_b,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project
+    )
+
     delivery = replacer(
         text=settings.defaults[lang].invoice_delivery,
         settings=settings,
@@ -558,6 +585,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         title=title,
         id=id,
         comment=comment,
+        comment_b=comment_b,
         date_fmt=date_fmt,
         date=date.today(),
         delivery=delivery,
@@ -610,6 +638,15 @@ def PresetInvoice(
         offerinvoice=invoice_preset
     )
 
+    comment_b = replacer(
+        text=invoice_preset.comment_b,
+        settings=settings,
+        global_list=global_list,
+        client=client,
+        project=project,
+        offerinvoice=invoice_preset
+    )
+
     delivery = replacer(
         text=invoice_preset.delivery,
         settings=settings,
@@ -632,6 +669,7 @@ def PresetInvoice(
         title=title,
         id=id,
         comment=comment,
+        comment_b=comment_b,
         date_fmt=date_fmt,
         date=date,
         delivery=delivery,
