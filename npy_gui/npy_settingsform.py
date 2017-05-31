@@ -217,6 +217,11 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Ledgeradd tax account:',
             begin_entry_at=26
         )
+        self.ledgeradd_def_payee = self.add(
+            npyscreen.TitleText,
+            name='Ledgeradd def. payee:',
+            begin_entry_at=26
+        )
         self.ledger_alias_file = self.add(
             npyscreen.TitleFilenameCombo,
             name='Ledger alias file:',
@@ -244,6 +249,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.ledgeradd_receiving_account
         )
         self.ledgeradd_tax_account.value = self.parentApp.S.ledgeradd_tax_account
+        self.ledgeradd_def_payee.value = self.parentApp.S.ledgeradd_def_payee
         self.ledger_alias_file.value = self.parentApp.S.ledger_alias_file
         self.ledger_alias_default_account.value = (
             self.parentApp.S.ledger_alias_default_account
@@ -260,6 +266,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         ledgeradd_command = self.ledgeradd_command.value
         ledgeradd_receiving_account = self.ledgeradd_receiving_account.value
         ledgeradd_tax_account = self.ledgeradd_tax_account.value
+        ledgeradd_def_payee = self.ledgeradd_def_payee.value
         ledger_alias_file = self.ledger_alias_file.value
         ledger_alias_default_account = self.ledger_alias_default_account.value
 
@@ -318,6 +325,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.ledgeradd_command = ledgeradd_command
             self.parentApp.S.ledgeradd_receiving_account = ledgeradd_receiving_account
             self.parentApp.S.ledgeradd_tax_account = ledgeradd_tax_account
+            self.parentApp.S.ledgeradd_def_payee = ledgeradd_def_payee
             self.parentApp.S.ledger_alias_file = ledger_alias_file
             self.parentApp.S.ledger_alias_default_account = ledger_alias_default_account
 

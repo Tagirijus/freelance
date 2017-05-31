@@ -512,8 +512,17 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         # ask for payee
+        def_payee = replacer(
+            text=self.parentApp.S.ledgeradd_def_payee,
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            client=self.parentApp.tmpClient,
+            project=self.parentApp.tmpProject,
+            offerinvoice=self.parentApp.tmpInvoice
+        )
         payee = npyscreen.notify_input(
             'Payee:',
+            pre_text=def_payee,
             title='Summerize into one account? (empty = project title)'
         )
 

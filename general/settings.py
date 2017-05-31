@@ -20,6 +20,7 @@ class Settings(object):
         ledgeradd_command=None,
         ledgeradd_receiving_account=None,
         ledgeradd_tax_account=None,
+        ledgeradd_def_payee=None,
         ledger_alias_file=None,
         ledger_alias_default_account=None
     ):
@@ -63,6 +64,11 @@ class Settings(object):
         self.ledgeradd_tax_account = (
             'tax' if ledgeradd_tax_account is None else str(
                 ledgeradd_tax_account
+            )
+        )
+        self.ledgeradd_def_payee = (
+            '' if ledgeradd_def_payee is None else str(
+                ledgeradd_def_payee
             )
         )
 
@@ -221,6 +227,7 @@ class Settings(object):
         out['ledgeradd_command'] = self.ledgeradd_command
         out['ledgeradd_receiving_account'] = self.ledgeradd_receiving_account
         out['ledgeradd_tax_account'] = self.ledgeradd_tax_account
+        out['ledgeradd_def_payee'] = self.ledgeradd_def_payee
         out['ledger_alias_file'] = self.ledger_alias_file
         out['ledger_alias_default_account'] = self.ledger_alias_default_account
 
@@ -271,6 +278,9 @@ class Settings(object):
 
         if 'ledgeradd_tax_account' in js.keys():
             self.ledgeradd_tax_account = js['ledgeradd_tax_account']
+
+        if 'ledgeradd_def_payee' in js.keys():
+            self.ledgeradd_def_payee = js['ledgeradd_def_payee']
 
         if 'ledger_alias_file' in js.keys():
             self.ledger_alias_file = js['ledger_alias_file']
