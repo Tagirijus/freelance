@@ -163,8 +163,7 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         else:
             offerinvoice_title = self.parentApp.tmpInvoice.title
 
-        self.name = '{} > {} > Base entry ({})'.format(
-            self.parentApp.tmpProject.title,
+        self.name = '{} > Base entry ({})'.format(
             offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
@@ -395,8 +394,7 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             offerinvoice_title = self.parentApp.tmpOffer.title
         else:
             offerinvoice_title = self.parentApp.tmpInvoice.title
-        self.name = '{} > {} > Multiply entry ({})'.format(
-            self.parentApp.tmpProject.title,
+        self.name = '{} > Multiply entry ({})'.format(
             offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
@@ -675,8 +673,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             offerinvoice_title = self.parentApp.tmpOffer.title
         else:
             offerinvoice_title = self.parentApp.tmpInvoice.title
-        self.name = '{} > {} > Connect entry ({})'.format(
-            self.parentApp.tmpProject.title,
+        self.name = '{} > Connect entry ({})'.format(
             offerinvoice_title,
             self.parentApp.tmpEntry.title
         )
