@@ -321,11 +321,13 @@ class BaseEntry(object):
         # get ID if it's no preset_loading
         if not keep_id:
             id = None
-        else:
+        elif keep_id is True:
             if 'id' in js.keys():
                 id = js['id']
             else:
                 id = None
+        else:
+            id = str(keep_id)
 
         # get other values
         if 'title' in js.keys():
@@ -580,11 +582,13 @@ class MultiplyEntry(BaseEntry):
         # get ID if it's no preset_loading
         if not keep_id:
             id = None
-        else:
+        elif keep_id is True:
             if 'id' in js.keys():
                 id = js['id']
             else:
                 id = None
+        else:
+            id = str(keep_id)
 
         # get other values
         if 'title' in js.keys():
@@ -886,11 +890,13 @@ class ConnectEntry(BaseEntry):
         # get ID, if it's no preset_loading
         if not keep_id:
             id = None
-        else:
+        elif keep_id is True:
             if 'id' in js.keys():
                 id = js['id']
             else:
                 id = None
+        else:
+            id = str(keep_id)
 
         # get other values
         if 'title' in js.keys():

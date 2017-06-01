@@ -72,7 +72,7 @@ class PresetList(npyscreen.MultiLineAction):
                 global_list=self.parent.parentApp.L,
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
-            ).copy(keep_id=False)
+            ).copy(keep_id=self.parent.parentApp.tmpEntry.get_id())
 
             self.parent.parentApp.setNextForm('BaseEntry')
             self.parent.parentApp.switchFormNow()
@@ -85,7 +85,7 @@ class PresetList(npyscreen.MultiLineAction):
                 global_list=self.parent.parentApp.L,
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
-            ).copy(keep_id=False)
+            ).copy(keep_id=self.parent.parentApp.tmpEntry.get_id())
 
             self.parent.parentApp.setNextForm('MultiplyEntry')
             self.parent.parentApp.switchFormNow()
@@ -98,7 +98,7 @@ class PresetList(npyscreen.MultiLineAction):
                 global_list=self.parent.parentApp.L,
                 client=self.parent.parentApp.tmpClient,
                 project=self.parent.parentApp.tmpProject
-            ).copy(keep_id=False)
+            ).copy(keep_id=self.parent.parentApp.tmpEntry.get_id())
 
             self.parent.parentApp.setNextForm('ConnectEntry')
             self.parent.parentApp.switchFormNow()
