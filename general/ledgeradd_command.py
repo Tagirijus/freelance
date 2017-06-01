@@ -70,7 +70,7 @@ def generate_parameter(
                         client_acc,
                         name
                     ),
-                    str(price)
+                    str(price * -1)
                 )
             )
 
