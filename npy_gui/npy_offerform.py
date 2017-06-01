@@ -465,8 +465,6 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
                 name=name
             )
 
-            npyscreen.notify_confirm(str(self.parentApp.P.offer_list))
-
             if not added:
                 npyscreen.notify_confirm(
                     'Offer not added. It probably already exists.',
