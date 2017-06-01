@@ -96,6 +96,12 @@ class UnpaidInvoiceForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
+    def switch_to_help(self):
+        """Switch to help form."""
+        self.parentApp.load_helptext('help_unpaidinvoice.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
+
     def exit(self):
         """Exit the programm."""
         self.parentApp.setNextForm(None)
@@ -105,6 +111,7 @@ class UnpaidInvoiceForm(npyscreen.ActionFormWithMenus):
         """Create the widgets."""
         # the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # the list

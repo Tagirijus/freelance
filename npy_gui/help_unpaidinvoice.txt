@@ -1,0 +1,3 @@
+This form lists all unpaid active invoices. Explanation:
+
+! = invoice past due

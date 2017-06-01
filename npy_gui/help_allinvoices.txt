@@ -1,0 +1,4 @@
+This form lists ALL invoices - the ones from inactive and active projects. Explanation:
+
+* = invoice unpaid
+! = invoice unpaid AND past due

@@ -16,6 +16,11 @@ class AllInvoicesList(npyscreen.MultiLineAction):
 
     def update_values(self):
         """Update the values."""
+        # get inactive and active as new list combined
+        self.parent.the_list = self.parent.parentApp.L.get_active_and_inactive_list(
+            settings=self.parent.parentApp.S
+        )
+
         all_projects = self.parent.the_list.project_list
 
         # get list of unpaid invoices - sort by date reversed!
@@ -84,10 +89,11 @@ class AllInvoicesForm(npyscreen.ActionFormWithMenus):
             '^Q': self.on_cancel
         })
 
-        # get inactive and active as new list combined
-        self.the_list = self.parentApp.L.get_active_and_inactive_list(
-            settings=self.parentApp.S
-        )
+    def switch_to_help(self):
+        """Switch to help form."""
+        self.parentApp.load_helptext('help_allinvoices.txt')
+        self.parentApp.setNextForm('Help')
+        self.parentApp.switchFormNow()
 
     def exit(self):
         """Exit the programm."""
@@ -98,6 +104,7 @@ class AllInvoicesForm(npyscreen.ActionFormWithMenus):
         """Create the widgets."""
         # the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(text='Help', onSelect=self.switch_to_help, shortcut='h')
         self.m.addItem(text='Exit', onSelect=self.exit, shortcut='e')
 
         # the list
