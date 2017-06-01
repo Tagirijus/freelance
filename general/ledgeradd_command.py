@@ -91,7 +91,7 @@ def generate_parameter(
                             name,
                             tax_acc.replace('{TAX_PERCENT}', str(e.get_tax_percent()))
                         ),
-                        str(tax)
+                        str(tax * -1)
                     )
                 )
 
@@ -107,7 +107,7 @@ def generate_parameter(
                     wage=invoice.get_wage(project=project),
                     project=project,
                     round_price=invoice.get_round_price()
-                ))
+                ) * -1)
             )
         )
 
@@ -127,7 +127,7 @@ def generate_parameter(
                         single_account,
                         tax_acc.replace('{TAX_PERCENT}', '').strip()
                     ),
-                    str(tax_total)
+                    str(tax_total * -1)
                 )
             )
 
