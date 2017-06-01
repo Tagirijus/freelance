@@ -26,7 +26,7 @@ class OfferInvoice(object):
         date_fmt=None,
         date=None,
         delivery=None,
-        due_date=None,
+        due_days=None,
         paid_date=None,
         wage=None,
         commodity=None,
@@ -41,7 +41,8 @@ class OfferInvoice(object):
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
         self.set_date(date)
         self.delivery = '' if delivery is None else str(delivery)
-        self.set_due_date(due_date)
+        self._due_days = 14             # set default
+        self.set_due_days(due_days)     # try to set value
         self.set_paid_date(paid_date)
         self.set_round_price(
             False if round_price is None else round_price
@@ -76,36 +77,23 @@ class OfferInvoice(object):
         """Get date."""
         return self._date
 
-    def set_due_date(self, value=None):
-        """Set due_date."""
-        # value is date, set it
-        if type(value) is ddate:
-            self._due_date = value
+    def set_due_days(self, value):
+        """Set due_days."""
+        try:
+            self._due_days = int(value)
+        except Exception:
+            pass
 
-        # value is integer, set date + due days
-        elif type(value) is int:
-            try:
-                self._due_date = self._date + timedelta(days=value)
-            except Exception:
-                self._due_date = None
-
-        # value is empty string, set None
-        elif value == '' or value is None:
-            self._due_date = None
-
-        # value is other string, try to fetch it to date object
-        elif type(value) is str:
-            try:
-                self._due_date = datetime.strptime(value, '%Y-%m-%d').date()
-            except Exception:
-                self._due_date = None
-
-        else:
-            self._due_date = None
+    def get_due_days(self):
+        """Get due_days."""
+        return self._due_days
 
     def get_due_date(self):
         """Get due_date."""
-        return self._due_date
+        if self._date is not None:
+            return self._date + timedelta(days=self._due_days)
+        else:
+            return ddate(1987, 10, 15)
 
     def set_paid_date(self, value):
         """Set paid_date."""
@@ -206,10 +194,7 @@ class OfferInvoice(object):
 
         out['delivery'] = self.delivery
 
-        try:
-            out['due_date'] = self._due_date.strftime('%Y-%m-%d')
-        except Exception:
-            out['due_date'] = None
+        out['due_days'] = self._due_days
 
         try:
             out['paid_date'] = self._paid_date.strftime('%Y-%m-%d')
@@ -322,13 +307,10 @@ class OfferInvoice(object):
         else:
             delivery = None
 
-        if 'due_date' in js.keys():
-            try:
-                due_date = datetime.strptime(js['due_date'], '%Y-%m-%d').date()
-            except Exception:
-                due_date = None
+        if 'due_days' in js.keys():
+            due_days = js['due_days']
         else:
-            due_date = None
+            due_days = None
 
         if 'paid_date' in js.keys():
             try:
@@ -368,7 +350,7 @@ class OfferInvoice(object):
             date_fmt=date_fmt,
             date=date,
             delivery=delivery,
-            due_date=due_date,
+            due_days=due_days,
             paid_date=paid_date,
             wage=wage,
             commodity=commodity,

@@ -583,8 +583,8 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    # dates
-    due_date = settings.defaults[lang].get_invoice_due_days()
+    # date
+    due_days = settings.defaults[lang].get_invoice_due_days()
 
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
@@ -599,7 +599,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         date_fmt=date_fmt,
         date=date.today(),
         delivery=delivery,
-        due_date=due_date,
+        due_days=due_days,
         commodity=settings.defaults[lang].commodity,
         round_price=round_price
     )
@@ -675,11 +675,7 @@ def PresetInvoice(
     elif replace and inv_date is None:
         inv_date = date.today()
 
-    due_date = invoice_preset.get_due_date()
-    if not replace and due_date is not None:
-        due_date = settings.defaults[client.language].get_invoice_due_days()
-    elif replace and due_date is None:
-        due_date = settings.defaults[client.language].get_invoice_due_days()
+    due_days = invoice_preset.get_due_days()
 
     paid_date = invoice_preset.get_paid_date()
     if not replace and paid_date is not None:
@@ -701,7 +697,7 @@ def PresetInvoice(
         date_fmt=date_fmt,
         date=inv_date,
         delivery=delivery,
-        due_date=due_date,
+        due_days=due_days,
         paid_date=paid_date,
         wage=wage,
         commodity=commodity,

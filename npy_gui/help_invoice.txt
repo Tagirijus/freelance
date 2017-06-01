@@ -24,7 +24,7 @@ Following options are possible, when you save an invoice as a preset with the fo
 - s_date = None --> l_date = None
 - s_date = set --> l_date = today
 - s_due_date = None --> l_due_date = None
-- s_due_date = set --> l_due_date = l_date + settings due_days
+- s_due_date = set --> l_due_date = l_date + (days between s_date and s_due_date)
 - s_paid_date = None --> l_paid_date = None
 - s_paid_date = set --> l_paid_date = l_date
 

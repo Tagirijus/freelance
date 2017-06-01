@@ -726,9 +726,9 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             begin_entry_at=20,
             max_width=59
         )
-        self.due_date = self.add_widget_intelligent(
-            TitleDateComboRefresh,
-            name='Due date:',
+        self.due_days = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='Due days:',
             begin_entry_at=12,
             relx=60,
             rely=self.delivery.rely
@@ -824,7 +824,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.date.value = self.parentApp.tmpInvoice.get_date()
         self.delivery.value = self.parentApp.tmpInvoice.delivery
         self.paid_date.value = self.parentApp.tmpInvoice.get_paid_date()
-        self.due_date.value = self.parentApp.tmpInvoice.get_due_date()
+        self.due_days.value = str(self.parentApp.tmpInvoice.get_due_days())
         self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
         self.wage.value = str(self.parentApp.tmpInvoice.get_wage())
         self.commodity.value = self.parentApp.tmpInvoice.commodity
@@ -854,7 +854,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.set_date(self.date.value)
         self.parentApp.tmpInvoice.delivery = self.delivery.value
         self.parentApp.tmpInvoice.set_paid_date(self.paid_date.value)
-        self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
+        self.parentApp.tmpInvoice.set_due_days(self.due_days.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
         self.parentApp.tmpInvoice.set_wage(self.wage.value)
         self.parentApp.tmpInvoice.commodity = self.commodity.value
