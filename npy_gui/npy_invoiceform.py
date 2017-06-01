@@ -236,9 +236,7 @@ class EntryList(npyscreen.MultiLineAction):
         """Display the entries."""
         title = vl.title[:26]
 
-        price_com = self.parent.parentApp.S.defaults[
-            self.parent.parentApp.tmpClient.language
-        ].commodity
+        price_com = self.parent.parentApp.tmpInvoice.commodity
 
         unit_price = str(vl.get_unit_price(
             entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
@@ -742,7 +740,15 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.wage = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Wage:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
+        )
+        self.commodity = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='Currency:',
+            begin_entry_at=12,
+            relx=60,
+            rely=self.wage.rely
         )
         self.round_price = self.add_widget_intelligent(
             TitleMultiSelectRefresh,
@@ -756,9 +762,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
     def update_info(self):
         """Update info for the invoice - summerize etc."""
         # get commodity for info text preparation
-        price_com = self.parentApp.S.defaults[
-            self.parentApp.tmpClient.language
-        ].commodity
+        price_com = self.parentApp.tmpInvoice.commodity
 
         # update info texts / summerizing stuff etc.
         price_val = self.parentApp.tmpInvoice.get_price_total(
@@ -822,6 +826,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.due_date.value = self.parentApp.tmpInvoice.get_due_date()
         self.date_fmt.value = self.parentApp.tmpInvoice.date_fmt
         self.wage.value = str(self.parentApp.tmpInvoice.get_wage())
+        self.commodity.value = self.parentApp.tmpInvoice.commodity
         self.round_price.value = (
             [0] if self.parentApp.tmpInvoice.get_round_price() else []
         )
@@ -851,6 +856,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpInvoice.set_due_date(self.due_date.value)
         self.parentApp.tmpInvoice.date_fmt = self.date_fmt.value
         self.parentApp.tmpInvoice.set_wage(self.wage.value)
+        self.parentApp.tmpInvoice.commodity = self.commodity.value
 
         if self.round_price.value == [0]:
             self.parentApp.tmpInvoice.set_round_price(True)

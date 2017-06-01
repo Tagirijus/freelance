@@ -164,19 +164,11 @@ def replacer(
         # time related offer / invoice stuff
         replace_me['TIME_TOTAL'] = offerinvoice.get_time_total()
 
-        # financial offer / invoice stuff
-        if is_client and is_settings:
-            commodity = settings.defaults[client.language].commodity
-        elif not is_client and is_settings:
-            commodity = settings.defaults['en'].commodity
-        else:
-            commodity = '$'
-
-        replace_me['COMMODITY'] = commodity
+        replace_me['COMMODITY'] = offerinvoice.commodity
 
         replace_me['WAGE'] = '{} {}/h'.format(
             offerinvoice.get_wage(project=project),
-            commodity
+            replace_me['COMMODITY']
         )
 
         price_total = offerinvoice.get_price_total(
@@ -186,7 +178,7 @@ def replacer(
         )
         replace_me['PRICE_TOTAL'] = '{} {}'.format(
             price_total,
-            commodity
+            replace_me['COMMODITY']
         )
 
         tax_total = offerinvoice.get_price_tax_total(
@@ -196,14 +188,14 @@ def replacer(
         )
         replace_me['TAX_TOTAL'] = '{} {}'.format(
             tax_total,
-            commodity
+            replace_me['COMMODITY']
         )
 
         replace_me['HAS_TAX'] = str(tax_total > 0)
 
         replace_me['PRICE_TAX_TOTAL'] = '{} {}'.format(
             price_total + tax_total,
-            commodity
+            replace_me['COMMODITY']
         )
 
     if text is None:

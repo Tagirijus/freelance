@@ -29,6 +29,7 @@ class OfferInvoice(object):
         due_date=None,
         paid_date=None,
         wage=None,
+        commodity=None,
         round_price=None,
         entry_list=None
     ):
@@ -47,6 +48,7 @@ class OfferInvoice(object):
         )
         self._wage = Decimal(0)             # set default
         self.set_wage(wage)                 # try to set arguments value
+        self.commodity = '$' if commodity is None else str(commodity)
         self._entry_list = []               # set default
         self.set_entry_list(entry_list)     # try to set arguments value
 
@@ -215,6 +217,7 @@ class OfferInvoice(object):
             out['paid_date'] = None
 
         out['wage'] = float(self._wage)
+        out['commodity'] = self.commodity
         out['round_price'] = self._round_price
 
         # fetch the jsons from the entries
@@ -340,6 +343,11 @@ class OfferInvoice(object):
         else:
             wage = None
 
+        if 'commodity' in js.keys():
+            commodity = js['commodity']
+        else:
+            commodity = None
+
         if 'round_price' in js.keys():
             round_price = js['round_price']
         else:
@@ -363,6 +371,7 @@ class OfferInvoice(object):
             due_date=due_date,
             paid_date=paid_date,
             wage=wage,
+            commodity=commodity,
             round_price=round_price,
             entry_list=entry_list
         )

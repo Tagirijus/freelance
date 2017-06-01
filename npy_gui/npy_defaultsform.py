@@ -301,7 +301,7 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.commodity = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Commodity:',
+            name='Currency:',
             begin_entry_at=26
         )
 

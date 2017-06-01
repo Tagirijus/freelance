@@ -61,7 +61,7 @@ class UnpaidInvoiceList(npyscreen.MultiLineAction):
         client = vl.get_client(global_list=self.parent.parentApp.L, project=project)
 
         # get commodity
-        commodity = self.parent.parentApp.S.defaults[client.language].commodity
+        commodity = vl.commodity
 
         # get tag for urgent invoices
         urgent = '! ' if vl.get_due_date() <= date.today() else ''

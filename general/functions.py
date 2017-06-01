@@ -185,6 +185,7 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         comment_b=comment_b,
         date_fmt=date_fmt,
         date=date.today(),
+        commodity=settings.defaults[lang].commodity,
         round_price=round_price
     )
 
@@ -241,6 +242,7 @@ def PresetOffer(
     # get other values
     date_fmt = offer_preset.date_fmt
     wage = offer_preset.get_wage()
+    commodity = offer_preset.commodity
     round_price = offer_preset.get_round_price()
     entry_list = offer_preset.get_entry_list()
 
@@ -252,6 +254,7 @@ def PresetOffer(
         date_fmt=date_fmt,
         date=off_date,
         wage=wage,
+        commodity=commodity,
         round_price=round_price,
         entry_list=entry_list
     )
@@ -594,6 +597,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         date=date.today(),
         delivery=delivery,
         due_date=due_date,
+        commodity=settings.defaults[lang].commodity,
         round_price=round_price
     )
 
@@ -678,6 +682,7 @@ def PresetInvoice(
     # get other values
     date_fmt = invoice_preset.date_fmt
     wage = invoice_preset.get_wage()
+    commodity = invoice_preset.commodity
     round_price = invoice_preset.get_round_price()
     entry_list = invoice_preset.get_entry_list()
 
@@ -693,6 +698,7 @@ def PresetInvoice(
         due_date=due_date,
         paid_date=paid_date,
         wage=wage,
+        commodity=commodity,
         round_price=round_price,
         entry_list=entry_list
     )

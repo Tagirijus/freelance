@@ -235,9 +235,7 @@ class EntryList(npyscreen.MultiLineAction):
         """Display the entries."""
         title = vl.title[:29]
 
-        price_com = self.parent.parentApp.S.defaults[
-            self.parent.parentApp.tmpClient.language
-        ].commodity
+        price_com = self.parent.parentApp.tmpOffer.commodity
 
         amount = vl.get_amount_str()[:14]
 
@@ -653,7 +651,15 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.wage = self.add_widget_intelligent(
             TitleTextRefresh,
             name='Wage:',
-            begin_entry_at=20
+            begin_entry_at=20,
+            max_width=59
+        )
+        self.commodity = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='Currency:',
+            begin_entry_at=12,
+            relx=60,
+            rely=self.wage.rely
         )
         self.round_price = self.add_widget_intelligent(
             TitleMultiSelectRefresh,
@@ -667,9 +673,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
     def update_info(self):
         """Update info for the offer - summerize etc."""
         # get commodity for info text preparation
-        price_com = self.parentApp.S.defaults[
-            self.parentApp.tmpClient.language
-        ].commodity
+        price_com = self.parentApp.tmpOffer.commodity
 
         # update info texts / summerizing stuff etc.
         time = self.parentApp.tmpOffer.get_time_total()
@@ -737,6 +741,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.date.value = self.parentApp.tmpOffer.get_date()
         self.date_fmt.value = self.parentApp.tmpOffer.date_fmt
         self.wage.value = str(self.parentApp.tmpOffer.get_wage())
+        self.commodity.value = self.parentApp.tmpOffer.commodity
         self.round_price.value = [0] if self.parentApp.tmpOffer.get_round_price() else []
 
         self.update_info()
@@ -760,6 +765,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpOffer.set_date(self.date.value)
         self.parentApp.tmpOffer.date_fmt = self.date_fmt.value
         self.parentApp.tmpOffer.set_wage(self.wage.value)
+        self.parentApp.tmpOffer.commodity = self.commodity.value
         if self.round_price.value == [0]:
             self.parentApp.tmpOffer.set_round_price(True)
         else:
