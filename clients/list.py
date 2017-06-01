@@ -744,6 +744,19 @@ class List(object):
                 project_dir=project_dir
             )
 
+    def get_active_and_inactive_list(self, settings=None):
+        """Get inactive clients and projects and active together."""
+        # get both lists
+        inact_list = self.get_inactive_list(settings=settings)
+        act_list = self.copy()
+
+        # combine clients and projects
+        inact_list.project_list += act_list.project_list
+        inact_list.client_list += act_list.client_list
+
+        return inact_list
+
+
     def get_unpaid_invoices(self):
         """Return list with unpaid invoices - sorted by due date."""
         unpaid = []

@@ -322,6 +322,11 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         self.parentApp.setNextForm('UnpaidInvoice')
         self.parentApp.switchFormNow()
 
+    def all_invoices(self):
+        """Show all invoices."""
+        self.parentApp.setNextForm('AllInvoices')
+        self.parentApp.switchFormNow()
+
     def add_client(self):
         """Add a client."""
         self.clients_box.entry_widget.add_client()
@@ -365,6 +370,9 @@ class MainForm(npyscreen.FormBaseNewWithMenus):
         self.m = self.new_menu(name='Menu')
         self.m.addItem(
             text='Show unpaid invoices', onSelect=self.unpaid_invoices, shortcut='I'
+        )
+        self.m.addItem(
+            text='Show all invoices', onSelect=self.all_invoices, shortcut='a'
         )
         self.m.addItem(text='Add client', onSelect=self.add_client, shortcut='c')
         self.m.addItem(text='Deactivate client', onSelect=self.deact_client, shortcut='C')
