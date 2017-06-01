@@ -16,8 +16,19 @@ ID:
 The ID / number for the invoice.
 
 
-Date / due date:
-Choose a date form the date box.
+Date / due date / paid date:
+Choose a date form the date box. If paid date is not set, the invoice is tagged as "not paid" and will be listed in the unpaid invoices list from the main menu.
+
+Following options are possible, when you save an invoice as a preset with the following dates, where s_date stands for the date you saved to the preset and l_date stands for the date, which will "come from the preset" then.
+
+- s_date = None --> l_date = actual date
+- s_date = set --> l_date = the set date
+- s_due_date = None --> l_due_date = l_date + settigns due_days
+- s_due_date = set --> l_due_date = l_due_date
+- s_paid_date = None --> l_paid_date = None
+- s_paid_date = set
+	--> option A: l_paid_date = l_date, when s_date was None
+	--> option B: l_paid_date = s_paid_date, when s_date was set
 
 
 Date fmt:
@@ -37,10 +48,6 @@ Enter an individual wage for this offer. If this is set to 0, the projects wage 
 
 Round price:
 If enabled the prices will be rounded to a non-decimal number.
-
-
-Paid:
-Enable, if the invoice is paid.
 
 
 You can also load a preset from the menu.
