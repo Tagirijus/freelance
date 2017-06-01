@@ -27,7 +27,13 @@ class AllInvoicesList(npyscreen.MultiLineAction):
         self.values = list(
             set([inv for i in all_projects for inv in i.get_invoice_list()])
         )
-        self.values = sorted(self.values, key=lambda x: x.get_date(), reverse=True)
+        self.values = sorted(
+            [
+                i for i in self.values
+                if i.get_date() is not None
+            ],
+            key=lambda x: x.get_date(), reverse=True
+        )
 
         self.display()
 

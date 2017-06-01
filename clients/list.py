@@ -766,7 +766,7 @@ class List(object):
             # cycle through the invoices of the project
             for invoice in project.get_invoice_list():
                 # append it, if it has no paid_date set (None)
-                if invoice.get_paid_date() is None:
+                if invoice.get_paid_date() is None and invoice.get_date() is not None:
                     unpaid.append(invoice)
 
         # sort the invoices by due date
