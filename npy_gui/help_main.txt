@@ -45,6 +45,7 @@ Offer / invcoie:
 - {DATE}: date
 - {DELIVERY}: delivery string
 - {DUE_DATE}: due date
+- {PAID_DATE}: paid date
 - {FINISH_DATE}: finishing date (mainly used in an offer)
 - {TIME_TOTAL}: total working time
 - {COMMODITY}: the commodity

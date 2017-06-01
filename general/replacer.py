@@ -145,6 +145,14 @@ def replacer(
         else:
             replace_me['DUE_DATE'] = '-'
 
+        # paid date is not None
+        if offerinvoice.get_paid_date() is not None:
+            replace_me['PAID_DATE'] = offerinvoice.get_paid_date().strftime(
+                offerinvoice.date_fmt
+            )
+        else:
+            replace_me['PAID_DATE'] = '-'
+
         # finish date
         replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(
             project=project
