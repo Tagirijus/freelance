@@ -195,7 +195,8 @@ def PresetOffer(
     settings=None,
     global_list=None,
     client=None,
-    project=None
+    project=None,
+    replace=False
 ):
     """Return new Offer based on given offer, but with string replacements."""
     if type(offer_preset) is not Offer:
@@ -236,7 +237,9 @@ def PresetOffer(
 
     # dates
     off_date = offer_preset.get_date()
-    if off_date is None:
+    if not replace and off_date is not None:
+        off_date = date.today()
+    elif replace and off_date is None:
         off_date = date.today()
 
     # get other values
@@ -607,7 +610,8 @@ def PresetInvoice(
     settings=None,
     global_list=None,
     client=None,
-    project=None
+    project=None,
+    replace=False
 ):
     """Return new Invoice based on given invoice, but with string replacements."""
     if type(invoice_preset) is not Invoice:
@@ -666,17 +670,19 @@ def PresetInvoice(
 
     # dates
     inv_date = invoice_preset.get_date()
-    inv_date_was_none = False
-    if inv_date is None:
+    if not replace and inv_date is not None:
         inv_date = date.today()
-        inv_date_was_none = True
+    elif replace and inv_date is None:
+        inv_date = date.today()
 
     due_date = invoice_preset.get_due_date()
-    if due_date is None:
+    if not replace and due_date is not None:
+        due_date = settings.defaults[client.language].get_invoice_due_days()
+    elif replace and due_date is None:
         due_date = settings.defaults[client.language].get_invoice_due_days()
 
     paid_date = invoice_preset.get_paid_date()
-    if paid_date is not None and inv_date_was_none:
+    if not replace and paid_date is not None:
         paid_date = inv_date
 
     # get other values

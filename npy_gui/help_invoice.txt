@@ -21,14 +21,14 @@ Choose a date form the date box. If paid date is not set, the invoice is tagged 
 
 Following options are possible, when you save an invoice as a preset with the following dates, where s_date stands for the date you saved to the preset and l_date stands for the date, which will "come from the preset" then.
 
-- s_date = None --> l_date = actual date
-- s_date = set --> l_date = the set date
-- s_due_date = None --> l_due_date = l_date + settigns due_days
-- s_due_date = set --> l_due_date = l_due_date
+- s_date = None --> l_date = None
+- s_date = set --> l_date = today
+- s_due_date = None --> l_due_date = None
+- s_due_date = set --> l_due_date = l_date + settings due_days
 - s_paid_date = None --> l_paid_date = None
-- s_paid_date = set
-	--> option A: l_paid_date = l_date, when s_date was None
-	--> option B: l_paid_date = s_paid_date, when s_date was set
+- s_paid_date = set --> l_paid_date = l_date
+
+On replacing strings the None-dates will be replaced by actual dates. This way you can save up a preset with None-dates, which you can replace at once with the replace function on another day (in case you are filling an invoice over time and do not want the creation day of the invoice to be the actual invoice date).
 
 
 Date fmt:

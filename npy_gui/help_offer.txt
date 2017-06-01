@@ -13,7 +13,7 @@ The title of the offer.
 
 
 Date:
-Choose a date form the date box.
+Choose a date from the date box.
 
 
 Date fmt:
