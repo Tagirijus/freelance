@@ -16,4 +16,22 @@ Amount format has replacement values like this:
 - {R}: amount converted to time, show remaining
 
 
+Title / comment has replacement values like this:
+
+- {E_POSITION}: position of the entry
+- {E_TITLE}: title of the entry
+- {E_COMMENT}: its comment
+- {E_TIME}: its time
+- {E_AMOUNT}: its amount returned with the amount format string
+- {E_AMOUNT_B}: its amount B returned with the amount format string
+- {E_PRICE}: its price without tax
+- {E_UNIT_PRICE}: its price not multiplied by its amount
+- {E_PRICE_TAX}: its price tax only
+- {E_UNIT_PRICE_TAX}: its price tax only not multiplied by its amount
+- {E_TOTAL}: price with tax
+- {E_UNIT_TOTAL}: price with tax not multiplied by its amount
+- {E_TAX_PERCENT}: the tax percentage as a number
+- {E_HAS_TAX}: boolean; true if entry has a tax percentage or value > 0
+
+
 You can also load a preset from the menu.
