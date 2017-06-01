@@ -109,8 +109,9 @@ class PresetList(npyscreen.MultiLineAction):
         if len(self.values) < 1:
             return False
 
-        old_name = self.values[self.cursor_line]['name']
+        entry = self.values[self.cursor_line]['item']
 
+        old_name = self.values[self.cursor_line]['name']
         new_name = npyscreen.notify_input(
             'Enter name for preset:',
             pre_text=old_name
