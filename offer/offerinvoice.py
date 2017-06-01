@@ -656,6 +656,7 @@ class OfferInvoice(object):
                     'COMMENT': comment,
                     'TIME': time,
                     'AMOUNT': e.get_amount_str(),
+                    'AMOUNT_B': e.get_amount_b_str(),
                     'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
                     'UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
                     'PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),

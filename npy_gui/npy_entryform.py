@@ -130,6 +130,16 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
             name='Amount format:',
             begin_entry_at=20
         )
+        self.amount_b = self.add(
+            npyscreen.TitleText,
+            name='Amount B:',
+            begin_entry_at=20
+        )
+        self.amount_b_format = self.add(
+            npyscreen.TitleText,
+            name='Amount B format:',
+            begin_entry_at=20
+        )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
@@ -153,6 +163,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.amount_b.value = str(self.parentApp.tmpEntry.get_amount_b())
+        self.amount_b_format.value = self.parentApp.tmpEntry.amount_b_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.time.value = str(self.parentApp.tmpEntry.get_time_raw())
         self.price.value = str(self.parentApp.tmpEntry.get_price_raw())
@@ -175,6 +187,8 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_amount_b(self.amount_b.value)
+        self.parentApp.tmpEntry.amount_b_format = self.amount_b_format.value
         self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_time(self.time.value)
         self.parentApp.tmpEntry.set_price(self.price.value)
@@ -368,6 +382,16 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             name='Amount format:',
             begin_entry_at=20
         )
+        self.amount_b = self.add(
+            npyscreen.TitleText,
+            name='Amount B:',
+            begin_entry_at=20
+        )
+        self.amount_b_format = self.add(
+            npyscreen.TitleText,
+            name='Amount B format:',
+            begin_entry_at=20
+        )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
@@ -386,6 +410,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.amount_b.value = str(self.parentApp.tmpEntry.get_amount_b())
+        self.amount_b_format.value = self.parentApp.tmpEntry.amount_b_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.hour_rate.value = str(self.parentApp.tmpEntry.get_hour_rate())
 
@@ -406,6 +432,8 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_amount_b(self.amount_b.value)
+        self.parentApp.tmpEntry.amount_b_format = self.amount_b_format.value
         self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_hour_rate(self.hour_rate.value)
 
@@ -598,6 +626,16 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
             name='Amount format:',
             begin_entry_at=20
         )
+        self.amount_b = self.add(
+            npyscreen.TitleText,
+            name='Amount B:',
+            begin_entry_at=20
+        )
+        self.amount_b_format = self.add(
+            npyscreen.TitleText,
+            name='Amount B format:',
+            begin_entry_at=20
+        )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
@@ -630,6 +668,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.comment.reformat()
         self.amount.value = str(self.parentApp.tmpEntry.get_amount())
         self.amount_format.value = self.parentApp.tmpEntry.amount_format
+        self.amount_b.value = str(self.parentApp.tmpEntry.get_amount_b())
+        self.amount_b_format.value = self.parentApp.tmpEntry.amount_b_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.multiplicator.value = str(self.parentApp.tmpEntry.get_multiplicator())
         self.is_time.value = [0] if self.parentApp.tmpEntry.get_is_time() else []
@@ -685,6 +725,8 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpEntry.comment = self.comment.value.replace('\n', ' ')
         self.parentApp.tmpEntry.set_amount(self.amount.value)
         self.parentApp.tmpEntry.amount_format = self.amount_format.value
+        self.parentApp.tmpEntry.set_amount_b(self.amount_b.value)
+        self.parentApp.tmpEntry.amount_b_format = self.amount_b_format.value
         self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_multiplicator(self.multiplicator.value)
         if self.is_time.value == [0]:

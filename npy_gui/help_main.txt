@@ -61,6 +61,7 @@ These are keys for dictionary variables, which you can access inside the templat
 - {COMMENT}: its comment
 - {TIME}: its time
 - {AMOUNT}: its amount returned with the amount format string
+- {AMOUNT_B}: its amount B returned with the amount format string
 - {PRICE}: its price without tax
 - {UNIT_PRICE}: its price not multiplied by its amount
 - {PRICE_TAX}: its price tax only

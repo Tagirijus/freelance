@@ -52,17 +52,23 @@ class Default(object):
         baseentry_comment=None,
         baseentry_amount=None,
         baseentry_amount_format=None,
+        baseentry_amount_b=None,
+        baseentry_amount_b_format=None,
         baseentry_time=None,
         baseentry_price=None,
         multiplyentry_title=None,
         multiplyentry_comment=None,
         multiplyentry_amount=None,
         multiplyentry_amount_format=None,
+        multiplyentry_amount_b=None,
+        multiplyentry_amount_b_format=None,
         multiplyentry_hour_rate=None,
         connectentry_title=None,
         connectentry_comment=None,
         connectentry_amount=None,
         connectentry_amount_format=None,
+        connectentry_amount_b=None,
+        connectentry_amount_b_format=None,
         connectentry_is_time=None,
         connectentry_multiplicator=None
     ):
@@ -129,6 +135,12 @@ class Default(object):
         self._baseentry_amount = OfferAmountTime(baseentry_amount)
         self.baseentry_amount_format = ('' if baseentry_amount_format is None
                                         else baseentry_amount_format)
+        if baseentry_amount_b is None:
+            self._baseentry_amount_b = OfferAmountTime(1)
+        else:
+            self._baseentry_amount_b = OfferAmountTime(baseentry_amount_b)
+        self.baseentry_amount_b_format = ('' if baseentry_amount_b_format is None
+                                        else baseentry_amount_b_format)
         self._baseentry_time = OfferAmountTime(baseentry_time)
         self._baseentry_price = Decimal(0)
         self.set_baseentry_price(baseentry_price)
@@ -141,6 +153,12 @@ class Default(object):
         self._multiplyentry_amount = OfferAmountTime(multiplyentry_amount)
         self.multiplyentry_amount_format = ('' if multiplyentry_amount_format is None
                                             else multiplyentry_amount_format)
+        if multiplyentry_amount_b is None:
+            self._multiplyentry_amount_b = OfferAmountTime(1)
+        else:
+            self._multiplyentry_amount_b = OfferAmountTime(multiplyentry_amount_b)
+        self.multiplyentry_amount_b_format = ('' if multiplyentry_amount_b_format is None
+                                            else multiplyentry_amount_b_format)
         self._multiplyentry_hour_rate = OfferAmountTime(multiplyentry_hour_rate)
 
         # connectentry default values
@@ -151,6 +169,13 @@ class Default(object):
         self._connectentry_amount = OfferAmountTime(connectentry_amount)
         self.connectentry_amount_format = ('' if connectentry_amount_format is None else
                                            connectentry_amount_format)
+        if connectentry_amount_b is None:
+            self._connectentry_amount_b = OfferAmountTime(1)
+        else:
+            self._connectentry_amount_b = OfferAmountTime(connectentry_amount_b)
+        self.connectentry_amount_b_format = (
+            '' if connectentry_amount_b_format is None else connectentry_amount_b_format
+        )
         self.set_connectentry_is_time(
             True if connectentry_is_time is None else connectentry_is_time
         )
@@ -241,120 +266,141 @@ class Default(object):
         return self._invoice_due_days
 
     def set_project_hours_per_day(self, value):
-        """Set set_project_hours_per_day."""
+        """Set project_hours_per_day."""
         try:
             self._project_hours_per_day = int(value)
         except Exception:
             pass
 
     def get_project_hours_per_day(self):
-        """Get set_project_hours_per_day."""
+        """Get project_hours_per_day."""
         return self._project_hours_per_day
 
     def set_project_work_days(self, value):
-        """Set set_project_work_days."""
+        """Set project_work_days."""
         if type(value) is list:
             self._project_work_days = value
 
     def get_project_work_days(self):
-        """Get set_project_work_days."""
+        """Get project_work_days."""
         return self._project_work_days
 
     def set_project_minimum_days(self, value):
-        """Set set_project_minimum_days."""
+        """Set project_minimum_days."""
         try:
             self._project_minimum_days = int(value)
         except Exception:
             pass
 
     def get_project_minimum_days(self):
-        """Get set_project_minimum_days."""
+        """Get project_minimum_days."""
         return self._project_minimum_days
 
     def set_project_wage(self, value):
-        """Set set_project_wage."""
+        """Set project_wage."""
         try:
             self._project_wage = Decimal(str(value))
         except Exception:
             pass
 
     def get_project_wage(self):
-        """Get set_project_wage."""
+        """Get project_wage."""
         return self._project_wage
 
     def set_baseentry_amount(self, value):
-        """Set set_baseentry_amount."""
+        """Set baseentry_amount."""
         self._baseentry_amount.set(value)
 
     def get_baseentry_amount(self):
-        """Get set_baseentry_amount."""
+        """Get baseentry_amount."""
         return self._baseentry_amount
 
+    def set_baseentry_amount_b(self, value):
+        """Set baseentry_amount_b."""
+        self._baseentry_amount_b.set(value)
+
+    def get_baseentry_amount_b(self):
+        """Get baseentry_amount_b."""
+        return self._baseentry_amount_b
+
     def set_baseentry_time(self, value):
-        """Set set_baseentry_time."""
+        """Set baseentry_time."""
         self._baseentry_time.set(value)
 
     def get_baseentry_time(self):
-        """Get set_baseentry_time."""
+        """Get baseentry_time."""
         self._baseentry_time.type('time')
         return self._baseentry_time
 
     def set_baseentry_price(self, value):
-        """Set set_baseentry_price."""
+        """Set baseentry_price."""
         try:
             self._baseentry_price = Decimal(str(value))
         except Exception:
             pass
 
     def get_baseentry_price(self):
-        """Get set_baseentry_price."""
+        """Get baseentry_price."""
         return self._baseentry_price
 
     def set_multiplyentry_amount(self, value):
-        """Set set_multiplyentry_amount."""
-        try:
-            self._multiplyentry_amount = Decimal(str(value))
-        except Exception:
-            pass
+        """Set multiplyentry_amount."""
+        self._multiplyentry_amount.set(value)
 
     def get_multiplyentry_amount(self):
-        """Get set_multiplyentry_amount."""
+        """Get multiplyentry_amount."""
         return self._multiplyentry_amount
 
+    def set_multiplyentry_amount_b(self, value):
+        """Set multiplyentry_amount_b."""
+        self._multiplyentry_amount_b.set(value)
+
+    def get_multiplyentry_amount_b(self):
+        """Get multiplyentry_amount_b."""
+        return self._multiplyentry_amount_b
+
     def set_multiplyentry_hour_rate(self, value):
-        """Set set_multiplyentry_hour_rate."""
+        """Set multiplyentry_hour_rate."""
         self._multiplyentry_hour_rate.set(value)
 
     def get_multiplyentry_hour_rate(self):
-        """Get set_multiplyentry_hour_rate."""
+        """Get multiplyentry_hour_rate."""
         self._multiplyentry_hour_rate.type('time')
         return self._multiplyentry_hour_rate
 
     def set_connectentry_amount(self, value):
-        """Set set_connectentry_amount."""
+        """Set connectentry_amount."""
         self._connectentry_amount.set(value)
 
     def get_connectentry_amount(self):
-        """Get set_connectentry_amount."""
+        """Get connectentry_amount."""
         return self._connectentry_amount
 
+    def set_connectentry_amount_b(self, value):
+        """Set connectentry_amount_b."""
+        self._connectentry_amount_b.set(value)
+
+    def get_connectentry_amount_b(self):
+        """Get connectentry_amount_b."""
+        return self._connectentry_amount_b
+
     def set_connectentry_is_time(self, value):
-        """Set set_connectentry_is_time."""
+        """Set connectentry_is_time."""
         self._connectentry_is_time = bool(value)
 
     def get_connectentry_is_time(self):
-        """Get set_connectentry_is_time."""
+        """Get connectentry_is_time."""
         return self._connectentry_is_time
 
     def set_connectentry_multiplicator(self, value):
-        """Set set_connectentry_multiplicator."""
+        """Set connectentry_multiplicator."""
         try:
             self._connectentry_multiplicator = Decimal(str(value))
         except Exception:
             pass
 
     def get_connectentry_multiplicator(self):
-        """Get set_connectentry_multiplicator."""
+        """Get connectentry_multiplicator."""
         return self._connectentry_multiplicator
 
     def to_json(self, indent=2):
@@ -408,6 +454,8 @@ class Default(object):
         out['baseentry_comment'] = self.baseentry_comment
         out['baseentry_amount'] = str(self._baseentry_amount)
         out['baseentry_amount_format'] = self.baseentry_amount_format
+        out['baseentry_amount_b'] = str(self._baseentry_amount_b)
+        out['baseentry_amount_b_format'] = self.baseentry_amount_b_format
         out['baseentry_time'] = str(self._baseentry_time)
         out['baseentry_price'] = float(self._baseentry_price)
 
@@ -415,12 +463,16 @@ class Default(object):
         out['multiplyentry_comment'] = self.multiplyentry_comment
         out['multiplyentry_amount'] = str(self._multiplyentry_amount)
         out['multiplyentry_amount_format'] = self.multiplyentry_amount_format
+        out['multiplyentry_amount_b'] = str(self._multiplyentry_amount_b)
+        out['multiplyentry_amount_b_format'] = self.multiplyentry_amount_b_format
         out['multiplyentry_hour_rate'] = str(self._multiplyentry_hour_rate)
 
         out['connectentry_title'] = self.connectentry_title
         out['connectentry_comment'] = self.connectentry_comment
         out['connectentry_amount'] = str(self._connectentry_amount)
         out['connectentry_amount_format'] = self.connectentry_amount_format
+        out['connectentry_amount_b'] = str(self._connectentry_amount_b)
+        out['connectentry_amount_b_format'] = self.connectentry_amount_b_format
         out['connectentry_is_time'] = self._connectentry_is_time
         out['connectentry_multiplicator'] = float(self._connectentry_multiplicator)
 
@@ -560,6 +612,12 @@ class Default(object):
         if 'baseentry_amount_format' in js.keys():
             self.baseentry_amount_format = js['baseentry_amount_format']
 
+        if 'baseentry_amount_b' in js.keys():
+            self.set_baseentry_amount_b(js['baseentry_amount_b'])
+
+        if 'baseentry_amount_b_format' in js.keys():
+            self.baseentry_amount_b_format = js['baseentry_amount_b_format']
+
         if 'baseentry_time' in js.keys():
             self.set_baseentry_time(js['baseentry_time'])
 
@@ -578,6 +636,12 @@ class Default(object):
         if 'multiplyentry_amount_format' in js.keys():
             self.multiplyentry_amount_format = js['multiplyentry_amount_format']
 
+        if 'multiplyentry_amount_b' in js.keys():
+            self.set_multiplyentry_amount_b(js['multiplyentry_amount_b'])
+
+        if 'multiplyentry_amount_b_format' in js.keys():
+            self.multiplyentry_amount_b_format = js['multiplyentry_amount_b_format']
+
         if 'multiplyentry_hour_rate' in js.keys():
             self.set_multiplyentry_hour_rate(js['multiplyentry_hour_rate'])
 
@@ -592,6 +656,12 @@ class Default(object):
 
         if 'connectentry_amount_format' in js.keys():
             self.connectentry_amount_format = js['connectentry_amount_format']
+
+        if 'connectentry_amount_b' in js.keys():
+            self.set_connectentry_amount_b(js['connectentry_amount_b'])
+
+        if 'connectentry_amount_b_format' in js.keys():
+            self.connectentry_amount_b_format = js['connectentry_amount_b_format']
 
         if 'connectentry_is_time' in js.keys():
             self.set_connectentry_is_time(js['connectentry_is_time'])
@@ -673,17 +743,23 @@ class Default(object):
             baseentry_comment=self.baseentry_comment,
             baseentry_amount=self._baseentry_amount,
             baseentry_amount_format=self.baseentry_amount_format,
+            baseentry_amount_b=self._baseentry_amount_b,
+            baseentry_amount_b_format=self.baseentry_amount_b_format,
             baseentry_time=self._baseentry_time,
             baseentry_price=self._baseentry_price,
             multiplyentry_title=self.multiplyentry_title,
             multiplyentry_comment=self.multiplyentry_comment,
             multiplyentry_amount=self._multiplyentry_amount,
             multiplyentry_amount_format=self.multiplyentry_amount_format,
+            multiplyentry_amount_b=self._multiplyentry_amount_b,
+            multiplyentry_amount_b_format=self.multiplyentry_amount_b_format,
             multiplyentry_hour_rate=self._multiplyentry_hour_rate,
             connectentry_title=self.connectentry_title,
             connectentry_comment=self.connectentry_comment,
             connectentry_amount=self._connectentry_amount,
             connectentry_amount_format=self.connectentry_amount_format,
+            connectentry_amount_b=self._connectentry_amount_b,
+            connectentry_amount_b_format=self.connectentry_amount_b_format,
             connectentry_is_time=self._connectentry_is_time,
             connectentry_multiplicator=self._connectentry_multiplicator
         )

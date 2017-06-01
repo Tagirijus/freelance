@@ -1028,6 +1028,16 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             name='Base amount fmt:',
             begin_entry_at=26
         )
+        self.baseentry_amount_b = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Base amount B:',
+            begin_entry_at=26
+        )
+        self.baseentry_amount_b_format = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Base amt fmt B:',
+            begin_entry_at=26
+        )
         self.baseentry_time = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base time:',
@@ -1062,6 +1072,16 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             name='Multi amount fmt:',
             begin_entry_at=26
         )
+        self.multiplyentry_amount_b = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Multi amount B:',
+            begin_entry_at=26
+        )
+        self.multiplyentry_amount_b_format = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Multi amt fmt B:',
+            begin_entry_at=26
+        )
         self.multiplyentry_hour_rate = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi h-rate:',
@@ -1089,6 +1109,16 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.connectentry_amount_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Con. amount fmt:',
+            begin_entry_at=26
+        )
+        self.connectentry_amount_b = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Connect amount B:',
+            begin_entry_at=26
+        )
+        self.connectentry_amount_b_format = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Con. amt fmt B:',
             begin_entry_at=26
         )
         self.connectentry_multiplicator = self.add_widget_intelligent(
@@ -1119,6 +1149,12 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.baseentry_amount_format.value = (
             self.parentApp.tmpDefault.baseentry_amount_format
         )
+        self.baseentry_amount_b.value = str(
+            self.parentApp.tmpDefault.get_baseentry_amount_b()
+        )
+        self.baseentry_amount_b_format.value = (
+            self.parentApp.tmpDefault.baseentry_amount_b_format
+        )
         self.baseentry_time.value = str(
             self.parentApp.tmpDefault.get_baseentry_time()
         )
@@ -1137,6 +1173,12 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.multiplyentry_amount_format.value = (
             self.parentApp.tmpDefault.multiplyentry_amount_format
         )
+        self.multiplyentry_amount_b.value = str(
+            self.parentApp.tmpDefault.get_multiplyentry_amount_b()
+        )
+        self.multiplyentry_amount_b_format.value = (
+            self.parentApp.tmpDefault.multiplyentry_amount_b_format
+        )
         self.multiplyentry_hour_rate.value = str(
             self.parentApp.tmpDefault.get_multiplyentry_hour_rate()
         )
@@ -1151,6 +1193,12 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.connectentry_amount_format.value = (
             self.parentApp.tmpDefault.connectentry_amount_format
+        )
+        self.connectentry_amount_b.value = str(
+            self.parentApp.tmpDefault.get_connectentry_amount_b()
+        )
+        self.connectentry_amount_b_format.value = (
+            self.parentApp.tmpDefault.connectentry_amount_b_format
         )
         self.connectentry_multiplicator.value = str(
             self.parentApp.tmpDefault.get_connectentry_multiplicator()
@@ -1170,37 +1218,53 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.baseentry_amount_format = (
             self.baseentry_amount_format.value
         )
+        self.parentApp.tmpDefault.set_baseentry_amount_b(
+            self.baseentry_amount_b.value
+        )
+        self.parentApp.tmpDefault.baseentry_amount_b_format = (
+            self.baseentry_amount_b_format.value
+        )
         self.parentApp.tmpDefault.set_baseentry_time(
             self.baseentry_time.value
         )
         self.parentApp.tmpDefault.set_baseentry_price(
             self.baseentry_price.value
         )
+
         self.parentApp.tmpDefault.multiplyentry_title = self.multiplyentry_title.value
         self.parentApp.tmpDefault.multiplyentry_comment = (
             self.multiplyentry_comment.value
         )
-
         self.parentApp.tmpDefault.set_multiplyentry_amount(
             self.multiplyentry_amount.value
         )
         self.parentApp.tmpDefault.multiplyentry_amount_format = (
             self.multiplyentry_amount_format.value
         )
-
+        self.parentApp.tmpDefault.set_multiplyentry_amount_b(
+            self.multiplyentry_amount_b.value
+        )
+        self.parentApp.tmpDefault.multiplyentry_amount_b_format = (
+            self.multiplyentry_amount_b_format.value
+        )
         self.parentApp.tmpDefault.set_multiplyentry_hour_rate(
             self.multiplyentry_hour_rate.value
         )
+
         self.parentApp.tmpDefault.connectentry_title = self.connectentry_title.value
         self.parentApp.tmpDefault.connectentry_comment = self.connectentry_comment.value
-
         self.parentApp.tmpDefault.set_connectentry_amount(
             self.connectentry_amount.value
         )
         self.parentApp.tmpDefault.connectentry_amount_format = (
             self.connectentry_amount_format.value
         )
-
+        self.parentApp.tmpDefault.set_connectentry_amount_b(
+            self.connectentry_amount_b.value
+        )
+        self.parentApp.tmpDefault.connectentry_amount_b_format = (
+            self.connectentry_amount_b_format.value
+        )
         self.parentApp.tmpDefault.set_connectentry_multiplicator(
             self.connectentry_multiplicator.value
         )
