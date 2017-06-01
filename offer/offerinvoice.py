@@ -600,24 +600,6 @@ class OfferInvoice(object):
         for e in self._entry_list:
             position += 1
 
-            title = replacer(
-                text=e.title,
-                settings=settings,
-                global_list=global_list,
-                client=client,
-                project=project,
-                offerinvoice=self
-            )
-
-            comment = replacer(
-                text=e.comment,
-                settings=settings,
-                global_list=global_list,
-                client=client,
-                project=project,
-                offerinvoice=self
-            )
-
             time = e.get_time(
                 entry_list=self._entry_list
             )
@@ -648,6 +630,45 @@ class OfferInvoice(object):
 
             total = price + tax
             total_unit = price_unit + tax_unit
+
+            tmp_replacer = {
+                'E_POSITION': position,
+                'E_TITLE': e.title,
+                'E_COMMENT': e.comment,
+                'E_TIME': e.get_time(
+                    entry_list=self._entry_list
+                ),
+                'E_AMOUNT': e.get_amount_str(),
+                'E_AMOUNT_B': e.get_amount_b_str(),
+                'E_PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
+                'E_UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
+                'E_PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
+                'E_UNIT_PRICE_TAX': '{} {}'.format(tax_unit, replace_me['COMMODITY']),
+                'E_TOTAL': '{} {}'.format(total, replace_me['COMMODITY']),
+                'E_UNIT_TOTAL': '{} {}'.format(total_unit, replace_me['COMMODITY']),
+                'E_TAX_PERCENT': '{}'.format(round(e.get_tax_percent())),
+                'E_HAS_TAX': (tax > 0)
+            }
+
+            title = replacer(
+                text=e.title,
+                settings=settings,
+                global_list=global_list,
+                client=client,
+                project=project,
+                offerinvoice=self
+            )
+            title = title.format(**tmp_replacer)
+
+            comment = replacer(
+                text=e.comment,
+                settings=settings,
+                global_list=global_list,
+                client=client,
+                project=project,
+                offerinvoice=self
+            )
+            comment = comment.format(**tmp_replacer)
 
             entries.append(
                 {

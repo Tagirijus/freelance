@@ -54,8 +54,29 @@ Offer / invcoie:
 - {PRICE_TAX_TOTAL}: the total price + tax
 - {HAS_TAX}: boolen if any tax exists
 
-Entries:
-These are keys for dictionary variables, which you can access inside the template via entries['KEY'].
+Entries in entry:
+
+(These values can be replaced inside a entry with its own values. For example if you'd like to add dynamically the amount B into the comment, put {E_AMOUNT_B} into the comment and this entries amount B string will be placed in its comment then.)
+
+- {E_POSITION}: position of the entry
+- {E_TITLE}: title of the entry
+- {E_COMMENT}: its comment
+- {E_TIME}: its time
+- {E_AMOUNT}: its amount returned with the amount format string
+- {E_AMOUNT_B}: its amount B returned with the amount format string
+- {E_PRICE}: its price without tax
+- {E_UNIT_PRICE}: its price not multiplied by its amount
+- {E_PRICE_TAX}: its price tax only
+- {E_UNIT_PRICE_TAX}: its price tax only not multiplied by its amount
+- {E_TOTAL}: price with tax
+- {E_UNIT_TOTAL}: price with tax not multiplied by its amount
+- {E_TAX_PERCENT}: the tax percentage as a number
+- {E_HAS_TAX}: boolean; true if entry has a tax percentage or value > 0
+
+Entries inside template:
+
+(These are keys for dictionary variables, which you can access inside the template via entries['KEY'])
+
 - {POSITION}: position of the entry
 - {TITLE}: title of the entry
 - {COMMENT}: its comment
