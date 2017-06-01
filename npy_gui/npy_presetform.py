@@ -216,7 +216,7 @@ class PresetList(npyscreen.MultiLineAction):
 
     def display_value(self, vl):
         """Display values."""
-        return '{}'.format(vl['name'])
+        return '{}: {}'.format(vl['item'].__class__.__name__, vl['name'])
 
     def is_offer(self, entry=None):
         """Check if entry is Offer."""
