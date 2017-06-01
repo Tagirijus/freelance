@@ -64,18 +64,24 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.values_to_tmp()
 
         name = npyscreen.notify_input(
-            'Name for the entry preset:'
+            'Name for the BaseEntry preset:'
         )
 
         if name:
-            added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry.copy(),
-                name=name
-            )
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                added = self.parentApp.P.add_offer_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
+            else:
+                added = self.parentApp.P.add_invoice_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
 
             if not added:
                 npyscreen.notify_confirm(
-                    'Entry not added. It probably already exists.',
+                    'BaseEntry not added. It probably already exists.',
                     form_color='DANGER'
                 )
 
@@ -297,18 +303,24 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.values_to_tmp()
 
         name = npyscreen.notify_input(
-            'Name for the entry preset:'
+            'Name for the MultiplyEntry preset:'
         )
 
         if name:
-            added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry.copy(),
-                name=name
-            )
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                added = self.parentApp.P.add_offer_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
+            else:
+                added = self.parentApp.P.add_invoice_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
 
             if not added:
                 npyscreen.notify_confirm(
-                    'Entry not added. It probably already exists.',
+                    'MultiplyEntry not added. It probably already exists.',
                     form_color='DANGER'
                 )
 
@@ -522,18 +534,24 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.values_to_tmp()
 
         name = npyscreen.notify_input(
-            'Name for the entry preset:'
+            'Name for the ConnectEntry preset:'
         )
 
         if name:
-            added = self.parentApp.P.add_entry(
-                entry=self.parentApp.tmpEntry.copy(),
-                name=name
-            )
+            if self.parentApp.tmpEntry_offer_invoice == 'offer':
+                added = self.parentApp.P.add_offer_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
+            else:
+                added = self.parentApp.P.add_invoice_entry(
+                    entry=self.parentApp.tmpEntry.copy(),
+                    name=name
+                )
 
             if not added:
                 npyscreen.notify_confirm(
-                    'Entry not added. It probably already exists.',
+                    'ConnectEntry not added. It probably already exists.',
                     form_color='DANGER'
                 )
 

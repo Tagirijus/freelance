@@ -18,10 +18,12 @@ class Preset(object):
         data_path=None,
         offer_dir='/presets_offer',
         offer_list=None,
-        entry_dir='/presets_entry',
-        entry_list=None,
+        offer_entry_dir='/presets_offer_entry',
+        offer_entry_list=None,
         invoice_dir='/presets_invoice',
-        invoice_list=None
+        invoice_list=None,
+        invoice_entry_dir='/presets_invoice_entry',
+        invoice_entry_list=None
     ):
         """Initialize the class."""
         self.data_path = data_path
@@ -31,16 +33,28 @@ class Preset(object):
             raise IOError
 
         self.offer_dir = offer_dir
-        self.offer_list = (self.load_offer_list_from_file() if offer_list is None
-                           else offer_list)
+        self.offer_list = (
+            self.load_offer_list_from_file()
+            if offer_list is None else offer_list
+        )
 
-        self.entry_dir = entry_dir
-        self.entry_list = (self.load_entry_list_from_file() if entry_list is None
-                           else entry_list)
+        self.offer_entry_dir = offer_entry_dir
+        self.offer_entry_list = (
+            self.load_offer_entry_list_from_file()
+            if offer_entry_list is None else offer_entry_list
+        )
 
         self.invoice_dir = invoice_dir
-        self.invoice_list = (self.load_invoice_list_from_file() if invoice_list is None
-                             else invoice_list)
+        self.invoice_list = (
+            self.load_invoice_list_from_file()
+            if invoice_list is None else invoice_list
+        )
+
+        self.invoice_entry_dir = invoice_entry_dir
+        self.invoice_entry_list = (
+            self.load_invoice_entry_list_from_file()
+            if invoice_entry_list is None else invoice_entry_list
+        )
 
     def add_offer(self, offer=None, name=None):
         """Add an offer preset."""
@@ -90,50 +104,50 @@ class Preset(object):
             new_item_name=new_name
         )
 
-    def add_entry(self, entry=None, name=None):
+    def add_offer_entry(self, entry=None, name=None):
         """Add an entry preset."""
         added = self.add_item(
-            item_list=self.entry_list,
+            item_list=self.offer_entry_list,
             item=entry,
             name=name
         )
 
         if added:
-            return self.save_entry_to_file(name=name)
+            return self.save_offer_entry_to_file(name=name)
         else:
             return added
 
-    def save_entry_to_file(self, name=None):
-        """Save single entry to file."""
+    def save_offer_entry_to_file(self, name=None):
+        """Save single offer_entry to file."""
         return self.save_item_to_file(
-            item_list=self.entry_list,
-            path=self.data_path + self.entry_dir,
+            item_list=self.offer_entry_list,
+            path=self.data_path + self.offer_entry_dir,
             ending='.flentry',
             name=name
         )
 
-    def delete_entry_file(self, name=None):
-        """Delete single entry file."""
+    def delete_offer_entry_file(self, name=None):
+        """Delete single offer_entry file."""
         return self.delete_item_file(
-            item_list=self.entry_list,
-            path=self.data_path + self.entry_dir,
+            item_list=self.offer_entry_list,
+            path=self.data_path + self.offer_entry_dir,
             ending='.flentry',
             name=name
         )
 
-    def remove_entry(self, name=None):
-        """Remove entry, if it exists."""
+    def remove_offer_entry(self, name=None):
+        """Remove offer_entry, if it exists."""
         return self.remove_item(
-            item_list=self.entry_list,
-            path=self.data_path + self.entry_dir,
+            item_list=self.offer_entry_list,
+            path=self.data_path + self.offer_entry_dir,
             ending='.flentry',
             name=name
         )
 
-    def rename_entry(self, old_name=None, new_name=None):
-        """Try to rename the entry with the given title."""
+    def rename_offer_entry(self, old_name=None, new_name=None):
+        """Try to rename the offer_entry with the given title."""
         return self.rename_item(
-            item_list=self.entry_list,
+            item_list=self.offer_entry_list,
             old_item_name=old_name,
             new_item_name=new_name
         )
@@ -182,6 +196,54 @@ class Preset(object):
         """Try to rename the invoice with the given title."""
         return self.rename_item(
             item_list=self.invoice_list,
+            old_item_name=old_name,
+            new_item_name=new_name
+        )
+
+    def add_invoice_entry(self, entry=None, name=None):
+        """Add an invoice_entry preset."""
+        added = self.add_item(
+            item_list=self.invoice_entry_list,
+            item=entry,
+            name=name
+        )
+
+        if added:
+            return self.save_invoice_entry_to_file(name=name)
+        else:
+            return added
+
+    def save_invoice_entry_to_file(self, name=None):
+        """Save single invoice_entry to file."""
+        return self.save_item_to_file(
+            item_list=self.invoice_entry_list,
+            path=self.data_path + self.invoice_entry_dir,
+            ending='.flentry',
+            name=name
+        )
+
+    def delete_invoice_entry_file(self, name=None):
+        """Delete single invoice_entry file."""
+        return self.delete_item_file(
+            item_list=self.invoice_entry_list,
+            path=self.data_path + self.invoice_entry_dir,
+            ending='.flentry',
+            name=name
+        )
+
+    def remove_invoice_entry(self, name=None):
+        """Remove invoice_entry, if it exists."""
+        return self.remove_item(
+            item_list=self.invoice_entry_list,
+            path=self.data_path + self.invoice_entry_dir,
+            ending='.flentry',
+            name=name
+        )
+
+    def rename_invoice_entry(self, old_name=None, new_name=None):
+        """Try to rename the invoice_entry with the given title."""
+        return self.rename_item(
+            item_list=self.invoice_entry_list,
             old_item_name=old_name,
             new_item_name=new_name
         )
@@ -417,15 +479,15 @@ class Preset(object):
             ending='.floffer'
         )
 
-    def save_entry_list_to_file(self):
-        """Save entry list to file."""
-        for i in self.entry_list:
-            self.save_entry_to_file(name=i['name'])
+    def save_offer_entry_list_to_file(self):
+        """Save offer_entry list to file."""
+        for i in self.offer_entry_list:
+            self.save_offer_entry_to_file(name=i['name'])
 
-    def load_entry_list_from_file(self):
-        """Load the entrys from file and return entry_list."""
+    def load_offer_entry_list_from_file(self):
+        """Load the offer_entrys from file and return offer_entry_list."""
         return self.load_item_list_from_file(
-            path=self.data_path + self.entry_dir,
+            path=self.data_path + self.offer_entry_dir,
             ending='.flentry'
         )
 
@@ -441,11 +503,24 @@ class Preset(object):
             ending='.flinvoice'
         )
 
+    def save_invoice_entry_list_to_file(self):
+        """Save invoice_entry list to file."""
+        for i in self.invoice_entry_list:
+            self.save_invoice_entry_to_file(name=i['name'])
+
+    def load_invoice_entry_list_from_file(self):
+        """Load the invoice_entrys from file and return invoice_entry_list."""
+        return self.load_item_list_from_file(
+            path=self.data_path + self.invoice_entry_dir,
+            ending='.flentry'
+        )
+
     def save_all(self):
         """Save all presets."""
         self.save_offer_list_to_file()
-        self.save_entry_list_to_file()
+        self.save_offer_entry_list_to_file()
         self.save_invoice_list_to_file()
+        self.save_invoice_entry_list_to_file()
 
     def reload(self, data_path=None):
         """Reload the presets."""
@@ -456,8 +531,9 @@ class Preset(object):
 
         self.data_path = data_path
         self.offer_list = self.load_offer_list_from_file()
-        self.entry_list = self.load_entry_list_from_file()
+        self.offer_entry_list = self.load_offer_entry_list_from_file()
         self.invoice_list = self.load_invoice_list_from_file()
+        self.invoice_entry_list = self.load_invoice_entry_list_from_file()
 
     def us(self, string=''):
         """Return string with underscores instead of whitespace."""

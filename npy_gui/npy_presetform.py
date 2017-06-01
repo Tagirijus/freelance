@@ -128,10 +128,16 @@ class PresetList(npyscreen.MultiLineAction):
                     new_name=new_name
                 )
             elif self.is_entry(entry):
-                renamed = self.parent.parentApp.P.rename_entry(
-                    old_name=old_name,
-                    new_name=new_name
-                )
+                if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
+                    renamed = self.parent.parentApp.P.rename_offer_entry(
+                        old_name=old_name,
+                        new_name=new_name
+                    )
+                else:
+                    renamed = self.parent.parentApp.P.rename_invoice_entry(
+                        old_name=old_name,
+                        new_name=new_name
+                    )
             else:
                 renamed = False
 
@@ -163,7 +169,10 @@ class PresetList(npyscreen.MultiLineAction):
             elif self.is_invoice(entry):
                 deleted = self.parent.parentApp.P.remove_invoice(name=name)
             elif self.is_entry(entry):
-                deleted = self.parent.parentApp.P.remove_entry(name=name)
+                if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
+                    deleted = self.parent.parentApp.P.remove_offer_entry(name=name)
+                else:
+                    deleted = self.parent.parentApp.P.remove_invoice_entry(name=name)
             else:
                 deleted = False
 
@@ -188,10 +197,16 @@ class PresetList(npyscreen.MultiLineAction):
                 key=lambda x: x['name']
             )
         else:
-            self.values = sorted(
-                self.parent.parentApp.P.entry_list,
-                key=lambda x: x['name']
-            )
+            if self.parent.parentApp.tmpEntry_offer_invoice == 'offer':
+                self.values = sorted(
+                    self.parent.parentApp.P.offer_entry_list,
+                    key=lambda x: x['name']
+                )
+            else:
+                self.values = sorted(
+                    self.parent.parentApp.P.invoice_entry_list,
+                    key=lambda x: x['name']
+                )
 
         self.display()
 
