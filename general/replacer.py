@@ -15,7 +15,7 @@ class ReplacementDict(dict):
 
     def __missing__(self, key):
         """Return the key instead."""
-        return '{' + str(key).replace('#', '') + '}'
+        return '{' + str(key).replace('#', '', 1) + '}'
 
 
 def replacer(
