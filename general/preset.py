@@ -101,7 +101,9 @@ class Preset(object):
         return self.rename_item(
             item_list=self.offer_list,
             old_item_name=old_name,
-            new_item_name=new_name
+            new_item_name=new_name,
+            path=self.data_path + self.offer_dir,
+            ending='.floffer'
         )
 
     def add_offer_entry(self, entry=None, name=None):
@@ -149,7 +151,9 @@ class Preset(object):
         return self.rename_item(
             item_list=self.offer_entry_list,
             old_item_name=old_name,
-            new_item_name=new_name
+            new_item_name=new_name,
+            path=self.data_path + self.offer_entry_dir,
+            ending='.flentry'
         )
 
     def add_invoice(self, invoice=None, name=None):
@@ -197,7 +201,9 @@ class Preset(object):
         return self.rename_item(
             item_list=self.invoice_list,
             old_item_name=old_name,
-            new_item_name=new_name
+            new_item_name=new_name,
+            path=self.data_path + self.invoice_dir,
+            ending='.flinvoice'
         )
 
     def add_invoice_entry(self, entry=None, name=None):
@@ -245,7 +251,9 @@ class Preset(object):
         return self.rename_item(
             item_list=self.invoice_entry_list,
             old_item_name=old_name,
-            new_item_name=new_name
+            new_item_name=new_name,
+            path=self.data_path + self.invoice_entry_dir,
+            ending='.flentry'
         )
 
     def add_item(self, item_list=None, item=None, name=None):
@@ -418,7 +426,14 @@ class Preset(object):
         except Exception:
             return False
 
-    def rename_item(self, item_list=None, old_item_name=None, new_item_name=None):
+    def rename_item(
+        self,
+        item_list=None,
+        old_item_name=None,
+        new_item_name=None,
+        path=None,
+        ending=None
+    ):
         """Try to rename the item with the given name."""
         # get index of original or cancel
         try:
@@ -444,10 +459,23 @@ class Preset(object):
             return False
 
         # added, now remove the old one
-        return self.remove_item(
+        removed = self.remove_item(
             item_list=item_list,
-            name=old_item_name
+            path=path,
+            ending=ending,
+            name=str(old_item_name)
         )
+
+        # save if removed
+        if removed:
+            return self.save_item_to_file(
+                item_list=item_list,
+                path=path,
+                ending=ending,
+                name=str(new_item_name)
+            )
+        else:
+            return False
 
     def load_item_list_from_file(self, path=None, ending=None):
         """Load item list from file and return list."""
