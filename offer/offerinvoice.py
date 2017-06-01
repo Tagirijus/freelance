@@ -38,13 +38,10 @@ class OfferInvoice(object):
         self.comment = '' if comment is None else str(comment)
         self.comment_b = '' if comment_b is None else str(comment_b)
         self.date_fmt = '%d.%m.%Y' if date_fmt is None else str(date_fmt)
-        self._date = ddate.today()          # set default
-        self.set_date(date)                 # try to set arguments value
+        self.set_date(date)
         self.delivery = '' if delivery is None else str(delivery)
-        self._due_date = ddate.today()      # set default
-        self.set_due_date(due_date)         # try to set arguments value
-        self._paid_date = None              # set default
-        self.set_paid_date(paid_date)       # try to set arguments value
+        self.set_due_date(due_date)
+        self.set_paid_date(paid_date)
         self.set_round_price(
             False if round_price is None else round_price
         )
@@ -55,31 +52,54 @@ class OfferInvoice(object):
 
     def set_date(self, value):
         """Set date."""
+        # value is date, set it
         if type(value) is ddate:
             self._date = value
-        else:
+
+        # value is empty string, set None
+        elif value == '' or value is None:
+            self._date = None
+
+        # value is other string, try to fetch it to date object
+        elif type(value) is str:
             try:
                 self._date = datetime.strptime(value, '%Y-%m-%d').date()
             except Exception:
-                pass
+                self._date = None
+
+        else:
+            self._date = None
 
     def get_date(self):
         """Get date."""
         return self._date
 
-    def set_due_date(self, value=None, due_days=None):
+    def set_due_date(self, value=None):
         """Set due_date."""
+        # value is date, set it
         if type(value) is ddate:
             self._due_date = value
-        else:
+
+        # value is integer, set date + due days
+        elif type(value) is int:
+            try:
+                self._due_date = self._date + timedelta(days=value)
+            except Exception:
+                self._due_date = None
+
+        # value is empty string, set None
+        elif value == '' or value is None:
+            self._due_date = None
+
+        # value is other string, try to fetch it to date object
+        elif type(value) is str:
             try:
                 self._due_date = datetime.strptime(value, '%Y-%m-%d').date()
             except Exception:
-                try:
-                    # calculate it with the due_days
-                    self._due_date = ddate.today() + timedelta(days=due_days)
-                except Exception:
-                    pass
+                self._due_date = None
+
+        else:
+            self._due_date = None
 
     def get_due_date(self):
         """Get due_date."""
@@ -87,15 +107,23 @@ class OfferInvoice(object):
 
     def set_paid_date(self, value):
         """Set paid_date."""
+        # value is date, set it
         if type(value) is ddate:
             self._paid_date = value
-        elif value == '':
+
+        # value is empty string, set None
+        elif value == '' or value is None:
             self._paid_date = None
-        else:
+
+        # value is other string, try to fetch it to date object
+        elif type(value) is str:
             try:
                 self._paid_date = datetime.strptime(value, '%Y-%m-%d').date()
             except Exception:
-                pass
+                self._paid_date = None
+
+        else:
+            self._paid_date = None
 
     def get_paid_date(self):
         """Get paid_date."""
@@ -172,14 +200,14 @@ class OfferInvoice(object):
         try:
             out['date'] = self._date.strftime('%Y-%m-%d')
         except Exception:
-            out['date'] = ddate.today().strftime('%Y-%m-%d')
+            out['date'] = None
 
         out['delivery'] = self.delivery
 
         try:
             out['due_date'] = self._due_date.strftime('%Y-%m-%d')
         except Exception:
-            out['due_date'] = ddate.today().strftime('%Y-%m-%d')
+            out['due_date'] = None
 
         try:
             out['paid_date'] = self._paid_date.strftime('%Y-%m-%d')
@@ -239,7 +267,7 @@ class OfferInvoice(object):
         return entry_list
 
     @classmethod
-    def from_json(cls, js=None, keep_date=True, due_days=14):
+    def from_json(cls, js=None):
         """Convert all data from json format."""
         if js is None:
             return cls()
@@ -305,11 +333,6 @@ class OfferInvoice(object):
             except Exception:
                 paid_date = None
         else:
-            paid_date = None
-
-        if not keep_date:
-            date = None
-            due_date = None
             paid_date = None
 
         if 'wage' in js.keys():
@@ -428,8 +451,7 @@ class OfferInvoice(object):
     def get_finish_date(self, project=None):
         """Calculate and return the finish date."""
         # if no project is given, return 1987-15-10
-        # if not is_project(project):
-        if not check_objects.is_project(project):
+        if not check_objects.is_project(project) or self._date is None:
             return ddate(1987, 10, 15)
 
         # get time needed for this offer
@@ -670,22 +692,14 @@ class OfferInvoice(object):
 class Offer(OfferInvoice):
     """The offer object."""
 
-    def copy(self, keep_date=True):
+    def copy(self):
         """Copy the own offer into new offer object."""
-        return Offer().from_json(js=self.to_json(), keep_date=keep_date)
+        return Offer().from_json(js=self.to_json())
 
 
 class Invoice(OfferInvoice):
     """The invoice object."""
 
-    def copy(self, keep_date=True, due_days=None):
+    def copy(self):
         """Copy the own offer into new offer object."""
-        # handle the thing with the due date
-        invoice_copy = Invoice().from_json(js=self.to_json(), keep_date=keep_date)
-        if not keep_date and due_days is not None:
-            try:
-                invoice_copy.set_due_date(due_days=int(due_days))
-            except Exception:
-                pass
-
-        return invoice_copy
+        return Invoice().from_json(js=self.to_json())

@@ -233,9 +233,13 @@ def PresetOffer(
         offerinvoice=offer_preset
     )
 
+    # dates
+    off_date = offer_preset.get_date()
+    if off_date is None:
+        off_date = date.today()
+
     # get other values
     date_fmt = offer_preset.date_fmt
-    off_date = offer_preset.get_date()
     wage = offer_preset.get_wage()
     round_price = offer_preset.get_round_price()
     entry_list = offer_preset.get_entry_list()
@@ -573,11 +577,11 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
+    # dates
+    due_date = settings.defaults[lang].get_invoice_due_days()
+
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
-    due_date = date.today() + timedelta(
-        days=settings.defaults[lang].get_invoice_due_days()
-    )
     round_price = settings.defaults[lang].get_invoice_round_price()
 
     # return new Invoice object
@@ -656,14 +660,23 @@ def PresetInvoice(
         offerinvoice=invoice_preset
     )
 
-    # get other values
-    date_fmt = invoice_preset.date_fmt
+    # dates
     inv_date = invoice_preset.get_date()
+    inv_date_was_none = False
+    if inv_date is None:
+        inv_date = date.today()
+        inv_date_was_none = True
+
     due_date = invoice_preset.get_due_date()
+    if due_date is None:
+        due_date = settings.defaults[client.language].get_invoice_due_days()
+
     paid_date = invoice_preset.get_paid_date()
-    if paid_date is not None:
+    if paid_date is not None and inv_date_was_none:
         paid_date = inv_date
 
+    # get other values
+    date_fmt = invoice_preset.date_fmt
     wage = invoice_preset.get_wage()
     round_price = invoice_preset.get_round_price()
     entry_list = invoice_preset.get_entry_list()
