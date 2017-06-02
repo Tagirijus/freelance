@@ -250,7 +250,7 @@ class EntryList(npyscreen.MultiLineAction):
             price_com
         )[:14]
 
-        amount = vl.get_amount_str()[:11]
+        quantity = vl.get_quantity_str()[:11]
 
         price_amt = str(vl.get_price(
             entry_list=self.parent.parentApp.tmpInvoice.get_entry_list(),
@@ -275,7 +275,7 @@ class EntryList(npyscreen.MultiLineAction):
         return '{:30} {:9} {:15} {:>11} {:>11}'.format(
             title,
             unit,
-            amount,
+            quantity,
             price,
             price_tax
         )
@@ -610,7 +610,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         entries_title = '{:—<27}{:—<10}{:—<20}{:—<13}{}'.format(
             'Entries ',
             ' Unit ',
-            ' Amount ',
+            ' Quantity ',
             ' Price ',
             ' Tax'
         )

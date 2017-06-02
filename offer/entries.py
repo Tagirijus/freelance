@@ -6,7 +6,7 @@ The classes have privat values and setter and getter methods.
 
 from decimal import Decimal
 import json
-from offer.offeramounttime import OfferAmountTime
+from offer.offerquantitytime import OfferQuantityTime
 import uuid
 
 
@@ -18,10 +18,10 @@ class BaseEntry(object):
         id=None,
         title=None,
         comment=None,
-        amount=None,
-        amount_format=None,
-        amount_b=None,
-        amount_b_format=None,
+        quantity=None,
+        quantity_format=None,
+        quantity_b=None,
+        quantity_b_format=None,
         tax=None,
         time=None,
         price=None,
@@ -34,16 +34,16 @@ class BaseEntry(object):
         # get other variables from arguments
         self.title = '' if title is None else str(title)
         self.comment = '' if comment is None else str(comment)
-        self._amount = OfferAmountTime(amount)
-        self.amount_format = '' if amount_format is None else str(amount_format)
-        if amount_b is None:
-            self._amount_b = OfferAmountTime(1)
+        self._quantity = OfferQuantityTime(quantity)
+        self.quantity_format = '' if quantity_format is None else str(quantity_format)
+        if quantity_b is None:
+            self._quantity_b = OfferQuantityTime(1)
         else:
-            self._amount_b = OfferAmountTime(amount_b)
-        self.amount_b_format = '' if amount_b_format is None else str(amount_b_format)
+            self._quantity_b = OfferQuantityTime(quantity_b)
+        self.quantity_b_format = '' if quantity_b_format is None else str(quantity_b_format)
         self._tax = Decimal(0)                  # set default
         self.set_tax(tax)                       # try to set arguments value
-        self._time = OfferAmountTime(time)
+        self._time = OfferQuantityTime(time)
         self._price = Decimal(0)                # set default
         self.set_price(price)                   # try to set arguments value
 
@@ -57,41 +57,41 @@ class BaseEntry(object):
         """Get id."""
         return self._id
 
-    def set_amount(self, value):
-        """Set amount."""
-        self._amount.set(value)
+    def set_quantity(self, value):
+        """Set quantity."""
+        self._quantity.set(value)
 
-    def get_amount(self):
-        """Get amount."""
-        return self._amount
+    def get_quantity(self):
+        """Get quantity."""
+        return self._quantity
 
-    def get_amount_str(self, fmt=None):
-        """Get self._amount as string."""
-        return self.get_amount_universal_str(
+    def get_quantity_str(self, fmt=None):
+        """Get self._quantity as string."""
+        return self.get_quantity_universal_str(
             fmt=fmt,
-            amount=self._amount,
-            amount_fmt=self.amount_format
+            quantity=self._quantity,
+            quantity_fmt=self.quantity_format
         )
 
-    def set_amount_b(self, value):
-        """Set amount_b."""
-        self._amount_b.set(value)
+    def set_quantity_b(self, value):
+        """Set quantity_b."""
+        self._quantity_b.set(value)
 
-    def get_amount_b(self):
-        """Get amount_b."""
-        return self._amount_b
+    def get_quantity_b(self):
+        """Get quantity_b."""
+        return self._quantity_b
 
-    def get_amount_b_str(self, fmt=None):
-        """Get self._amount_b as string."""
-        return self.get_amount_universal_str(
+    def get_quantity_b_str(self, fmt=None):
+        """Get self._quantity_b as string."""
+        return self.get_quantity_universal_str(
             fmt=fmt,
-            amount=self._amount_b,
-            amount_fmt=self.amount_b_format
+            quantity=self._quantity_b,
+            quantity_fmt=self.quantity_b_format
         )
 
-    def get_amount_universal_str(self, fmt=None, amount=None, amount_fmt=None):
+    def get_quantity_universal_str(self, fmt=None, quantity=None, quantity_fmt=None):
         """
-        Get amount as string with possible formatting.
+        Get quantity as string with possible formatting.
 
         In case the offer is for music production for example, it would
         be good if the quantity of the offer posting would not be listed
@@ -99,20 +99,20 @@ class BaseEntry(object):
         "1.5 min" -> "1:30 min" or similar. With the following format
         options you can achieve this - also with leading zeros:
 
-        {s}: standard automatic amount
-        {d}: amount in decimal
-        {F}: amount converted to time, show full
-        {R}: amount converted to time, show remaining
+        {s}: standard automatic quantity
+        {d}: quantity in decimal
+        {F}: quantity converted to time, show full
+        {R}: quantity converted to time, show remaining
 
         Means that 1.5 with fmt == "{F}:{R}" would output 0:01, while
         fmt == "{F}:{R}" would output 1:30. 61.75 with
         """
-        if type(amount) is not OfferAmountTime:
+        if type(quantity) is not OfferQuantityTime:
             return str(fmt)
 
-        # get self.amount_format if no argument is given
+        # get self.quantity_format if no argument is given
         if fmt is None:
-            fmt = amount_fmt
+            fmt = quantity_fmt
 
         # is this also is empty, get '{s}' as default output
         # (so that it shows the default at least)
@@ -123,10 +123,10 @@ class BaseEntry(object):
         format_me = {}
 
         # get format_me
-        format_me['s'] = amount
-        format_me['d'] = amount.get()
-        format_me['F'] = amount.full()
-        format_me['R'] = amount.remain()
+        format_me['s'] = quantity
+        format_me['d'] = quantity.get()
+        format_me['F'] = quantity.full()
+        format_me['R'] = quantity.remain()
 
         # {F} exists
         if '{F}' in fmt:
@@ -174,7 +174,7 @@ class BaseEntry(object):
     def get_time(self, *args, **kwargs):
         """Get time."""
         self._time.type('time')
-        return self._time * self._amount * self._amount_b
+        return self._time * self._quantity * self._quantity_b
 
     def get_time_raw(self, *args, **kwargs):
         """Get raw time value."""
@@ -183,7 +183,7 @@ class BaseEntry(object):
 
     def get_time_zero(self, *args, **kwargs):
         """Get time as '-' if time is 0, else str of time."""
-        if self.get_time(*args, **kwargs) == OfferAmountTime(0):
+        if self.get_time(*args, **kwargs) == OfferQuantityTime(0):
             return '-'
         else:
             return str(self.get_time(*args, **kwargs))
@@ -204,20 +204,20 @@ class BaseEntry(object):
             rounder = 0
         else:
             rounder = 2
-        return round(self._price * self._amount.get() * self._amount_b.get(), rounder)
+        return round(self._price * self._quantity.get() * self._quantity_b.get(), rounder)
 
     def get_unit_price(self, round_price=False, *args, **kwargs):
-        """Get price / amount."""
-        amounts = self._amount.get() * self._amount_b.get()
+        """Get price / quantity."""
+        quantitys = self._quantity.get() * self._quantity_b.get()
 
-        # divide with amount, if its > 0
-        if amounts > 0:
+        # divide with quantity, if its > 0
+        if quantitys > 0:
             return round(
                 self.get_price(
                     round_price=round_price,
                     *args,
                     **kwargs
-                ) / amounts,
+                ) / quantitys,
                 2
             )
 
@@ -247,16 +247,16 @@ class BaseEntry(object):
         )
 
     def get_unit_price_tax(self, *args, **kwargs):
-        """Get price_tax / amount."""
-        amounts = self._amount.get() * self._amount_b.get()
+        """Get price_tax / quantity."""
+        quantitys = self._quantity.get() * self._quantity_b.get()
 
-        # divide with amount, if its > 0
-        if amounts > 0:
+        # divide with quantity, if its > 0
+        if quantitys > 0:
             return round(
                 self.get_price_tax(
                     *args,
                     **kwargs
-                ) / amounts,
+                ) / quantitys,
                 2
             )
 
@@ -283,10 +283,10 @@ class BaseEntry(object):
         out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = str(self._amount)
-        out['amount_format'] = self.amount_format
-        out['amount_b'] = str(self._amount_b)
-        out['amount_b_format'] = self.amount_b_format
+        out['quantity'] = str(self._quantity)
+        out['quantity_format'] = self.quantity_format
+        out['quantity_b'] = str(self._quantity_b)
+        out['quantity_b_format'] = self.quantity_b_format
         out['tax'] = float(self._tax)
         out['time'] = str(self._time)
         out['price'] = float(self._price)
@@ -340,25 +340,25 @@ class BaseEntry(object):
         else:
             comment = None
 
-        if 'amount' in js.keys():
-            amount = js['amount']
+        if 'quantity' in js.keys():
+            quantity = js['quantity']
         else:
-            amount = None
+            quantity = None
 
-        if 'amount_format' in js.keys():
-            amount_format = js['amount_format']
+        if 'quantity_format' in js.keys():
+            quantity_format = js['quantity_format']
         else:
-            amount_format = None
+            quantity_format = None
 
-        if 'amount_b' in js.keys():
-            amount_b = js['amount_b']
+        if 'quantity_b' in js.keys():
+            quantity_b = js['quantity_b']
         else:
-            amount_b = None
+            quantity_b = None
 
-        if 'amount_b_format' in js.keys():
-            amount_b_format = js['amount_b_format']
+        if 'quantity_b_format' in js.keys():
+            quantity_b_format = js['quantity_b_format']
         else:
-            amount_b_format = None
+            quantity_b_format = None
 
         if 'tax' in js.keys():
             tax = js['tax']
@@ -379,10 +379,10 @@ class BaseEntry(object):
             id=id,
             title=title,
             comment=comment,
-            amount=amount,
-            amount_format=amount_format,
-            amount_b=amount_b,
-            amount_b_format=amount_b_format,
+            quantity=quantity,
+            quantity_format=quantity_format,
+            quantity_b=quantity_b,
+            quantity_b_format=quantity_b_format,
             tax=tax,
             time=time,
             price=price
@@ -420,10 +420,10 @@ class BaseEntry(object):
                 id=self.get_id(),
                 title=self.title,
                 comment=self.comment,
-                amount=self.get_amount(),
-                amount_format=self.amount_format,
-                amount_b=self.get_amount_b(),
-                amount_b_format=self.amount_b_format,
+                quantity=self.get_quantity(),
+                quantity_format=self.quantity_format,
+                quantity_b=self.get_quantity_b(),
+                quantity_b_format=self.quantity_b_format,
                 tax=self.get_tax()
             )
 
@@ -435,10 +435,10 @@ class BaseEntry(object):
                 id=self.get_id(),
                 title=self.title,
                 comment=self.comment,
-                amount=self.get_amount(),
-                amount_format=self.amount_format,
-                amount_b=self.get_amount_b(),
-                amount_b_format=self.amount_b_format,
+                quantity=self.get_quantity(),
+                quantity_format=self.quantity_format,
+                quantity_b=self.get_quantity_b(),
+                quantity_b_format=self.quantity_b_format,
                 tax=self.get_tax()
             )
 
@@ -450,10 +450,10 @@ class BaseEntry(object):
                 id=self.get_id(),
                 title=self.title,
                 comment=self.comment,
-                amount=self.get_amount(),
-                amount_format=self.amount_format,
-                amount_b=self.get_amount_b(),
-                amount_b_format=self.amount_b_format,
+                quantity=self.get_quantity(),
+                quantity_format=self.quantity_format,
+                quantity_b=self.get_quantity_b(),
+                quantity_b_format=self.quantity_b_format,
                 tax=self.get_tax(),
                 price=self.get_price(
                     entry_list=entry_list,
@@ -475,7 +475,7 @@ class MultiplyEntry(BaseEntry):
     This entry type is similar to the BaseEntry, except that
     it calculates the time according to a given hour_rate value.
     The class has a new value "hour_rate" which will be multiplicated
-    by the amount and thus calculates the time.
+    by the quantity and thus calculates the time.
     """
 
     def __init__(
@@ -483,10 +483,10 @@ class MultiplyEntry(BaseEntry):
         id=None,
         title=None,
         comment=None,
-        amount=None,
-        amount_format=None,
-        amount_b=None,
-        amount_b_format=None,
+        quantity=None,
+        quantity_format=None,
+        quantity_b=None,
+        quantity_b_format=None,
         tax=None,
         hour_rate=None
     ):
@@ -496,23 +496,23 @@ class MultiplyEntry(BaseEntry):
             id=id,
             title=title,
             comment=comment,
-            amount=amount,
-            amount_format=amount_format,
-            amount_b=amount_b,
-            amount_b_format=amount_b_format,
+            quantity=quantity,
+            quantity_format=quantity_format,
+            quantity_b=quantity_b,
+            quantity_b_format=quantity_b_format,
             tax=tax
         )
 
         # new values for this class
-        self._hour_rate = OfferAmountTime(hour_rate)
+        self._hour_rate = OfferQuantityTime(hour_rate)
 
     def set_time(self, value):
         """Disable the function."""
         pass
 
     def get_time(self, *args, **kwargs):
-        """Get own amount * own hour as time."""
-        out = self._amount * self._amount_b * self._hour_rate
+        """Get own quantity * own hour as time."""
+        out = self._quantity * self._quantity_b * self._hour_rate
         out.type('time')
         return out
 
@@ -545,10 +545,10 @@ class MultiplyEntry(BaseEntry):
         out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = str(self._amount)
-        out['amount_format'] = self.amount_format
-        out['amount_b'] = str(self._amount_b)
-        out['amount_b_format'] = self.amount_b_format
+        out['quantity'] = str(self._quantity)
+        out['quantity_format'] = self.quantity_format
+        out['quantity_b'] = str(self._quantity_b)
+        out['quantity_b_format'] = self.quantity_b_format
         out['tax'] = float(self._tax)
         out['hour_rate'] = str(self._hour_rate)
 
@@ -601,25 +601,25 @@ class MultiplyEntry(BaseEntry):
         else:
             comment = None
 
-        if 'amount' in js.keys():
-            amount = js['amount']
+        if 'quantity' in js.keys():
+            quantity = js['quantity']
         else:
-            amount = None
+            quantity = None
 
-        if 'amount_format' in js.keys():
-            amount_format = js['amount_format']
+        if 'quantity_format' in js.keys():
+            quantity_format = js['quantity_format']
         else:
-            amount_format = None
+            quantity_format = None
 
-        if 'amount_b' in js.keys():
-            amount_b = js['amount_b']
+        if 'quantity_b' in js.keys():
+            quantity_b = js['quantity_b']
         else:
-            amount_b = None
+            quantity_b = None
 
-        if 'amount_b_format' in js.keys():
-            amount_b_format = js['amount_b_format']
+        if 'quantity_b_format' in js.keys():
+            quantity_b_format = js['quantity_b_format']
         else:
-            amount_b_format = None
+            quantity_b_format = None
 
         if 'tax' in js.keys():
             tax = js['tax']
@@ -635,10 +635,10 @@ class MultiplyEntry(BaseEntry):
             id=id,
             title=title,
             comment=comment,
-            amount=amount,
-            amount_format=amount_format,
-            amount_b=amount_b,
-            amount_b_format=amount_b_format,
+            quantity=quantity,
+            quantity_format=quantity_format,
+            quantity_b=quantity_b,
+            quantity_b_format=quantity_b_format,
             tax=tax,
             hour_rate=hour_rate
         )
@@ -663,10 +663,10 @@ class ConnectEntry(BaseEntry):
         id=None,
         title=None,
         comment=None,
-        amount=None,
-        amount_format=None,
-        amount_b=None,
-        amount_b_format=None,
+        quantity=None,
+        quantity_format=None,
+        quantity_b=None,
+        quantity_b_format=None,
         tax=None,
         connected=None,
         is_time=None,
@@ -678,10 +678,10 @@ class ConnectEntry(BaseEntry):
             id=id,
             title=title,
             comment=comment,
-            amount=amount,
-            amount_format=amount_format,
-            amount_b=amount_b,
-            amount_b_format=amount_b_format,
+            quantity=quantity,
+            quantity_format=quantity_format,
+            quantity_b=quantity_b,
+            quantity_b_format=quantity_b_format,
             tax=tax,
             connected=connected
         )
@@ -708,19 +708,19 @@ class ConnectEntry(BaseEntry):
         """
         # if is_time() == False or entry_list not a list, return 0
         if not self.get_is_time() or type(entry_list) is not list:
-            return OfferAmountTime('0:00')
+            return OfferQuantityTime('0:00')
         # is_time() == True, calculate time respecting other entires
         else:
             # otherwise iterate through entry_list and find
             # entries which ids exist in the self._connected list
-            out = OfferAmountTime('0:00')
+            out = OfferQuantityTime('0:00')
             for entry in entry_list:
                 if entry.get_id() in self._connected:
                     # if its in the list, multiply its time and add it
                     out += (self.get_multiplicator() *
                             entry.get_time(entry_list=entry_list))
             # return the result
-            return out * self._amount * self._amount_b
+            return out * self._quantity * self._quantity_b
 
     def set_price(self, value):
         """Disable function."""
@@ -768,7 +768,7 @@ class ConnectEntry(BaseEntry):
                                 entry_list=entry_list,
                                 wage=wage))
             # return the value
-            return round(out * self._amount.get() * self._amount_b.get(), rounder)
+            return round(out * self._quantity.get() * self._quantity_b.get(), rounder)
 
     def set_multiplicator(self, value):
         """Set multiplicator."""
@@ -847,10 +847,10 @@ class ConnectEntry(BaseEntry):
         out['id'] = self.get_id()
         out['title'] = self.title
         out['comment'] = self.comment
-        out['amount'] = str(self._amount)
-        out['amount_format'] = self.amount_format
-        out['amount_b'] = str(self._amount_b)
-        out['amount_b_format'] = self.amount_b_format
+        out['quantity'] = str(self._quantity)
+        out['quantity_format'] = self.quantity_format
+        out['quantity_b'] = str(self._quantity_b)
+        out['quantity_b_format'] = self.quantity_b_format
         out['tax'] = float(self._tax)
         out['is_time'] = self.get_is_time()
         out['multiplicator'] = float(self._multiplicator)
@@ -909,25 +909,25 @@ class ConnectEntry(BaseEntry):
         else:
             comment = None
 
-        if 'amount' in js.keys():
-            amount = js['amount']
+        if 'quantity' in js.keys():
+            quantity = js['quantity']
         else:
-            amount = None
+            quantity = None
 
-        if 'amount_format' in js.keys():
-            amount_format = js['amount_format']
+        if 'quantity_format' in js.keys():
+            quantity_format = js['quantity_format']
         else:
-            amount_format = None
+            quantity_format = None
 
-        if 'amount_b' in js.keys():
-            amount_b = js['amount_b']
+        if 'quantity_b' in js.keys():
+            quantity_b = js['quantity_b']
         else:
-            amount_b = None
+            quantity_b = None
 
-        if 'amount_b_format' in js.keys():
-            amount_b_format = js['amount_b_format']
+        if 'quantity_b_format' in js.keys():
+            quantity_b_format = js['quantity_b_format']
         else:
-            amount_b_format = None
+            quantity_b_format = None
 
         if 'tax' in js.keys():
             tax = js['tax']
@@ -953,10 +953,10 @@ class ConnectEntry(BaseEntry):
             id=id,
             title=title,
             comment=comment,
-            amount=amount,
-            amount_format=amount_format,
-            amount_b=amount_b,
-            amount_b_format=amount_b_format,
+            quantity=quantity,
+            quantity_format=quantity_format,
+            quantity_b=quantity_b,
+            quantity_b_format=quantity_b_format,
             tax=tax,
             is_time=is_time,
             multiplicator=multiplicator,

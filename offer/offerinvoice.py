@@ -10,7 +10,7 @@ import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offeramounttime import OfferAmountTime
+from offer.offerquantitytime import OfferQuantityTime
 import os
 
 
@@ -398,7 +398,7 @@ class OfferInvoice(object):
     def get_time_total(self):
         """Get times of entries summerized."""
         # init output variable
-        out = OfferAmountTime('0:00')
+        out = OfferQuantityTime('0:00')
 
         # iterate through the entries and get its time
         for e in self._entry_list:
@@ -629,8 +629,8 @@ class OfferInvoice(object):
                 'E_TIME': e.get_time(
                     entry_list=self._entry_list
                 ),
-                'E_AMOUNT': e.get_amount_str(),
-                'E_AMOUNT_B': e.get_amount_b_str(),
+                'E_QUANTITY': e.get_quantity_str(),
+                'E_QUANTITY_B': e.get_quantity_b_str(),
                 'E_PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
                 'E_UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
                 'E_PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),
@@ -667,8 +667,8 @@ class OfferInvoice(object):
                     'TITLE': title,
                     'COMMENT': comment,
                     'TIME': time,
-                    'AMOUNT': e.get_amount_str(),
-                    'AMOUNT_B': e.get_amount_b_str(),
+                    'QUANTITY': e.get_quantity_str(),
+                    'QUANTITY_B': e.get_quantity_b_str(),
                     'PRICE': '{} {}'.format(price, replace_me['COMMODITY']),
                     'UNIT_PRICE': '{} {}'.format(price_unit, replace_me['COMMODITY']),
                     'PRICE_TAX': '{} {}'.format(tax, replace_me['COMMODITY']),

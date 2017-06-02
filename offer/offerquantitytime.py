@@ -1,11 +1,11 @@
-"""The class for the amount of the entries."""
+"""The class for the quantity of the entries."""
 
 from decimal import Decimal
 
 
-class OfferAmountTime(object):
+class OfferQuantityTime(object):
     """
-    The OfferAmountTime class.
+    The OfferQuantityTime class.
 
     A flexible object, which can be represented as a Decimal or a time-string
     like "1:45", if the internal value is 1.75, for example.
@@ -34,12 +34,12 @@ class OfferAmountTime(object):
         out = self._full
 
         # check if same type and calculate
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out += Decimal(other._full)
         else:
             out += Decimal(other)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
@@ -53,12 +53,12 @@ class OfferAmountTime(object):
         out = self._full
 
         # check if same type and calculate
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out -= Decimal(other._full)
         else:
             out -= Decimal(other)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
@@ -66,7 +66,7 @@ class OfferAmountTime(object):
     def __rsub__(self, other):
         """Sub."""
         # check if same type
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out = Decimal(other._full)
         else:
             out = Decimal(other)
@@ -74,7 +74,7 @@ class OfferAmountTime(object):
         # calculate
         out -= Decimal(self._full)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
@@ -84,12 +84,12 @@ class OfferAmountTime(object):
         out = self._full
 
         # check if same type and calculate
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out *= Decimal(other._full)
         else:
             out *= Decimal(other)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
@@ -103,12 +103,12 @@ class OfferAmountTime(object):
         out = self._full
 
         # check if same type and calculate
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out /= Decimal(other._full)
         else:
             out /= Decimal(other)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
@@ -116,7 +116,7 @@ class OfferAmountTime(object):
     def __rtruediv__(self, other):
         """Divide."""
         # check if same type
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             out = Decimal(other._full)
         else:
             out = Decimal(other)
@@ -124,49 +124,49 @@ class OfferAmountTime(object):
         # calculate
         out /= Decimal(self._full)
 
-        out = OfferAmountTime(out)
+        out = OfferQuantityTime(out)
         out.type(self._type)
 
         return out
 
     def __lt__(self, other):
         """Lower than."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full < other._full
         else:
             return self._full < other
 
     def __le__(self, other):
         """Lower equal than."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full <= other._full
         else:
             return self._full <= other
 
     def __eq__(self, other):
         """Equal to."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full == other._full
         else:
             return self._full == other
 
     def __ne__(self, other):
         """Not equal."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full != other._full
         else:
             return self._full != other
 
     def __ge__(self, other):
         """Greater equal."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full >= other._full
         else:
             return self._full >= other
 
     def __gt__(self, other):
         """Greater than."""
-        if type(other) is OfferAmountTime:
+        if type(other) is OfferQuantityTime:
             return self._full > other._full
         else:
             return self._full > other

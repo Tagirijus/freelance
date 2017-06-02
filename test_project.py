@@ -15,7 +15,7 @@ class TestOfferA(object):
     b = BaseEntry(
         title='Base title',
         comment='Base comment',
-        amount=1,
+        quantity=1,
         time=2.5,
         price=125
     )
@@ -23,14 +23,14 @@ class TestOfferA(object):
     m = MultiplyEntry(
         title='Multiply title',
         comment='Multiply comment',
-        amount=0.5,
+        quantity=0.5,
         hour_rate=4
     )
 
     c = ConnectEntry(
         title='Connect title',
         comment='Connect comment',
-        amount=3,
+        quantity=3,
         is_time=True,
         multiplicator=2
     )
@@ -55,7 +55,7 @@ class TestOfferB(object):
     b = BaseEntry(
         title='Base title',
         comment='Base comment',
-        amount=1,
+        quantity=1,
         time=2.5,
         price=125
     )
@@ -63,21 +63,21 @@ class TestOfferB(object):
     m = MultiplyEntry(
         title='Multiply title',
         comment='Multiply comment',
-        amount=0.5,
+        quantity=0.5,
         hour_rate=4
     )
 
     c = MultiplyEntry(
         title='Multiply title 2',
         comment='Multiply comment 2',
-        amount=4,
+        quantity=4,
         hour_rate=3.15
     )
 
     d = ConnectEntry(
         title='Connect title 2',
         comment='Connect comment 2',
-        amount=9,
+        quantity=9,
         is_time=False,
         multiplicator=0.25
     )

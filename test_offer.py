@@ -7,7 +7,7 @@ from offer.offerinvoice import Offer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offeramounttime import OfferAmountTime
+from offer.offerquantitytime import OfferQuantityTime
 
 
 class TestOffer(object):
@@ -17,7 +17,7 @@ class TestOffer(object):
     b = BaseEntry(
         title='Base title',
         comment='Base comment',
-        amount=1,
+        quantity=1,
         time=2.5,
         price=125
     )
@@ -25,14 +25,14 @@ class TestOffer(object):
     m = MultiplyEntry(
         title='Multiply title',
         comment='Multiply comment',
-        amount=0.5,
+        quantity=0.5,
         hour_rate=4
     )
 
     c = ConnectEntry(
         title='Connect title',
         comment='Connect comment',
-        amount=3,
+        quantity=3,
         is_time=True,
         multiplicator=2
     )
@@ -59,7 +59,7 @@ def test_offer_data_structure():
 
     # check time of third entry
     t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
-    assert t == OfferAmountTime(0)
+    assert t == OfferQuantityTime(0)
 
     # connect connected entry to base entry (3rd entry to 1st)
     myoffer.get_entry_list()[2].connect_entry(
@@ -69,7 +69,7 @@ def test_offer_data_structure():
 
     # now time of third entry is 2 * 3 * 2.5 hours
     t = myoffer.get_entry_list()[2].get_time(myoffer.get_entry_list())
-    multi = 2 * 3 * OfferAmountTime(2.5)
+    multi = 2 * 3 * OfferQuantityTime(2.5)
     assert t == multi
 
 
@@ -117,7 +117,7 @@ def test_price_total():
 
     off.append(
         BaseEntry(
-            amount=1.0,
+            quantity=1.0,
             price=100.0,
             tax=19
         )
@@ -125,7 +125,7 @@ def test_price_total():
 
     off.append(
         BaseEntry(
-            amount=1.0,
+            quantity=1.0,
             price=10.0,
             tax=7
         )
@@ -133,7 +133,7 @@ def test_price_total():
 
     off.append(
         ConnectEntry(
-            amount=1.0,
+            quantity=1.0,
             tax=19,
             multiplicator=1
         )

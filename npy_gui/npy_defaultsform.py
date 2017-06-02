@@ -1018,22 +1018,22 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             name='Base comment:',
             begin_entry_at=26
         )
-        self.baseentry_amount = self.add_widget_intelligent(
+        self.baseentry_quantity = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Base amount:',
+            name='Base quantity:',
             begin_entry_at=26
         )
-        self.baseentry_amount_format = self.add_widget_intelligent(
+        self.baseentry_quantity_format = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Base amount fmt:',
+            name='Base quantity fmt:',
             begin_entry_at=26
         )
-        self.baseentry_amount_b = self.add_widget_intelligent(
+        self.baseentry_quantity_b = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Base amount B:',
+            name='Base quantity B:',
             begin_entry_at=26
         )
-        self.baseentry_amount_b_format = self.add_widget_intelligent(
+        self.baseentry_quantity_b_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Base amt fmt B:',
             begin_entry_at=26
@@ -1062,22 +1062,22 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             name='Multi comment:',
             begin_entry_at=26
         )
-        self.multiplyentry_amount = self.add_widget_intelligent(
+        self.multiplyentry_quantity = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Multi amount:',
+            name='Multi quantity:',
             begin_entry_at=26
         )
-        self.multiplyentry_amount_format = self.add_widget_intelligent(
+        self.multiplyentry_quantity_format = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Multi amount fmt:',
+            name='Multi quantity fmt:',
             begin_entry_at=26
         )
-        self.multiplyentry_amount_b = self.add_widget_intelligent(
+        self.multiplyentry_quantity_b = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Multi amount B:',
+            name='Multi quantity B:',
             begin_entry_at=26
         )
-        self.multiplyentry_amount_b_format = self.add_widget_intelligent(
+        self.multiplyentry_quantity_b_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Multi amt fmt B:',
             begin_entry_at=26
@@ -1101,22 +1101,22 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             name='Connect comment:',
             begin_entry_at=26
         )
-        self.connectentry_amount = self.add_widget_intelligent(
+        self.connectentry_quantity = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Connect amount:',
+            name='Connect quantity:',
             begin_entry_at=26
         )
-        self.connectentry_amount_format = self.add_widget_intelligent(
+        self.connectentry_quantity_format = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Con. amount fmt:',
+            name='Con. quantity fmt:',
             begin_entry_at=26
         )
-        self.connectentry_amount_b = self.add_widget_intelligent(
+        self.connectentry_quantity_b = self.add_widget_intelligent(
             npyscreen.TitleText,
-            name='Connect amount B:',
+            name='Connect quantity B:',
             begin_entry_at=26
         )
-        self.connectentry_amount_b_format = self.add_widget_intelligent(
+        self.connectentry_quantity_b_format = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Con. amt fmt B:',
             begin_entry_at=26
@@ -1134,7 +1134,7 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True,
             values=['True']
         )
-        self.ledger_time_def_amount = self.add_widget_intelligent(
+        self.ledger_time_def_quantity = self.add_widget_intelligent(
             npyscreen.TitleText,
             name='Ledger time def. amt.:',
             begin_entry_at=26
@@ -1148,17 +1148,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.baseentry_comment.value = (
             self.parentApp.tmpDefault.baseentry_comment
         )
-        self.baseentry_amount.value = str(
-            self.parentApp.tmpDefault.get_baseentry_amount()
+        self.baseentry_quantity.value = str(
+            self.parentApp.tmpDefault.get_baseentry_quantity()
         )
-        self.baseentry_amount_format.value = (
-            self.parentApp.tmpDefault.baseentry_amount_format
+        self.baseentry_quantity_format.value = (
+            self.parentApp.tmpDefault.baseentry_quantity_format
         )
-        self.baseentry_amount_b.value = str(
-            self.parentApp.tmpDefault.get_baseentry_amount_b()
+        self.baseentry_quantity_b.value = str(
+            self.parentApp.tmpDefault.get_baseentry_quantity_b()
         )
-        self.baseentry_amount_b_format.value = (
-            self.parentApp.tmpDefault.baseentry_amount_b_format
+        self.baseentry_quantity_b_format.value = (
+            self.parentApp.tmpDefault.baseentry_quantity_b_format
         )
         self.baseentry_time.value = str(
             self.parentApp.tmpDefault.get_baseentry_time()
@@ -1172,17 +1172,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.multiplyentry_comment.value = (
             self.parentApp.tmpDefault.multiplyentry_comment
         )
-        self.multiplyentry_amount.value = str(
-            self.parentApp.tmpDefault.get_multiplyentry_amount()
+        self.multiplyentry_quantity.value = str(
+            self.parentApp.tmpDefault.get_multiplyentry_quantity()
         )
-        self.multiplyentry_amount_format.value = (
-            self.parentApp.tmpDefault.multiplyentry_amount_format
+        self.multiplyentry_quantity_format.value = (
+            self.parentApp.tmpDefault.multiplyentry_quantity_format
         )
-        self.multiplyentry_amount_b.value = str(
-            self.parentApp.tmpDefault.get_multiplyentry_amount_b()
+        self.multiplyentry_quantity_b.value = str(
+            self.parentApp.tmpDefault.get_multiplyentry_quantity_b()
         )
-        self.multiplyentry_amount_b_format.value = (
-            self.parentApp.tmpDefault.multiplyentry_amount_b_format
+        self.multiplyentry_quantity_b_format.value = (
+            self.parentApp.tmpDefault.multiplyentry_quantity_b_format
         )
         self.multiplyentry_hour_rate.value = str(
             self.parentApp.tmpDefault.get_multiplyentry_hour_rate()
@@ -1193,17 +1193,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.connectentry_comment.value = (
             self.parentApp.tmpDefault.connectentry_comment
         )
-        self.connectentry_amount.value = str(
-            self.parentApp.tmpDefault.get_connectentry_amount()
+        self.connectentry_quantity.value = str(
+            self.parentApp.tmpDefault.get_connectentry_quantity()
         )
-        self.connectentry_amount_format.value = (
-            self.parentApp.tmpDefault.connectentry_amount_format
+        self.connectentry_quantity_format.value = (
+            self.parentApp.tmpDefault.connectentry_quantity_format
         )
-        self.connectentry_amount_b.value = str(
-            self.parentApp.tmpDefault.get_connectentry_amount_b()
+        self.connectentry_quantity_b.value = str(
+            self.parentApp.tmpDefault.get_connectentry_quantity_b()
         )
-        self.connectentry_amount_b_format.value = (
-            self.parentApp.tmpDefault.connectentry_amount_b_format
+        self.connectentry_quantity_b_format.value = (
+            self.parentApp.tmpDefault.connectentry_quantity_b_format
         )
         self.connectentry_multiplicator.value = str(
             self.parentApp.tmpDefault.get_connectentry_multiplicator()
@@ -1212,8 +1212,8 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             [0] if self.parentApp.tmpDefault.get_connectentry_is_time() else []
         )
 
-        self.ledger_time_def_amount.value = (
-            self.parentApp.tmpDefault.ledger_time_def_amount
+        self.ledger_time_def_quantity.value = (
+            self.parentApp.tmpDefault.ledger_time_def_quantity
         )
 
     def values_to_tmp(self):
@@ -1221,17 +1221,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         # get values in temp object
         self.parentApp.tmpDefault.baseentry_title = self.baseentry_title.value
         self.parentApp.tmpDefault.baseentry_comment = self.baseentry_comment.value
-        self.parentApp.tmpDefault.set_baseentry_amount(
-            self.baseentry_amount.value
+        self.parentApp.tmpDefault.set_baseentry_quantity(
+            self.baseentry_quantity.value
         )
-        self.parentApp.tmpDefault.baseentry_amount_format = (
-            self.baseentry_amount_format.value
+        self.parentApp.tmpDefault.baseentry_quantity_format = (
+            self.baseentry_quantity_format.value
         )
-        self.parentApp.tmpDefault.set_baseentry_amount_b(
-            self.baseentry_amount_b.value
+        self.parentApp.tmpDefault.set_baseentry_quantity_b(
+            self.baseentry_quantity_b.value
         )
-        self.parentApp.tmpDefault.baseentry_amount_b_format = (
-            self.baseentry_amount_b_format.value
+        self.parentApp.tmpDefault.baseentry_quantity_b_format = (
+            self.baseentry_quantity_b_format.value
         )
         self.parentApp.tmpDefault.set_baseentry_time(
             self.baseentry_time.value
@@ -1244,17 +1244,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         self.parentApp.tmpDefault.multiplyentry_comment = (
             self.multiplyentry_comment.value
         )
-        self.parentApp.tmpDefault.set_multiplyentry_amount(
-            self.multiplyentry_amount.value
+        self.parentApp.tmpDefault.set_multiplyentry_quantity(
+            self.multiplyentry_quantity.value
         )
-        self.parentApp.tmpDefault.multiplyentry_amount_format = (
-            self.multiplyentry_amount_format.value
+        self.parentApp.tmpDefault.multiplyentry_quantity_format = (
+            self.multiplyentry_quantity_format.value
         )
-        self.parentApp.tmpDefault.set_multiplyentry_amount_b(
-            self.multiplyentry_amount_b.value
+        self.parentApp.tmpDefault.set_multiplyentry_quantity_b(
+            self.multiplyentry_quantity_b.value
         )
-        self.parentApp.tmpDefault.multiplyentry_amount_b_format = (
-            self.multiplyentry_amount_b_format.value
+        self.parentApp.tmpDefault.multiplyentry_quantity_b_format = (
+            self.multiplyentry_quantity_b_format.value
         )
         self.parentApp.tmpDefault.set_multiplyentry_hour_rate(
             self.multiplyentry_hour_rate.value
@@ -1262,17 +1262,17 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
 
         self.parentApp.tmpDefault.connectentry_title = self.connectentry_title.value
         self.parentApp.tmpDefault.connectentry_comment = self.connectentry_comment.value
-        self.parentApp.tmpDefault.set_connectentry_amount(
-            self.connectentry_amount.value
+        self.parentApp.tmpDefault.set_connectentry_quantity(
+            self.connectentry_quantity.value
         )
-        self.parentApp.tmpDefault.connectentry_amount_format = (
-            self.connectentry_amount_format.value
+        self.parentApp.tmpDefault.connectentry_quantity_format = (
+            self.connectentry_quantity_format.value
         )
-        self.parentApp.tmpDefault.set_connectentry_amount_b(
-            self.connectentry_amount_b.value
+        self.parentApp.tmpDefault.set_connectentry_quantity_b(
+            self.connectentry_quantity_b.value
         )
-        self.parentApp.tmpDefault.connectentry_amount_b_format = (
-            self.connectentry_amount_b_format.value
+        self.parentApp.tmpDefault.connectentry_quantity_b_format = (
+            self.connectentry_quantity_b_format.value
         )
         self.parentApp.tmpDefault.set_connectentry_multiplicator(
             self.connectentry_multiplicator.value
@@ -1281,8 +1281,8 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             self.connectentry_is_time.value
         )
 
-        self.parentApp.tmpDefault.ledger_time_def_amount = (
-            self.ledger_time_def_amount.value
+        self.parentApp.tmpDefault.ledger_time_def_quantity = (
+            self.ledger_time_def_quantity.value
         )
 
     def on_ok(self, keypress=None):

@@ -237,7 +237,7 @@ class EntryList(npyscreen.MultiLineAction):
 
         price_com = self.parent.parentApp.tmpOffer.commodity
 
-        amount = vl.get_amount_str()[:14]
+        quantity = vl.get_quantity_str()[:14]
 
         time = str(vl.get_time_zero(
             entry_list=self.parent.parentApp.tmpOffer.get_entry_list()
@@ -265,7 +265,7 @@ class EntryList(npyscreen.MultiLineAction):
 
         return '{:30} {:15} {:9} {:>11} {:>11}'.format(
             title,
-            amount,
+            quantity,
             time,
             price,
             price_tax
@@ -525,7 +525,7 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         # create the input widgets
         entries_title = '{:—<27}{:—<16}{:—<14}{:—<13}{}'.format(
             'Entries ',
-            ' Amount ',
+            ' Quantity ',
             ' Time ',
             ' Price ',
             ' Tax'

@@ -4,12 +4,12 @@ from decimal import Decimal
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offeramounttime import OfferAmountTime
+from offer.offerquantitytime import OfferQuantityTime
 
 
 def test_baseentry_set_price():
     """Set the price for BaseEntry."""
-    a = BaseEntry(amount=1)
+    a = BaseEntry(quantity=1)
     a.set_price(3)
 
     # integer gets two decimal after comma
@@ -25,7 +25,7 @@ def test_integrety_entry():
     a = BaseEntry(
         title='Title A',
         comment='Comment A',
-        amount=1.0,
+        quantity=1.0,
         time=1.0,
         price=50.00
     )
@@ -33,14 +33,14 @@ def test_integrety_entry():
     b = MultiplyEntry(
         title='Title B',
         comment='Comment B',
-        amount=2.0,
+        quantity=2.0,
         hour_rate=0.5
     )
 
     c = ConnectEntry(
         title='Title C',
         comment='Comment C',
-        amount=2.5,
+        quantity=2.5,
         is_time=False,
         multiplicator=0.5
     )
@@ -48,7 +48,7 @@ def test_integrety_entry():
     d = ConnectEntry(
         title='Title D',
         comment='Comment D',
-        amount=3.0,
+        quantity=3.0,
         is_time=True,
         multiplicator=0.75
     )
@@ -96,26 +96,26 @@ def test_integrety_entry():
     # check values for BaseEntry
     assert entries[0].title == 'Title A'
     assert entries[0].comment == 'Comment A'
-    assert entries[0].get_amount() == Decimal('1.0')
-    assert entries[0].get_time() == OfferAmountTime(1.0)
+    assert entries[0].get_quantity() == Decimal('1.0')
+    assert entries[0].get_time() == OfferQuantityTime(1.0)
     assert entries[0].get_price() == Decimal('50.00')
 
     # check values for MultiplyEntry
     assert entries[1].title == 'Title B'
     assert entries[1].comment == 'Comment B'
-    assert entries[1].get_amount() == Decimal('2.0')
-    assert entries[1].get_hour_rate() == OfferAmountTime(0.5)
-    assert entries[1].get_time() == OfferAmountTime(1.0)
+    assert entries[1].get_quantity() == Decimal('2.0')
+    assert entries[1].get_hour_rate() == OfferQuantityTime(0.5)
+    assert entries[1].get_time() == OfferQuantityTime(1.0)
     assert entries[1].get_price(wage=wage) == Decimal('50.00')
 
     # check values for first ConnectEntry
     assert entries[2].title == 'Title C'
     assert entries[2].comment == 'Comment C'
-    assert entries[2].get_amount() == Decimal('2.5')
+    assert entries[2].get_quantity() == Decimal('2.5')
     assert entries[2].get_is_time() is False
     assert entries[2].get_time(
         entry_list=entries
-    ) == OfferAmountTime(0)
+    ) == OfferQuantityTime(0)
     assert entries[2].get_price(
         entry_list=entries,
         wage=wage
@@ -124,11 +124,11 @@ def test_integrety_entry():
     # check values for second ConnectEntry
     assert entries[3].title == 'Title D'
     assert entries[3].comment == 'Comment D'
-    assert entries[3].get_amount() == Decimal('3.0')
+    assert entries[3].get_quantity() == Decimal('3.0')
     assert entries[3].get_is_time() is True
     assert entries[3].get_time(
         entry_list=entries
-    ) == OfferAmountTime('2:15:00')
+    ) == OfferQuantityTime('2:15:00')
     assert entries[3].get_price(
         entry_list=entries,
         wage=wage
@@ -141,8 +141,8 @@ def test_json_conversion_baseentry():
     a = BaseEntry(
         title='Total individual',
         comment='Individual comment!',
-        amount=1.25,
-        amount_format='{F}:{R} min',
+        quantity=1.25,
+        quantity_format='{F}:{R} min',
         time='1:45',
         price=1000
     )
@@ -154,8 +154,8 @@ def test_json_conversion_baseentry():
     assert b.get_id() != a.get_id()
     assert b.title != a.title
     assert b.comment != a.comment
-    assert b.get_amount() != a.get_amount()
-    assert b.amount_format != a.amount_format
+    assert b.get_quantity() != a.get_quantity()
+    assert b.quantity_format != a.quantity_format
     assert b.get_time() != a.get_time()
     assert b.get_price() != a.get_price()
 
@@ -166,8 +166,8 @@ def test_json_conversion_baseentry():
     assert b.get_id() == a.get_id()
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_time() == a.get_time()
     assert b.get_price() == a.get_price()
 
@@ -178,8 +178,8 @@ def test_json_conversion_baseentry():
     assert b.get_id() != a.get_id()     # not same, since "preset loading"
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_time() == a.get_time()
     assert b.get_price() == a.get_price()
 
@@ -190,8 +190,8 @@ def test_json_conversion_multiplyentry():
     a = MultiplyEntry(
         title='Total individual',
         comment='Individual comment!',
-        amount=1.25,
-        amount_format='{F}:{R} min',
+        quantity=1.25,
+        quantity_format='{F}:{R} min',
         hour_rate=0.75
     )
 
@@ -202,8 +202,8 @@ def test_json_conversion_multiplyentry():
     assert b.get_id() != a.get_id()
     assert b.title != a.title
     assert b.comment != a.comment
-    assert b.get_amount() != a.get_amount()
-    assert b.amount_format != a.amount_format
+    assert b.get_quantity() != a.get_quantity()
+    assert b.quantity_format != a.quantity_format
     assert b.get_hour_rate() != a.get_hour_rate()
 
     # load a into b with json as object with same attrbutes
@@ -213,8 +213,8 @@ def test_json_conversion_multiplyentry():
     assert b.get_id() == a.get_id()
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_hour_rate() == a.get_hour_rate()
 
     # load a into b with json as a preset
@@ -224,8 +224,8 @@ def test_json_conversion_multiplyentry():
     assert b.get_id() != a.get_id()     # not same, since "preset loading"
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_hour_rate() == a.get_hour_rate()
 
 
@@ -235,8 +235,8 @@ def test_json_conversion_connectentry():
     a = ConnectEntry(
         title='Total individual',
         comment='Individual comment!',
-        amount=1.23,
-        amount_format='{F}:{R} min',
+        quantity=1.23,
+        quantity_format='{F}:{R} min',
         is_time=True,
         multiplicator=9.99
     )
@@ -251,8 +251,8 @@ def test_json_conversion_connectentry():
     assert b.get_id() != a.get_id()
     assert b.title != a.title
     assert b.comment != a.comment
-    assert b.get_amount() != a.get_amount()
-    assert b.amount_format != a.amount_format
+    assert b.get_quantity() != a.get_quantity()
+    assert b.quantity_format != a.quantity_format
     assert b.get_is_time() != a.get_is_time()
     assert b.get_multiplicator() != a.get_multiplicator()
     assert b.get_connected() != a.get_connected()
@@ -264,8 +264,8 @@ def test_json_conversion_connectentry():
     assert b.get_id() == a.get_id()
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_is_time() == a.get_is_time()
     assert b.get_multiplicator() == a.get_multiplicator()
     assert b.get_connected() == a.get_connected()
@@ -277,29 +277,29 @@ def test_json_conversion_connectentry():
     assert b.get_id() != a.get_id()     # except the id, since it's "preset loading"
     assert b.title == a.title
     assert b.comment == a.comment
-    assert b.get_amount() == a.get_amount()
-    assert b.amount_format == a.amount_format
+    assert b.get_quantity() == a.get_quantity()
+    assert b.quantity_format == a.quantity_format
     assert b.get_is_time() == a.get_is_time()
     assert b.get_multiplicator() == a.get_multiplicator()
     assert b.get_connected() == a.get_connected()
 
 
-def test_get_amount_str():
-    """Test the get_amount_str method."""
+def test_get_quantity_str():
+    """Test the get_quantity_str method."""
     # init object
     a = BaseEntry(
         title='Total individual',
         comment='Individual comment!',
-        amount=61.75,
-        amount_format=''
+        quantity=61.75,
+        quantity_format=''
     )
 
-    # test differnet amount formats
-    a.amount_format = '{F}:{R}'
-    assert a.get_amount_str() == '61:45'
+    # test differnet quantity formats
+    a.quantity_format = '{F}:{R}'
+    assert a.get_quantity_str() == '61:45'
 
-    a.amount_format = '{s}'
-    assert a.get_amount_str() == '61.75'
+    a.quantity_format = '{s}'
+    assert a.get_quantity_str() == '61.75'
 
 
 def test_entry_tax_set():
@@ -322,7 +322,7 @@ def test_entry_tax_set():
 def test_entry_tax_price():
     """Test the price calculation with tax."""
     blubb = MultiplyEntry(
-        amount=1.0,
+        quantity=1.0,
         hour_rate=2.0
     )
 
@@ -358,7 +358,7 @@ def test_unit_price():
     """Test unit price and unit price tax methods."""
     # BaseEntry
     a_unitp = BaseEntry(
-        amount=2,
+        quantity=2,
         price=100
     )
 
@@ -367,7 +367,7 @@ def test_unit_price():
 
     # MultiplyEntry
     b_unitp = MultiplyEntry(
-        amount=2,
+        quantity=2,
         hour_rate='0:30'
     )
 
@@ -376,7 +376,7 @@ def test_unit_price():
 
     # ConnectEntry
     c_unitp = ConnectEntry(
-        amount=3,
+        quantity=3,
         multiplicator=2
     )
 

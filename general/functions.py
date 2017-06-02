@@ -291,8 +291,8 @@ def NewBaseEntry(settings=None, global_list=None, client=None, project=None):
     )
 
     # get other values
-    amount = settings.defaults[lang].get_baseentry_amount()
-    amount_format = settings.defaults[lang].baseentry_amount_format
+    quantity = settings.defaults[lang].get_baseentry_quantity()
+    quantity_format = settings.defaults[lang].baseentry_quantity_format
     time = settings.defaults[lang].get_baseentry_time()
     price = settings.defaults[lang].get_baseentry_price()
 
@@ -300,8 +300,8 @@ def NewBaseEntry(settings=None, global_list=None, client=None, project=None):
     return BaseEntry(
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
         time=time,
         price=price
     )
@@ -336,10 +336,10 @@ def PresetBaseEntry(
 
     # get other values
     id = entry_preset._id
-    amount = entry_preset._amount
-    amount_format = entry_preset.amount_format
-    amount_b = entry_preset._amount_b
-    amount_b_format = entry_preset.amount_b_format
+    quantity = entry_preset._quantity
+    quantity_format = entry_preset.quantity_format
+    quantity_b = entry_preset._quantity_b
+    quantity_b_format = entry_preset.quantity_b_format
     time = entry_preset._time
     price = entry_preset._price
 
@@ -348,10 +348,10 @@ def PresetBaseEntry(
         id=id,
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
-        amount_b=amount_b,
-        amount_b_format=amount_b_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
+        quantity_b=quantity_b,
+        quantity_b_format=quantity_b_format,
         time=time,
         price=price
     )
@@ -385,16 +385,16 @@ def NewMultiplyEntry(settings=None, global_list=None, client=None, project=None)
     )
 
     # get other values
-    amount = settings.defaults[lang].get_multiplyentry_amount()
-    amount_format = settings.defaults[lang].multiplyentry_amount_format
+    quantity = settings.defaults[lang].get_multiplyentry_quantity()
+    quantity_format = settings.defaults[lang].multiplyentry_quantity_format
     hour_rate = settings.defaults[lang].get_multiplyentry_hour_rate()
 
     # return entry with default values from settings default
     return MultiplyEntry(
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
         hour_rate=hour_rate
     )
 
@@ -428,10 +428,10 @@ def PresetMultiplyEntry(
 
     # get other values
     id = entry_preset._id
-    amount = entry_preset._amount
-    amount_format = entry_preset.amount_format
-    amount_b = entry_preset._amount_b
-    amount_b_format = entry_preset.amount_b_format
+    quantity = entry_preset._quantity
+    quantity_format = entry_preset.quantity_format
+    quantity_b = entry_preset._quantity_b
+    quantity_b_format = entry_preset.quantity_b_format
     hour_rate = entry_preset._hour_rate
 
     # return entry with default values from settings default
@@ -439,10 +439,10 @@ def PresetMultiplyEntry(
         id=id,
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
-        amount_b=amount_b,
-        amount_b_format=amount_b_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
+        quantity_b=quantity_b,
+        quantity_b_format=quantity_b_format,
         hour_rate=hour_rate
     )
 
@@ -475,8 +475,8 @@ def NewConnectEntry(settings=None, global_list=None, client=None, project=None):
     )
 
     # get other values
-    amount = settings.defaults[lang].get_connectentry_amount()
-    amount_format = settings.defaults[lang].connectentry_amount_format
+    quantity = settings.defaults[lang].get_connectentry_quantity()
+    quantity_format = settings.defaults[lang].connectentry_quantity_format
     is_time = settings.defaults[lang].get_connectentry_is_time()
     multiplicator = settings.defaults[lang].get_connectentry_multiplicator()
 
@@ -484,8 +484,8 @@ def NewConnectEntry(settings=None, global_list=None, client=None, project=None):
     return ConnectEntry(
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
         is_time=is_time,
         multiplicator=multiplicator
     )
@@ -520,10 +520,10 @@ def PresetConnectEntry(
 
     # get other values
     id = entry_preset._id
-    amount = entry_preset._amount
-    amount_format = entry_preset.amount_format
-    amount_b = entry_preset._amount_b
-    amount_b_format = entry_preset.amount_b_format
+    quantity = entry_preset._quantity
+    quantity_format = entry_preset.quantity_format
+    quantity_b = entry_preset._quantity_b
+    quantity_b_format = entry_preset.quantity_b_format
     is_time = entry_preset._is_time
     multiplicator = entry_preset._multiplicator
 
@@ -532,10 +532,10 @@ def PresetConnectEntry(
         id=id,
         title=title,
         comment=comment,
-        amount=amount,
-        amount_format=amount_format,
-        amount_b=amount_b,
-        amount_b_format=amount_b_format,
+        quantity=quantity,
+        quantity_format=quantity_format,
+        quantity_b=quantity_b,
+        quantity_b_format=quantity_b_format,
         is_time=is_time,
         multiplicator=multiplicator
     )
