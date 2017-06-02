@@ -6,7 +6,7 @@ The classes have privat values and setter and getter methods.
 
 from decimal import Decimal
 import json
-from offer.offerquantitytime import OfferQuantityTime
+from offer.quantitytime import QuantityTime
 import uuid
 
 
@@ -34,16 +34,16 @@ class BaseEntry(object):
         # get other variables from arguments
         self.title = '' if title is None else str(title)
         self.comment = '' if comment is None else str(comment)
-        self._quantity = OfferQuantityTime(quantity)
+        self._quantity = QuantityTime(quantity)
         self.quantity_format = '' if quantity_format is None else str(quantity_format)
         if quantity_b is None:
-            self._quantity_b = OfferQuantityTime(1)
+            self._quantity_b = QuantityTime(1)
         else:
-            self._quantity_b = OfferQuantityTime(quantity_b)
+            self._quantity_b = QuantityTime(quantity_b)
         self.quantity_b_format = '' if quantity_b_format is None else str(quantity_b_format)
         self._tax = Decimal(0)                  # set default
         self.set_tax(tax)                       # try to set arguments value
-        self._time = OfferQuantityTime(time)
+        self._time = QuantityTime(time)
         self._price = Decimal(0)                # set default
         self.set_price(price)                   # try to set arguments value
 
@@ -107,7 +107,7 @@ class BaseEntry(object):
         Means that 1.5 with fmt == "{F}:{R}" would output 0:01, while
         fmt == "{F}:{R}" would output 1:30. 61.75 with
         """
-        if type(quantity) is not OfferQuantityTime:
+        if type(quantity) is not QuantityTime:
             return str(fmt)
 
         # get self.quantity_format if no argument is given
@@ -183,7 +183,7 @@ class BaseEntry(object):
 
     def get_time_zero(self, *args, **kwargs):
         """Get time as '-' if time is 0, else str of time."""
-        if self.get_time(*args, **kwargs) == OfferQuantityTime(0):
+        if self.get_time(*args, **kwargs) == QuantityTime(0):
             return '-'
         else:
             return str(self.get_time(*args, **kwargs))
@@ -504,7 +504,7 @@ class MultiplyEntry(BaseEntry):
         )
 
         # new values for this class
-        self._hour_rate = OfferQuantityTime(hour_rate)
+        self._hour_rate = QuantityTime(hour_rate)
 
     def set_time(self, value):
         """Disable the function."""
@@ -708,12 +708,12 @@ class ConnectEntry(BaseEntry):
         """
         # if is_time() == False or entry_list not a list, return 0
         if not self.get_is_time() or type(entry_list) is not list:
-            return OfferQuantityTime('0:00')
+            return QuantityTime('0:00')
         # is_time() == True, calculate time respecting other entires
         else:
             # otherwise iterate through entry_list and find
             # entries which ids exist in the self._connected list
-            out = OfferQuantityTime('0:00')
+            out = QuantityTime('0:00')
             for entry in entry_list:
                 if entry.get_id() in self._connected:
                     # if its in the list, multiply its time and add it

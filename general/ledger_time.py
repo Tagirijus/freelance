@@ -11,7 +11,7 @@ import decimal
 from general import check_objects
 from general.functions import NewMultiplyEntry
 from offer.entries import MultiplyEntry
-from offer.offerquantitytime import OfferQuantityTime
+from offer.quantitytime import QuantityTime
 import os
 
 
@@ -179,7 +179,7 @@ def update_entry(entry=None, quantity=None):
         entry.quantity_format = quantity
         return entry
 
-    # it's a multiply entry: try to convert given quantity to OfferQuantityTime and string
+    # it's a multiply entry: try to convert given quantity to QuantityTime and string
 
     # first split the given quantity
     s = quantity.split(' ')
@@ -190,7 +190,7 @@ def update_entry(entry=None, quantity=None):
         return entry
 
     # get the quantity number
-    quantity_number = OfferQuantityTime(s[0])
+    quantity_number = QuantityTime(s[0])
 
     # get the quantity format
     quantity_format = ' '.join(s[1:])

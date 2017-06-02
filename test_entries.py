@@ -4,7 +4,7 @@ from decimal import Decimal
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
 from offer.entries import ConnectEntry
-from offer.offerquantitytime import OfferQuantityTime
+from offer.quantitytime import QuantityTime
 
 
 def test_baseentry_set_price():
@@ -97,15 +97,15 @@ def test_integrety_entry():
     assert entries[0].title == 'Title A'
     assert entries[0].comment == 'Comment A'
     assert entries[0].get_quantity() == Decimal('1.0')
-    assert entries[0].get_time() == OfferQuantityTime(1.0)
+    assert entries[0].get_time() == QuantityTime(1.0)
     assert entries[0].get_price() == Decimal('50.00')
 
     # check values for MultiplyEntry
     assert entries[1].title == 'Title B'
     assert entries[1].comment == 'Comment B'
     assert entries[1].get_quantity() == Decimal('2.0')
-    assert entries[1].get_hour_rate() == OfferQuantityTime(0.5)
-    assert entries[1].get_time() == OfferQuantityTime(1.0)
+    assert entries[1].get_hour_rate() == QuantityTime(0.5)
+    assert entries[1].get_time() == QuantityTime(1.0)
     assert entries[1].get_price(wage=wage) == Decimal('50.00')
 
     # check values for first ConnectEntry
@@ -115,7 +115,7 @@ def test_integrety_entry():
     assert entries[2].get_is_time() is False
     assert entries[2].get_time(
         entry_list=entries
-    ) == OfferQuantityTime(0)
+    ) == QuantityTime(0)
     assert entries[2].get_price(
         entry_list=entries,
         wage=wage
@@ -128,7 +128,7 @@ def test_integrety_entry():
     assert entries[3].get_is_time() is True
     assert entries[3].get_time(
         entry_list=entries
-    ) == OfferQuantityTime('2:15:00')
+    ) == QuantityTime('2:15:00')
     assert entries[3].get_price(
         entry_list=entries,
         wage=wage
