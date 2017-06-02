@@ -44,13 +44,20 @@ def get_time_entries(ledger_output_lines=None):
     """
     Try to fetch the time entries from ledger output string.
 
-    returns a dict like this: {ACCOUNT_NAME: HOURS_AS_DECIMAL}
+    Returns a dict like this: {ACCOUNT_NAME: HOURS_AS_DECIMAL}
+    Returns the total time and its account as well, if the other accounts
+    to not sum up to the total time.
     """
     if not type(ledger_output_lines) is list:
         return False
 
     # init output dict
     out = {}
+
+    # check counting
+    total = decimal.Decimal(0)
+    total_key = ''
+    amount = decimal.Decimal(0)
 
     # go through the lines
     for line in ledger_output_lines:
@@ -73,6 +80,9 @@ def get_time_entries(ledger_output_lines=None):
         if ':' in left:
             account = left.split(':')[-1]
 
+            # add the time checking
+            total_key = account
+
         # just get it as the account name
         else:
             account = left
@@ -80,6 +90,12 @@ def get_time_entries(ledger_output_lines=None):
         # get the seconds from the right site
         try:
             seconds = int(right[:-1])
+
+            # add the time checking
+            if total_key != '' and total == 0:
+                total = decimal.Decimal(seconds)
+            else:
+                amount += decimal.Decimal(seconds)
         except Exception:
             # did not work, continue
             continue
@@ -89,6 +105,10 @@ def get_time_entries(ledger_output_lines=None):
 
         # append it to the output
         out[account] = hours
+
+    # delete the total account, if the other sum up correctly
+    if total == amount:
+        del out[total_key]
 
     return out
 
@@ -101,7 +121,7 @@ def get_invoice_entries_from_time_journal(
     project=None,
     invoice=None
 ):
-    """Add invoice entries from ledger time journal."""
+    """Return list with invoice entries from ledger time journal."""
     is_settings = check_objects.is_settings(settings)
     is_list = check_objects.is_list(global_list)
     is_presets = check_objects.is_preset(presets)
@@ -184,13 +204,33 @@ def update_entry(entry=None, quantity=None):
     # first split the given quantity
     s = quantity.split(' ')
 
-    # cancel if there are less than two
-    if len(s) < 2:
-        entry.quantity_format = quantity
-        return entry
+    # quantity string given as well
+    if len(s) > 1:
+        # set new quantity format
+        entry.quantity_format = '{s} ' + ' '.join(s[1:])
+
+    # only one thign entered
+    else:
+        # set new quantity format
+        entry.quantity_format = '{s}'
 
     # get the quantity number
     quantity_number = QuantityTime(s[0])
 
-    # get the quantity format
-    quantity_format = ' '.join(s[1:])
+    # first given thing is a number > 0
+    if quantity_number > 0:
+
+        # calculate the new hour rate
+        hour_rate = entry.get_quantity() / quantity_number
+
+        # set new hour rate
+        entry.set_hour_rate(hour_rate)
+
+        # set new quantity
+        entry.set_quantity(quantity_number)
+
+    # it's something else, set quantity_format from argument and leave quantity
+    else:
+        entry.quantity_format = quantity
+
+    return entry

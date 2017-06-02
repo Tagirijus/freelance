@@ -134,48 +134,65 @@ class Default(object):
         self.baseentry_title = '' if baseentry_title is None else baseentry_title
         self.baseentry_comment = '' if baseentry_comment is None else baseentry_comment
         self._baseentry_quantity = QuantityTime(baseentry_quantity)
-        self.baseentry_quantity_format = ('' if baseentry_quantity_format is None
-                                        else baseentry_quantity_format)
+        self.baseentry_quantity_format = (
+            '' if baseentry_quantity_format is None
+            else baseentry_quantity_format
+        )
         if baseentry_quantity_b is None:
             self._baseentry_quantity_b = QuantityTime(1)
         else:
             self._baseentry_quantity_b = QuantityTime(baseentry_quantity_b)
-        self.baseentry_quantity_b_format = ('' if baseentry_quantity_b_format is None
-                                        else baseentry_quantity_b_format)
+        self.baseentry_quantity_b_format = (
+            '' if baseentry_quantity_b_format is None
+            else baseentry_quantity_b_format
+        )
         self._baseentry_time = QuantityTime(baseentry_time)
         self._baseentry_price = Decimal(0)
         self.set_baseentry_price(baseentry_price)
 
         # multiplyentry default values
-        self.multiplyentry_title = ('' if multiplyentry_title is None else
-                                    multiplyentry_title)
-        self.multiplyentry_comment = ('' if multiplyentry_comment is None else
-                                      multiplyentry_comment)
+        self.multiplyentry_title = (
+            '' if multiplyentry_title is None
+            else multiplyentry_title
+        )
+        self.multiplyentry_comment = (
+            '' if multiplyentry_comment is None
+            else multiplyentry_comment
+        )
         self._multiplyentry_quantity = QuantityTime(multiplyentry_quantity)
-        self.multiplyentry_quantity_format = ('' if multiplyentry_quantity_format is None
-                                            else multiplyentry_quantity_format)
+        self.multiplyentry_quantity_format = (
+            '' if multiplyentry_quantity_format is None
+            else multiplyentry_quantity_format
+        )
         if multiplyentry_quantity_b is None:
             self._multiplyentry_quantity_b = QuantityTime(1)
         else:
             self._multiplyentry_quantity_b = QuantityTime(multiplyentry_quantity_b)
-        self.multiplyentry_quantity_b_format = ('' if multiplyentry_quantity_b_format is None
-                                            else multiplyentry_quantity_b_format)
+        self.multiplyentry_quantity_b_format = (
+            '' if multiplyentry_quantity_b_format is None
+            else multiplyentry_quantity_b_format
+        )
         self._multiplyentry_hour_rate = QuantityTime(multiplyentry_hour_rate)
 
         # connectentry default values
-        self.connectentry_title = ('' if connectentry_title is None else
-                                   connectentry_title)
-        self.connectentry_comment = ('' if connectentry_comment is None else
-                                     connectentry_comment)
+        self.connectentry_title = (
+            '' if connectentry_title is None else connectentry_title
+        )
+        self.connectentry_comment = (
+            '' if connectentry_comment is None else connectentry_comment
+        )
         self._connectentry_quantity = QuantityTime(connectentry_quantity)
-        self.connectentry_quantity_format = ('' if connectentry_quantity_format is None else
-                                           connectentry_quantity_format)
+        self.connectentry_quantity_format = (
+            '' if connectentry_quantity_format is None
+            else connectentry_quantity_format
+        )
         if connectentry_quantity_b is None:
             self._connectentry_quantity_b = QuantityTime(1)
         else:
             self._connectentry_quantity_b = QuantityTime(connectentry_quantity_b)
         self.connectentry_quantity_b_format = (
-            '' if connectentry_quantity_b_format is None else connectentry_quantity_b_format
+            '' if connectentry_quantity_b_format is None
+            else connectentry_quantity_b_format
         )
         self.set_connectentry_is_time(
             True if connectentry_is_time is None else connectentry_is_time

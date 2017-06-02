@@ -50,4 +50,10 @@ Round price:
 If enabled the prices will be rounded to a non-decimal number.
 
 
+Generate entries from time:
+This menu option will try to generate invoice entries from the time journal for this project.
+
+Tip: When invoice entry presets exist in the pattern "AUTO: [TIME_TRACK_ACCOUNT]", the preset will be chosen for the found time entry.
+
+
 You can also load a preset from the menu.

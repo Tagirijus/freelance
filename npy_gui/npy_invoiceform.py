@@ -9,6 +9,7 @@ from general.functions import NewConnectEntry
 from general.functions import PresetInvoice
 from general.ledgeradd_command import generate_parameter
 from general.ledger_time import get_invoice_entries_from_time_journal
+from general.ledger_time import update_entry
 from general.replacer import replacer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -228,13 +229,14 @@ class EntryList(npyscreen.MultiLineAction):
         """Update list and refresh."""
         # get values
         self.values = self.parent.parentApp.tmpInvoice.get_entry_list()
-        self.display()
 
         # clear filter for not showing doubled entries (npyscreen bug?)
         self.clear_filter()
 
         # also update the info
         self.parent.update_info()
+
+        self.display()
 
     def display_value(self, vl):
         """Display the entries."""
@@ -443,6 +445,11 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         if entries is False:
+            npyscreen.notify_confirm(
+                'No time tracking data, or time tracking data '
+                'does not balance.',
+                form_color='WARNING'
+            )
             return False
 
         # get user input for amount format and append the entry
@@ -461,8 +468,12 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
                     done = True
                     break
                 else:
-                    e.quantity_format = new_quantity
-                    self.parentApp.tmpInvoice.append(e)
+                    self.parentApp.tmpInvoice.append(
+                        update_entry(
+                            entry=e,
+                            quantity=new_quantity
+                        )
+                    )
 
             done = True
 
