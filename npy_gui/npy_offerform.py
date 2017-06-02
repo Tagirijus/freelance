@@ -226,13 +226,14 @@ class EntryList(npyscreen.MultiLineAction):
         """Update list and refresh."""
         # get values
         self.values = self.parent.parentApp.tmpOffer.get_entry_list()
-        self.display()
 
         # clear filter for not showing doubled entries (npyscreen bug?)
         self.clear_filter()
 
         # also update the info
         self.parent.update_info()
+
+        self.display()
 
     def display_value(self, vl):
         """Display the entries."""
