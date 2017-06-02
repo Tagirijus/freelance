@@ -59,3 +59,11 @@ def is_entry(obj=None):
         )
     except Exception:
         return False
+
+
+def is_preset(obj=None):
+    """Check object."""
+    try:
+        return obj.__class__.__name__ == 'Preset'
+    except Exception:
+        return False

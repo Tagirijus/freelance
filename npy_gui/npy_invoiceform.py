@@ -8,6 +8,7 @@ from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
 from general.functions import PresetInvoice
 from general.ledgeradd_command import generate_parameter
+from general.ledger_time import get_invoice_entries_from_time_journal
 from general.replacer import replacer
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -232,6 +233,9 @@ class EntryList(npyscreen.MultiLineAction):
         # clear filter for not showing doubled entries (npyscreen bug?)
         self.clear_filter()
 
+        # also update the info
+        self.parent.update_info()
+
     def display_value(self, vl):
         """Display the entries."""
         title = vl.title[:26]
@@ -425,6 +429,45 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             '^L': self.load_preset
         })
 
+    def gen_entries(self):
+        """Generate entries form ledger time journal."""
+        self.values_to_tmp()
+
+        entries = get_invoice_entries_from_time_journal(
+            settings=self.parentApp.S,
+            global_list=self.parentApp.L,
+            presets=self.parentApp.P,
+            client=self.parentApp.tmpClient,
+            project=self.parentApp.tmpProject,
+            invoice=self.parentApp.tmpInvoice
+        )
+
+        if entries is False:
+            return False
+
+        # get user input for amount format and append the entry
+        done = False
+        while not done:
+            for e in entries:
+                new_quantity = npyscreen.notify_input(
+                    'Quantity:',
+                    title=e.title,
+                    pre_text=self.parentApp.S.defaults[
+                        self.parentApp.tmpClient.language
+                    ].ledger_time_def_quantity,
+                )
+
+                if new_quantity is False:
+                    done = True
+                    break
+                else:
+                    e.quantity_format = new_quantity
+                    self.parentApp.tmpInvoice.append(e)
+
+            done = True
+
+        self.entries_box.entry_widget.update_values()
+
     def add_entry(self):
         """Add an entry."""
         self.entries_box.entry_widget.add_entry()
@@ -594,6 +637,11 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         """Create the form."""
         # create the menu
         self.m = self.new_menu(name='Menu')
+        self.m.addItem(
+            text='Generate entries from time journal',
+            onSelect=self.gen_entries,
+            shortcut='g'
+        )
         self.m.addItem(text='Add entry', onSelect=self.add_entry, shortcut='a')
         self.m.addItem(text='Copy entry', onSelect=self.copy_entry, shortcut='c')
         self.m.addItem(text='Delete entry', onSelect=self.del_entry, shortcut='A')
@@ -809,6 +857,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.info_price_total.value = '{:>11}'.format(price_total[:11])
         self.info_wage.value = '{:>11}'.format(wage_price[:11])
         self.info_wage_tax.value = '{:>11}'.format(wage_tax[:11])
+
+        self.display()
 
     def beforeEditing(self):
         """Get values from temp object."""

@@ -231,6 +231,9 @@ class EntryList(npyscreen.MultiLineAction):
         # clear filter for not showing doubled entries (npyscreen bug?)
         self.clear_filter()
 
+        # also update the info
+        self.parent.update_info()
+
     def display_value(self, vl):
         """Display the entries."""
         title = vl.title[:29]
@@ -728,6 +731,8 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.info_date.value = date
         self.info_wage.value = '{:>11}'.format(wage_price[:11])
         self.info_wage_tax.value = '{:>11}'.format(wage_tax[:11])
+
+        self.display()
 
     def beforeEditing(self):
         """Get values from temp object."""

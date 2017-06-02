@@ -87,7 +87,7 @@ class Settings(object):
 
         # ledger time
         self.ledger_time_command = (
-            '' if ledger_time_command is None
+            'ledger -f [YOUR_TIME_JOURNAL] --depth=4' if ledger_time_command is None
             else str(ledger_time_command)
         )
 
