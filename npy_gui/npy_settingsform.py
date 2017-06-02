@@ -232,6 +232,11 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             name='Ledger alias def. acc.:',
             begin_entry_at=26
         )
+        self.ledger_time_command = self.add(
+            npyscreen.TitleText,
+            name='Ledger time cmd:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get values from settings object."""
@@ -254,6 +259,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         self.ledger_alias_default_account.value = (
             self.parentApp.S.ledger_alias_default_account
         )
+        self.ledger_time_command.value = self.parentApp.S.ledger_time_command
 
     def on_ok(self, keypress=None):
         """Do something because user pressed ok."""
@@ -269,6 +275,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
         ledgeradd_def_payee = self.ledgeradd_def_payee.value
         ledger_alias_file = self.ledger_alias_file.value
         ledger_alias_default_account = self.ledger_alias_default_account.value
+        ledger_time_command = self.ledger_time_command.value
 
         # check correctness of values
         data_path_correct = can_be_dir(data_path)
@@ -328,6 +335,7 @@ class SettingsForm(npyscreen.ActionFormWithMenus):
             self.parentApp.S.ledgeradd_def_payee = ledgeradd_def_payee
             self.parentApp.S.ledger_alias_file = ledger_alias_file
             self.parentApp.S.ledger_alias_default_account = ledger_alias_default_account
+            self.parentApp.S.ledger_time_command = ledger_time_command
 
             # store it and reload list and presets
             self.parentApp.S.save_settings_to_file()

@@ -22,7 +22,8 @@ class Settings(object):
         ledgeradd_tax_account=None,
         ledgeradd_def_payee=None,
         ledger_alias_file=None,
-        ledger_alias_default_account=None
+        ledger_alias_default_account=None,
+        ledger_time_command=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.BASE_PATH = os.path.dirname(os.path.realpath(__file__))[
@@ -82,6 +83,12 @@ class Settings(object):
             'Income:{CLIENT_FULLNAME}'
             if ledger_alias_default_account is None
             else str(ledger_alias_default_account)
+        )
+
+        # ledger time
+        self.ledger_time_command = (
+            '' if ledger_time_command is None
+            else str(ledger_time_command)
         )
 
         # try to load settings from self.data_path/freelance.settings afterwards
@@ -230,6 +237,7 @@ class Settings(object):
         out['ledgeradd_def_payee'] = self.ledgeradd_def_payee
         out['ledger_alias_file'] = self.ledger_alias_file
         out['ledger_alias_default_account'] = self.ledger_alias_default_account
+        out['ledger_time_command'] = self.ledger_time_command
 
         # return the json
         return json.dumps(
@@ -287,6 +295,9 @@ class Settings(object):
 
         if 'ledger_alias_default_account' in js.keys():
             self.ledger_alias_default_account = js['ledger_alias_default_account']
+
+        if 'ledger_time_command' in js.keys():
+            self.ledger_time_command = js['ledger_time_command']
 
     def gen_abs_path_to_settings_file(self):
         """Generate the absolut path to the settings file."""
