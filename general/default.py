@@ -70,7 +70,8 @@ class Default(object):
         connectentry_amount_b=None,
         connectentry_amount_b_format=None,
         connectentry_is_time=None,
-        connectentry_multiplicator=None
+        connectentry_multiplicator=None,
+        ledger_time_def_amount=None
     ):
         """Initialize the class and hard code defaults, if no file is given."""
         self.language = 'NEW' if language is None else language
@@ -181,6 +182,11 @@ class Default(object):
         )
         self._connectentry_multiplicator = Decimal(0)
         self.set_connectentry_multiplicator(connectentry_multiplicator)
+
+        # ledger time
+        self.ledger_time_def_amount = (
+            '1' if ledger_time_def_amount is None else ledger_time_def_amount
+        )
 
         # try to load default automatically
         if data_path is not None:
@@ -476,6 +482,8 @@ class Default(object):
         out['connectentry_is_time'] = self._connectentry_is_time
         out['connectentry_multiplicator'] = float(self._connectentry_multiplicator)
 
+        out['ledger_time_def_amount'] = self.ledger_time_def_amount
+
         # return the json
         return json.dumps(out, indent=indent, sort_keys=True)
 
@@ -669,6 +677,9 @@ class Default(object):
         if 'connectentry_multiplicator' in js.keys():
             self.set_connectentry_multiplicator(js['connectentry_multiplicator'])
 
+        if 'ledger_time_def_amount' in js.keys():
+            self.ledger_time_def_amount = js['ledger_time_def_amount']
+
     def gen_abs_path_to_default_file(self, data_path, lang=None):
         """Generate the absolut path to the settings file."""
         lang_set = type(lang) is str
@@ -761,5 +772,6 @@ class Default(object):
             connectentry_amount_b=self._connectentry_amount_b,
             connectentry_amount_b_format=self.connectentry_amount_b_format,
             connectentry_is_time=self._connectentry_is_time,
-            connectentry_multiplicator=self._connectentry_multiplicator
+            connectentry_multiplicator=self._connectentry_multiplicator,
+            ledger_time_def_amount=self.ledger_time_def_amount
         )

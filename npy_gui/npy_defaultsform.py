@@ -1134,6 +1134,11 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True,
             values=['True']
         )
+        self.ledger_time_def_amount = self.add_widget_intelligent(
+            npyscreen.TitleText,
+            name='Ledger time def. amt.:',
+            begin_entry_at=26
+        )
 
     def beforeEditing(self):
         """Get values form parentApp.tmpDefault."""
@@ -1207,6 +1212,10 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
             [0] if self.parentApp.tmpDefault.get_connectentry_is_time() else []
         )
 
+        self.ledger_time_def_amount.value = (
+            self.parentApp.tmpDefault.ledger_time_def_amount
+        )
+
     def values_to_tmp(self):
         """Store values in temp object."""
         # get values in temp object
@@ -1270,6 +1279,10 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         )
         self.parentApp.tmpDefault.set_connectentry_is_time(
             self.connectentry_is_time.value
+        )
+
+        self.parentApp.tmpDefault.ledger_time_def_amount = (
+            self.ledger_time_def_amount.value
         )
 
     def on_ok(self, keypress=None):
