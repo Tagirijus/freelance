@@ -4,6 +4,7 @@ The class holding informatin about the client and the client_list.
 The classes do not have privat values and setter and getter methods!
 """
 
+from decimal import Decimal
 import json
 
 
@@ -24,7 +25,8 @@ class Client(object):
         city=None,
         country=None,
         tax_id=None,
-        language=None
+        language=None,
+        def_wage=None
     ):
         """Initialize the class."""
         self.client_id = 'no_id' if client_id is None else str(client_id)
@@ -40,6 +42,20 @@ class Client(object):
         self.country = '' if country is None else str(country)
         self.tax_id = '' if tax_id is None else str(tax_id)
         self.language = 'en' if language is None else str(language)
+        self._def_wage = Decimal('0.00')            # set default
+        self.set_def_wage(def_wage)                 # try to set arguments value
+
+    def set_def_wage(self, value):
+        """Set def_wage."""
+        try:
+            # only works if value is convertable to Decimal
+            self._def_wage = Decimal(str(value))
+        except Exception:
+            pass
+
+    def get_def_wage(self):
+        """Get def_wage."""
+        return self._def_wage
 
     def fullname(self):
         """Return name + familyname."""
@@ -66,6 +82,7 @@ class Client(object):
         out['country'] = self.country
         out['tax_id'] = self.tax_id
         out['language'] = self.language
+        out['def_wage'] = str(self._def_wage)
 
         return out
 
@@ -158,6 +175,11 @@ class Client(object):
         else:
             language = None
 
+        if 'def_wage' in js.keys():
+            def_wage = js['def_wage']
+        else:
+            def_wage = None
+
         # return new object
         return cls(
             client_id=client_id,
@@ -172,7 +194,8 @@ class Client(object):
             city=city,
             country=country,
             tax_id=tax_id,
-            language=language
+            language=language,
+            def_wage=def_wage
         )
 
     def copy(self):

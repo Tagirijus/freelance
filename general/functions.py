@@ -102,7 +102,8 @@ def NewClient(settings=None, global_list=None):
         post_code=settings.defaults[lang].client_post_code,
         city=settings.defaults[lang].client_city,
         tax_id=settings.defaults[lang].client_tax_id,
-        language=lang
+        language=lang,
+        def_wage=settings.defaults[lang].get_project_wage()
     )
 
 
@@ -131,7 +132,7 @@ def NewProject(settings=None, global_list=None, client=None):
         title=title,
         hours_per_day=settings.defaults[lang].get_project_hours_per_day(),
         work_days=settings.defaults[lang].get_project_work_days(),
-        wage=settings.defaults[lang].get_project_wage(),
+        wage=client.get_def_wage(),
         minimum_days=settings.defaults[lang].get_project_minimum_days()
     )
 
