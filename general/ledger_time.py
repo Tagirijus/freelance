@@ -159,12 +159,13 @@ def get_invoice_entries_from_time_journal(
         # search the time entry account name in the presets,
         # which also have 'AUTO' in their name
         base = False
-        name_splitted = t.split(' ') + ['AUTO']
+        name_splitted = t.lower().split(' ') + ['auto']
         for x in presets.invoice_entry_list:
             name_in_presets = [
                 i for i in name_splitted
-                if i in x['name']
+                if i in x['name'].lower()
             ]
+
             if len(name_in_presets) > 1:
                 base = x['item']
                 base.title = t
