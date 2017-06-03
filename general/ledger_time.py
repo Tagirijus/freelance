@@ -159,9 +159,16 @@ def get_invoice_entries_from_time_journal(
         # search the time entry account name in the presets,
         # which also have 'AUTO' in their name
         base = False
+        name_splitted = t.split(' ') + ['AUTO']
         for x in presets.invoice_entry_list:
-            if 'AUTO' in x['name'] and t in x['name']:
+            name_in_presets = [
+                i for i in name_splitted
+                if i in x['name']
+            ]
+            if len(name_in_presets) > 1:
                 base = x['item']
+                base.title = t
+                base.set_hour_rate(1)
                 break
 
         # not found: generate a new multiplyentry
@@ -181,7 +188,7 @@ def get_invoice_entries_from_time_journal(
         base.set_quantity(time[t])
 
         # append it to the entries
-        entries.append(base)
+        entries.append(base.copy())
 
     return entries
 
