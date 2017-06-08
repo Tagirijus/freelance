@@ -37,6 +37,8 @@ Possible formating options are:
 - %Y: year
 - %m: month
 - %d: day
+- %b: month abbreviated name
+- %B: month full name
 
 Example:
 "%Y-%m on the %d. day" -> e.g. "2017-05 on the 07. day"
