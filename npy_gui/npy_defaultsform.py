@@ -261,8 +261,13 @@ class DefaultsGeneralForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def switch_to_help(self):
         """Switch to the help screen."""
@@ -425,8 +430,13 @@ class DefaultsOfferForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def add_temp(self):
         """Add template."""
@@ -593,8 +603,13 @@ class DefaultsInvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def add_temp(self):
         """Add template."""
@@ -782,8 +797,13 @@ class DefaultsClientProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def switch_to_help(self):
         """Switch to the help screen."""
@@ -985,8 +1005,13 @@ class DefaultsEntryForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def switch_to_help(self):
         """Switch to the help screen."""

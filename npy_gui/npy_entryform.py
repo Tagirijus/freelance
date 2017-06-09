@@ -28,8 +28,13 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.add_handlers({
             '^O': self.on_ok,
             '^Q': self.on_cancel,
-            '^L': self.load_preset
+            '^L': self.load_preset,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def change_type(self):
         """Change the type of the entry."""
@@ -280,8 +285,13 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.add_handlers({
             '^O': self.on_ok,
             '^Q': self.on_cancel,
-            '^L': self.load_preset
+            '^L': self.load_preset,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def change_type(self):
         """Change the type of the entry."""
@@ -524,8 +534,13 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.add_handlers({
             '^O': self.on_ok,
             '^Q': self.on_cancel,
-            '^L': self.load_preset
+            '^L': self.load_preset,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def change_type(self):
         """Change the type of the entry."""

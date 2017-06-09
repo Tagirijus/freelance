@@ -327,8 +327,13 @@ class ProjectForm(npyscreen.FormMultiPageActionWithMenus):
         # set up key shortcuts
         self.add_handlers({
             '^O': self.on_ok,
-            '^Q': self.on_cancel
+            '^Q': self.on_cancel,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def add_offer(self):
         """Add an offer."""

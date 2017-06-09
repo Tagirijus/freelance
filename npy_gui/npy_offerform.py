@@ -417,8 +417,13 @@ class OfferForm(npyscreen.FormMultiPageActionWithMenus):
         self.add_handlers({
             '^O': self.on_ok,
             '^Q': self.on_cancel,
-            '^L': self.load_preset
+            '^L': self.load_preset,
+            '^F': self.clear_widget
         })
+
+    def clear_widget(self, keypress=None):
+        """Clear widget."""
+        self.get_widget(self.editw).value = ''
 
     def add_entry(self):
         """Add an entry."""
