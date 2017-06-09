@@ -25,6 +25,9 @@ class Client(object):
         city=None,
         country=None,
         tax_id=None,
+        additional_a=None,
+        additional_b=None,
+        additional_c=None,
         language=None,
         def_wage=None
     ):
@@ -41,6 +44,9 @@ class Client(object):
         self.city = '' if city is None else str(city)
         self.country = '' if country is None else str(country)
         self.tax_id = '' if tax_id is None else str(tax_id)
+        self.additional_a = '' if additional_a is None else str(additional_a)
+        self.additional_b = '' if additional_b is None else str(additional_b)
+        self.additional_c = '' if additional_c is None else str(additional_c)
         self.language = 'en' if language is None else str(language)
         self._def_wage = Decimal('0.00')            # set default
         self.set_def_wage(def_wage)                 # try to set arguments value
@@ -81,6 +87,9 @@ class Client(object):
         out['city'] = self.city
         out['country'] = self.country
         out['tax_id'] = self.tax_id
+        out['additional_a'] = self.additional_a
+        out['additional_b'] = self.additional_b
+        out['additional_c'] = self.additional_c
         out['language'] = self.language
         out['def_wage'] = str(self._def_wage)
 
@@ -170,6 +179,21 @@ class Client(object):
         else:
             tax_id = None
 
+        if 'additional_a' in js.keys():
+            additional_a = js['additional_a']
+        else:
+            additional_a = None
+
+        if 'additional_b' in js.keys():
+            additional_b = js['additional_b']
+        else:
+            additional_b = None
+
+        if 'additional_c' in js.keys():
+            additional_c = js['additional_c']
+        else:
+            additional_c = None
+
         if 'language' in js.keys():
             language = js['language']
         else:
@@ -194,6 +218,9 @@ class Client(object):
             city=city,
             country=country,
             tax_id=tax_id,
+            additional_a=additional_a,
+            additional_b=additional_b,
+            additional_c=additional_c,
             language=language,
             def_wage=def_wage
         )

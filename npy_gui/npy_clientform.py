@@ -145,6 +145,21 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             name='Tax ID:',
             begin_entry_at=20
         )
+        self.client_additional_a = self.add(
+            npyscreen.TitleText,
+            name='Additional A:',
+            begin_entry_at=20
+        )
+        self.client_additional_b = self.add(
+            npyscreen.TitleText,
+            name='Additional B:',
+            begin_entry_at=20
+        )
+        self.client_additional_c = self.add(
+            npyscreen.TitleText,
+            name='Additional C:',
+            begin_entry_at=20
+        )
         self.def_wage = self.add(
             npyscreen.TitleText,
             name='Default wage:',
@@ -173,6 +188,9 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.client_city.value = self.parentApp.tmpClient.city
         self.client_country.value = self.parentApp.tmpClient.country
         self.client_tax_id.value = self.parentApp.tmpClient.tax_id
+        self.client_additional_a.value = self.parentApp.tmpClient.additional_a
+        self.client_additional_b.value = self.parentApp.tmpClient.additional_b
+        self.client_additional_c.value = self.parentApp.tmpClient.additional_c
         self.def_wage.value = str(self.parentApp.tmpClient.get_def_wage())
 
         # handle languages
@@ -212,6 +230,9 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpClient.city = self.client_city.value
         self.parentApp.tmpClient.country = self.client_country.value
         self.parentApp.tmpClient.tax_id = self.client_tax_id.value
+        self.parentApp.tmpClient.additional_a = self.client_additional_a.value
+        self.parentApp.tmpClient.additional_b = self.client_additional_b.value
+        self.parentApp.tmpClient.additional_c = self.client_additional_c.value
         self.parentApp.tmpClient.set_def_wage(self.def_wage.value)
         self.parentApp.tmpClient.language = self.client_language.values[
             self.client_language.value[0]

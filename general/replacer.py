@@ -103,19 +103,54 @@ def replacer(
 
     # client related
     if is_client:
-        replace_me['CLIENT_ID'] = client.client_id
-        replace_me['CLIENT_COMPANY'] = client.company
-        replace_me['CLIENT_COMPANY_B'] = client.company_b
-        replace_me['CLIENT_ATTN'] = client.attention
-        replace_me['CLIENT_SALUT'] = client.salutation
-        replace_me['CLIENT_NAME'] = client.name
-        replace_me['CLIENT_FAMILY'] = client.family_name
-        replace_me['CLIENT_FULLNAME'] = client.fullname()
-        replace_me['CLIENT_STREET'] = client.street
-        replace_me['CLIENT_POST_CODE'] = client.post_code
-        replace_me['CLIENT_CITY'] = client.city
-        replace_me['CLIENT_COUNTRY'] = client.country
-        replace_me['CLIENT_TAX_ID'] = client.tax_id
+        replace_me['CLIENT_ID'] = (
+            client.client_id.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_COMPANY'] = (
+            client.company.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_COMPANY_B'] = (
+            client.company_b.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_ATTN'] = (
+            client.attention.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_SALUT'] = (
+            client.salutation.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_NAME'] = (
+            client.name.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_FAMILY'] = (
+            client.family_name.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_FULLNAME'] = (
+            client.fullname().encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_STREET'] = (
+            client.street.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_POST_CODE'] = (
+            client.post_code.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_CITY'] = (
+            client.city.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_COUNTRY'] = (
+            client.country.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_TAX_ID'] = (
+            client.tax_id.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_ADDITIONAL_A'] = (
+            client.additional_a.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_ADDITIONAL_B'] = (
+            client.additional_b.encode('utf8').decode('unicode_escape')
+        )
+        replace_me['CLIENT_ADDITIONAL_C'] = (
+            client.additional_c.encode('utf8').decode('unicode_escape')
+        )
 
     # offer / invoice related
     if is_offerinvoice and is_project:
