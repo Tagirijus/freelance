@@ -160,9 +160,14 @@ class ClientForm(npyscreen.ActionFormWithMenus):
             name='Additional C:',
             begin_entry_at=20
         )
-        self.def_wage = self.add(
+        self.client_def_wage = self.add(
             npyscreen.TitleText,
             name='Default wage:',
+            begin_entry_at=20
+        )
+        self.client_def_commodity = self.add(
+            npyscreen.TitleText,
+            name='Def. commodity:',
             begin_entry_at=20
         )
         self.client_language = self.add(
@@ -191,7 +196,8 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.client_additional_a.value = self.parentApp.tmpClient.additional_a
         self.client_additional_b.value = self.parentApp.tmpClient.additional_b
         self.client_additional_c.value = self.parentApp.tmpClient.additional_c
-        self.def_wage.value = str(self.parentApp.tmpClient.get_def_wage())
+        self.client_def_wage.value = str(self.parentApp.tmpClient.get_def_wage())
+        self.client_def_commodity.value = self.parentApp.tmpClient.def_commodity
 
         # handle languages
         self.client_language.values = self.parentApp.S.get_languages()
@@ -233,7 +239,8 @@ class ClientForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpClient.additional_a = self.client_additional_a.value
         self.parentApp.tmpClient.additional_b = self.client_additional_b.value
         self.parentApp.tmpClient.additional_c = self.client_additional_c.value
-        self.parentApp.tmpClient.set_def_wage(self.def_wage.value)
+        self.parentApp.tmpClient.set_def_wage(self.client_def_wage.value)
+        self.parentApp.tmpClient.def_commodity = self.client_def_commodity.value
         self.parentApp.tmpClient.language = self.client_language.values[
             self.client_language.value[0]
         ]

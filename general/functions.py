@@ -103,7 +103,8 @@ def NewClient(settings=None, global_list=None):
         city=settings.defaults[lang].client_city,
         tax_id=settings.defaults[lang].client_tax_id,
         language=lang,
-        def_wage=settings.defaults[lang].get_project_wage()
+        def_wage=settings.defaults[lang].get_project_wage(),
+        def_commodity=settings.default[lang].commodity
     )
 
 
@@ -186,7 +187,7 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         comment_b=comment_b,
         date_fmt=date_fmt,
         date=date.today(),
-        commodity=settings.defaults[lang].commodity,
+        commodity=client.def_commodity,
         round_price=round_price
     )
 
@@ -613,7 +614,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         date=date.today(),
         delivery=delivery,
         due_days=due_days,
-        commodity=settings.defaults[lang].commodity,
+        commodity=client.def_commodity,
         round_price=round_price
     )
 

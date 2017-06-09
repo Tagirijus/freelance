@@ -29,7 +29,8 @@ class Client(object):
         additional_b=None,
         additional_c=None,
         language=None,
-        def_wage=None
+        def_wage=None,
+        def_commodity=None
     ):
         """Initialize the class."""
         self.client_id = 'no_id' if client_id is None else str(client_id)
@@ -50,6 +51,7 @@ class Client(object):
         self.language = 'en' if language is None else str(language)
         self._def_wage = Decimal('0.00')            # set default
         self.set_def_wage(def_wage)                 # try to set arguments value
+        self.def_commodity = '$' if def_commodity is None else str(def_commodity)
 
     def set_def_wage(self, value):
         """Set def_wage."""
@@ -92,6 +94,7 @@ class Client(object):
         out['additional_c'] = self.additional_c
         out['language'] = self.language
         out['def_wage'] = str(self._def_wage)
+        out['def_commodity'] = self.def_commodity
 
         return out
 
@@ -204,6 +207,11 @@ class Client(object):
         else:
             def_wage = None
 
+        if 'def_commodity' in js.keys():
+            def_commodity = js['def_commodity']
+        else:
+            def_commodity = None
+
         # return new object
         return cls(
             client_id=client_id,
@@ -222,7 +230,8 @@ class Client(object):
             additional_b=additional_b,
             additional_c=additional_c,
             language=language,
-            def_wage=def_wage
+            def_wage=def_wage,
+            def_commodity=def_commodity
         )
 
     def copy(self):
