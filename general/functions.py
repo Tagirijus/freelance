@@ -104,7 +104,7 @@ def NewClient(settings=None, global_list=None):
         tax_id=settings.defaults[lang].client_tax_id,
         language=lang,
         def_wage=settings.defaults[lang].get_project_wage(),
-        def_commodity=settings.default[lang].commodity
+        def_commodity=settings.defaults[lang].commodity
     )
 
 
