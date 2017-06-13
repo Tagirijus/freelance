@@ -18,6 +18,30 @@ class ReplacementDict(dict):
         return '{' + str(key).replace('#', '', 1) + '}'
 
 
+def code_str(text):
+    """
+    Code string so that it has correct newlines etc.
+
+    There must be a better solution, but maybe I am too dumb here ...
+    This function encodes to utf8, decodes with 'unicode_escape'. This way
+    the exported string with the secretary module has correct newlines, tabs, etc.
+    Unfortunately it also destroys the german umlauts. So my (probably very BAD)
+    workaround is just to replace the wrong string with the correct umlaut string
+    again, duh! (:
+
+    ... help me .... :D
+    """
+    text = text.encode('utf8').decode('unicode_escape')
+    text = text.replace('Ã¼', 'ü')
+    text = text.replace('Ã¶', 'ö')
+    text = text.replace('Ã¤', 'ä')
+    text = text.replace('Ã', 'Ü')
+    text = text.replace('Ã', 'Ö')
+    text = text.replace('Ã', 'Ä')
+    text = text.replace('Ã', 'ß')
+    return text
+
+
 def replacer(
     text=None,
     settings=None,
@@ -104,52 +128,52 @@ def replacer(
     # client related
     if is_client:
         replace_me['CLIENT_ID'] = (
-            client.client_id.encode('utf8').decode('unicode_escape')
+            code_str(client.client_id)
         )
         replace_me['CLIENT_COMPANY'] = (
-            client.company.encode('utf8').decode('unicode_escape')
+            code_str(client.company)
         )
         replace_me['CLIENT_COMPANY_B'] = (
-            client.company_b.encode('utf8').decode('unicode_escape')
+            code_str(client.company_b)
         )
         replace_me['CLIENT_ATTN'] = (
-            client.attention.encode('utf8').decode('unicode_escape')
+            code_str(client.attention)
         )
         replace_me['CLIENT_SALUT'] = (
-            client.salutation.encode('utf8').decode('unicode_escape')
+            code_str(client.salutation)
         )
         replace_me['CLIENT_NAME'] = (
-            client.name.encode('utf8').decode('unicode_escape')
+            code_str(client.name)
         )
         replace_me['CLIENT_FAMILY'] = (
-            client.family_name.encode('utf8').decode('unicode_escape')
+            code_str(client.family_name)
         )
         replace_me['CLIENT_FULLNAME'] = (
-            client.fullname().encode('utf8').decode('unicode_escape')
+            code_str(client.fullname())
         )
         replace_me['CLIENT_STREET'] = (
-            client.street.encode('utf8').decode('unicode_escape')
+            code_str(client.street)
         )
         replace_me['CLIENT_POST_CODE'] = (
-            client.post_code.encode('utf8').decode('unicode_escape')
+            code_str(client.post_code)
         )
         replace_me['CLIENT_CITY'] = (
-            client.city.encode('utf8').decode('unicode_escape')
+            code_str(client.city)
         )
         replace_me['CLIENT_COUNTRY'] = (
-            client.country.encode('utf8').decode('unicode_escape')
+            code_str(client.country)
         )
         replace_me['CLIENT_TAX_ID'] = (
-            client.tax_id.encode('utf8').decode('unicode_escape')
+            code_str(client.tax_id)
         )
         replace_me['CLIENT_ADDITIONAL_A'] = (
-            client.additional_a.encode('utf8').decode('unicode_escape')
+            code_str(client.additional_a)
         )
         replace_me['CLIENT_ADDITIONAL_B'] = (
-            client.additional_b.encode('utf8').decode('unicode_escape')
+            code_str(client.additional_b)
         )
         replace_me['CLIENT_ADDITIONAL_C'] = (
-            client.additional_c.encode('utf8').decode('unicode_escape')
+            code_str(client.additional_c)
         )
 
     # offer / invoice related
