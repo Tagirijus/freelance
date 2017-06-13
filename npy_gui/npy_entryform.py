@@ -117,48 +117,48 @@ class BaseEntryForm(npyscreen.ActionFormWithMenus):
         self.title = self.add(
             npyscreen.TitleText,
             name='Title:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.comment = self.add(
             TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20,
+            begin_entry_at=22,
             max_height=2
         )
         self.quantity = self.add(
             npyscreen.TitleText,
             name='Quantity:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_format = self.add(
             npyscreen.TitleText,
             name='Quantity format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b = self.add(
             npyscreen.TitleText,
             name='Quantity B:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b_format = self.add(
             npyscreen.TitleText,
             name='Quantity B format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.time = self.add(
             npyscreen.TitleText,
             name='Time:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.price = self.add(
             npyscreen.TitleText,
             name='Price (w/o tax):',
-            begin_entry_at=20
+            begin_entry_at=22
         )
 
     def beforeEditing(self):
@@ -374,43 +374,43 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.title = self.add(
             npyscreen.TitleText,
             name='Title:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.comment = self.add(
             TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20,
+            begin_entry_at=22,
             max_height=2
         )
         self.quantity = self.add(
             npyscreen.TitleText,
             name='Quantity:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_format = self.add(
             npyscreen.TitleText,
             name='Quantity format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b = self.add(
             npyscreen.TitleText,
             name='Quantity B:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b_format = self.add(
             npyscreen.TitleText,
             name='Quantity B format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.hour_rate = self.add(
             npyscreen.TitleText,
             name='Hour rate:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
 
     def beforeEditing(self):
@@ -623,48 +623,48 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.title = self.add(
             npyscreen.TitleText,
             name='Title:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.comment = self.add(
             TitleMultiLineEdit,
             name='Comment:',
-            begin_entry_at=20,
+            begin_entry_at=22,
             max_height=2
         )
         self.quantity = self.add(
             npyscreen.TitleText,
             name='Quantity:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_format = self.add(
             npyscreen.TitleText,
             name='Quantity format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b = self.add(
             npyscreen.TitleText,
             name='Quantity B:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.quantity_b_format = self.add(
             npyscreen.TitleText,
             name='Quantity B format:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.tax = self.add(
             npyscreen.TitleText,
             name='Tax rate:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.multiplicator = self.add(
             npyscreen.TitleText,
             name='Multiplicator:',
-            begin_entry_at=20
+            begin_entry_at=22
         )
         self.is_time = self.add(
             npyscreen.TitleMultiSelect,
             name='Is time:',
-            begin_entry_at=20,
+            begin_entry_at=22,
             max_height=2,
             scroll_exit=True,
             values=['enabled']
@@ -672,7 +672,7 @@ class ConnectEntryForm(npyscreen.ActionFormWithMenus):
         self.connected = self.add(
             npyscreen.TitleMultiSelect,
             name='Connect to:',
-            begin_entry_at=20,
+            begin_entry_at=22,
             scroll_exit=True
         )
 
