@@ -39,6 +39,10 @@ def code_str(text):
     text = text.replace('Ã', 'Ö')
     text = text.replace('Ã', 'Ä')
     text = text.replace('Ã', 'ß')
+    text = text.replace('Ã©', 'é')
+    text = text.replace('Ã¨', 'è')
+    text = text.replace('Ã', 'É')
+    text = text.replace('Ã', 'È')
     return text
 
 
