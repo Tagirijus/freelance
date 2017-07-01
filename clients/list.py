@@ -458,10 +458,13 @@ class List(object):
             return False
 
         # rename the file
-        self.rename_project_file(
+        renamed = self.rename_project_file(
             old_project=old_project,
             new_project=new_project
         )
+
+        if renamed is False:
+            return False
 
         # get its index
         index = self.get_project_index(old_project)

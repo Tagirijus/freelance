@@ -98,7 +98,7 @@ class OfferList(npyscreen.MultiLineAction):
 
     def add_offer(self, keypress=None):
         """Add a new offer to the project."""
-        self.parent.values_to_tmp()
+        self.parent.values_to_tmp(save=True)
 
         # prepare tmpOffer
         self.parent.parentApp.tmpOffer_new = True
@@ -138,7 +138,7 @@ class OfferList(npyscreen.MultiLineAction):
         """Do something, because a key was pressed."""
         try:
             # get the selected project
-            self.parent.values_to_tmp()
+            self.parent.values_to_tmp(save=True)
 
             # get the actual offer into temp offer
             self.parent.parentApp.tmpOffer = act_on_this.copy()
@@ -253,7 +253,7 @@ class InvoiceList(npyscreen.MultiLineAction):
 
     def add_invoice(self, keypress=None):
         """Add a new invoice to the project."""
-        self.parent.values_to_tmp()
+        self.parent.values_to_tmp(save=True)
 
         # prepare tmpInvoice
         self.parent.parentApp.tmpInvoice_new = True
@@ -293,7 +293,7 @@ class InvoiceList(npyscreen.MultiLineAction):
         """Do something, because a key was pressed."""
         try:
             # get the selected project
-            self.parent.values_to_tmp()
+            self.parent.values_to_tmp(save=True)
 
             # get the actual invoice into temp invoice
             self.parent.parentApp.tmpInvoice = act_on_this.copy()
