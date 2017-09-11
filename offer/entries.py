@@ -208,16 +208,19 @@ class BaseEntry(object):
 
     def get_unit_price(self, round_price=False, *args, **kwargs):
         """Get price / quantity."""
-        quantitys = self._quantity.get() * self._quantity_b.get()
+        quantities = self._quantity.get()
+
+        # decomment next line for getting unit price divided by quantity b as well!
+        #quantities = self._quantity.get() * self._quantity_b.get()
 
         # divide with quantity, if its > 0
-        if quantitys > 0:
+        if quantities > 0:
             return round(
                 self.get_price(
                     round_price=round_price,
                     *args,
                     **kwargs
-                ) / quantitys,
+                ) / quantities,
                 2
             )
 
@@ -248,15 +251,18 @@ class BaseEntry(object):
 
     def get_unit_price_tax(self, *args, **kwargs):
         """Get price_tax / quantity."""
-        quantitys = self._quantity.get() * self._quantity_b.get()
+        quantities = self._quantity.get()
+
+        # decomment next line for getting unit price divided by quantity b as well!
+        #quantities = self._quantity.get() * self._quantity_b.get()
 
         # divide with quantity, if its > 0
-        if quantitys > 0:
+        if quantities > 0:
             return round(
                 self.get_price_tax(
                     *args,
                     **kwargs
-                ) / quantitys,
+                ) / quantities,
                 2
             )
 
