@@ -451,8 +451,8 @@ class OfferInvoice(object):
         # get hours per day
         hours_per_day = project.get_hours_per_day()
 
-        # get days and add one safety day and the minimum days
-        finish_days = round(time.full() / hours_per_day) + 1 + project.get_minimum_days()
+        # get days and add the minimum days
+        finish_days = round(time.full() / hours_per_day) + project.get_minimum_days()
 
         # return calculation
         return finish_days
