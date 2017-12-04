@@ -439,6 +439,24 @@ class OfferInvoice(object):
         else:
             return round(Decimal(0), rounder)
 
+    def get_finish_days(self, project=None):
+        """Calculate and return the finish days."""
+        # if no project is given, return -1
+        if not check_objects.is_project(project):
+            return -1
+
+        # get time needed for this offer
+        time = self.get_time_total()
+
+        # get hours per day
+        hours_per_day = project.get_hours_per_day()
+
+        # get days and add one safety day and the minimum days
+        finish_days = round(time.full() / hours_per_day) + project.get_minimum_days()
+
+        # return calculation
+        return finish_days
+
     def get_finish_date(self, project=None):
         """Calculate and return the finish date."""
         # if no project is given, return 1987-15-10

@@ -11,7 +11,7 @@ The pattern for the default offer / invoice filename.
 
 
 Invoice round price:
-ROund prices or not.
+Round prices or not.
 
 
 Invoice template:

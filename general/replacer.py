@@ -224,6 +224,11 @@ def replacer(
             project=project
         ).strftime(offerinvoice.date_fmt)
 
+        # finish days
+        replace_me['FINISH_DAYS'] = offerinvoice.get_finish_days(
+            project=project
+        )
+
         # delivery date
         replace_me['DELIVERY'] = offerinvoice.delivery
 
