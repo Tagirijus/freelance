@@ -570,15 +570,17 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             title='Summerize into one account? (empty if not)'
         )
 
-        # ask for payee
-        def_payee = replacer(
-            text=self.parentApp.S.ledgeradd_def_payee,
+        # get replacer dict
+        replacer_dict = replacer(
             settings=self.parentApp.S,
             global_list=self.parentApp.L,
             client=self.parentApp.tmpClient,
             project=self.parentApp.tmpProject,
             offerinvoice=self.parentApp.tmpInvoice
         )
+
+        # ask for payee
+        def_payee = self.parentApp.S.ledgeradd_def_payee.format(**replacer_dict)
         payee = npyscreen.notify_input(
             'Payee:',
             pre_text=def_payee,
@@ -590,14 +592,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             return False
 
         # get payee replaced
-        payee = replacer(
-            text=payee,
-            settings=self.parentApp.S,
-            global_list=self.parentApp.L,
-            client=self.parentApp.tmpClient,
-            project=self.parentApp.tmpProject,
-            offerinvoice=self.parentApp.tmpInvoice
-        )
+        payee = payee.format(**replacer_dict)
 
         # generate parameters
         parameter = generate_parameter(
@@ -615,14 +610,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             )
             return False
 
-        parameter = replacer(
-            text=parameter,
-            settings=self.parentApp.S,
-            global_list=self.parentApp.L,
-            client=self.parentApp.tmpClient,
-            project=self.parentApp.tmpProject,
-            offerinvoice=self.parentApp.tmpInvoice
-        )
+        parameter = parameter.format(**replacer_dict)
 
         try:
             os.system(

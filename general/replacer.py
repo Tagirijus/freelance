@@ -71,6 +71,10 @@ def replacer(
 
     # replace stuff
     replace_me = ReplacementDict()
+    # if text is None:
+    #     return replace_me
+    # else:
+    #     return text.format(**replace_me)
 
     # simple date stuff
     replace_me['YEAR'] = date.today().strftime('%Y')
