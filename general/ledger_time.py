@@ -48,7 +48,10 @@ def get_time_entries(ledger_output_lines=None):
     Returns the total time and its account as well, if the other accounts
     to not sum up to the total time.
     """
-    if not type(ledger_output_lines) is list:
+    is_list = type(ledger_output_lines) is list
+    is_empty = len(ledger_output_lines) == 0
+
+    if not is_list or is_empty:
         return False
 
     # init output dict
