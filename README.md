@@ -24,4 +24,4 @@ Start the programm and open the menu with `Ctrl+X`. Then you have a help option 
 
 # To do
 
-- Ledger time track implementation for fully automated invoice creation
+- Make Freelance work faster. Especially the `replacer()` function slows the programm down very much.
