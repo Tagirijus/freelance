@@ -152,29 +152,16 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
     lang = client.language
 
     # get replaces
-    title = replacer(
-        text=settings.defaults[lang].offer_title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
 
-    comment = replacer(
-        text=settings.defaults[lang].offer_comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
-
-    comment_b = replacer(
-        text=settings.defaults[lang].offer_comment_b,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+    title = settings.defaults[lang].offer_title.format(**replace_dict)
+    comment = settings.defaults[lang].offer_comment.format(**replace_dict)
+    comment_b = settings.defaults[lang].offer_comment_b.format(**replace_dict)
 
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
@@ -210,8 +197,7 @@ def PresetOffer(
         )
 
     # get replaces
-    title = replacer(
-        text=offer_preset.title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
@@ -219,23 +205,9 @@ def PresetOffer(
         offerinvoice=offer_preset
     )
 
-    comment = replacer(
-        text=offer_preset.comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=offer_preset
-    )
-
-    comment_b = replacer(
-        text=offer_preset.comment_b,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=offer_preset
-    )
+    title = offer_preset.title.format(**replace_dict)
+    comment = offer_preset.comment.format(**replace_dict)
+    comment_b = offer_preset.comment_b.format(**replace_dict)
 
     # dates
     off_date = offer_preset.get_date()
@@ -277,20 +249,15 @@ def NewBaseEntry(settings=None, global_list=None, client=None, project=None):
     lang = client.language
 
     # get replaces
-    title = replacer(
-        text=settings.defaults[lang].baseentry_title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=settings.defaults[lang].baseentry_comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = settings.defaults[lang].baseentry_title.format(**replace_dict)
+    comment = settings.defaults[lang].baseentry_comment.format(**replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_baseentry_quantity()
@@ -321,20 +288,15 @@ def PresetBaseEntry(
         return NewBaseEntry(settings=settings, client=client, project=project)
 
     # get replaces
-    title = replacer(
-        text=entry_preset.title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=entry_preset.comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = entry_preset.title.format(**replace_dict)
+    comment = entry_preset.comment.format(**replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -371,20 +333,15 @@ def NewMultiplyEntry(settings=None, global_list=None, client=None, project=None)
     lang = client.language
 
     # get replaces
-    title = replacer(
-        text=settings.defaults[lang].multiplyentry_title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=settings.defaults[lang].multiplyentry_comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = settings.defaults[lang].multiplyentry_title.format(**replace_dict)
+    comment = settings.defaults[lang].multiplyentry_comment.format(**replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_multiplyentry_quantity()
@@ -413,20 +370,15 @@ def PresetMultiplyEntry(
         return NewMultiplyEntry(settings=settings, client=client, project=project)
 
     # get replaces
-    title = replacer(
-        text=entry_preset.title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=entry_preset.comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = entry_preset.title.format(**replace_dict)
+    comment = entry_preset.comment.format(**replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -461,20 +413,15 @@ def NewConnectEntry(settings=None, global_list=None, client=None, project=None):
     lang = client.language
 
     # get replaces
-    title = replacer(
-        text=settings.defaults[lang].connectentry_title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=settings.defaults[lang].connectentry_comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = settings.defaults[lang].connectentry_title.format(**replace_dict)
+    comment = settings.defaults[lang].connectentry_comment.format(**replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_connectentry_quantity()
@@ -505,20 +452,15 @@ def PresetConnectEntry(
         return NewConnectEntry(settings=settings, client=client, project=project)
 
     # get replaces
-    title = replacer(
-        text=entry_preset.title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
-    comment = replacer(
-        text=entry_preset.comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+
+    title = entry_preset.title.format(**replace_dict)
+    comment = entry_preset.comment.format(**replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -557,45 +499,18 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
     lang = client.language
 
     # get replaces
-    title = replacer(
-        text=settings.defaults[lang].invoice_title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
         project=project
     )
 
-    id = replacer(
-        text=settings.defaults[lang].invoice_id,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
-
-    comment = replacer(
-        text=settings.defaults[lang].invoice_comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
-
-    comment_b = replacer(
-        text=settings.defaults[lang].invoice_comment_b,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
-
-    delivery = replacer(
-        text=settings.defaults[lang].invoice_delivery,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project
-    )
+    title = settings.defaults[lang].invoice_title.format(**replace_dict)
+    id = settings.defaults[lang].invoice_id.format(**replace_dict)
+    comment = settings.defaults[lang].invoice_comment.format(**replace_dict)
+    comment_b = settings.defaults[lang].invoice_comment_b.format(**replace_dict)
+    delivery = settings.defaults[lang].invoice_delivery.format(**replace_dict)
 
     # date
     due_days = settings.defaults[lang].get_invoice_due_days()
@@ -637,8 +552,7 @@ def PresetInvoice(
         )
 
     # get replaces
-    title = replacer(
-        text=invoice_preset.title,
+    replace_dict = replacer(
         settings=settings,
         global_list=global_list,
         client=client,
@@ -646,41 +560,11 @@ def PresetInvoice(
         offerinvoice=invoice_preset
     )
 
-    id = replacer(
-        text=invoice_preset.id,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=invoice_preset
-    )
-
-    comment = replacer(
-        text=invoice_preset.comment,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=invoice_preset
-    )
-
-    comment_b = replacer(
-        text=invoice_preset.comment_b,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=invoice_preset
-    )
-
-    delivery = replacer(
-        text=invoice_preset.delivery,
-        settings=settings,
-        global_list=global_list,
-        client=client,
-        project=project,
-        offerinvoice=invoice_preset
-    )
+    title = invoice_preset.title.format(**replace_dict)
+    id = invoice_preset.id.format(**replace_dict)
+    comment = invoice_preset.comment.format(**replace_dict)
+    comment_b = invoice_preset.comment_b.format(**replace_dict)
+    delivery = invoice_preset.delivery.format(**replace_dict)
 
     # dates
     inv_date = invoice_preset.get_date()
