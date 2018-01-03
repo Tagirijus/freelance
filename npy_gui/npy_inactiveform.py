@@ -42,7 +42,8 @@ class ClientList(npyscreen.MultiLineAction):
         # yepp, delete it
         if really:
             worked = self.parent.iL.remove_client(
-                client=self.values[self.cursor_line]
+                client=self.values[self.cursor_line],
+                settings=self.parent.parentApp.S,
             )
 
             # something went wrong
@@ -134,7 +135,8 @@ class ProjectList(npyscreen.MultiLineAction):
         # yepp, delete it
         if really:
             worked = self.parent.iL.remove_project(
-                project=self.values[self.cursor_line]
+                project=self.values[self.cursor_line],
+                settings=self.parent.parentApp.S,
             )
 
             # something went wrong
@@ -238,9 +240,8 @@ class InactiveForm(npyscreen.ActionFormWithMenus):
     def beforeEditing(self):
         """Get correct lists for clients and projects."""
         # get the inactive list from inactive folders
-        self.iL = self.parentApp.L.get_inactive_list(
-            settings=self.parentApp.S
-        )
+        self.parentApp.L.update_inactive_list(settings=self.parentApp.S)
+        self.iL = self.parentApp.L.get_inactive_list(settings=self.parentApp.S)
 
         # save old selection
         cursor_save_c = self.clients_box.entry_widget.cursor_line

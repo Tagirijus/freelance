@@ -56,6 +56,7 @@ class FreelanceApplication(npyscreen.NPSAppManaged):
         # get global variables for the app
         self.S = Settings()
         self.L = List(data_path=self.S.data_path)
+        self.L.update_inactive_list(settings=self.S)
         self.P = Preset(data_path=self.S.data_path)
         self.P_what = 'offer'
         self.H = 'Fallback helptext is: learn by doing! (;'

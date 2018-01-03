@@ -39,6 +39,8 @@ class List(object):
         self.project_list = (self.load_project_list_from_file() if project_list is None
                              else project_list)
 
+        self.inactive_list = None
+
     def client_exists(self, client=None):
         """Check if client exists according to the ID."""
         if type(client) is Client:
@@ -145,7 +147,7 @@ class List(object):
 
         return True
 
-    def remove_client(self, client=None):
+    def remove_client(self, client=None, settings=None):
         """Remove client, if it exists (according to its ID)."""
         is_client = type(client) is Client
         id_exists = client.client_id in [c.client_id for c in self.client_list]
@@ -159,11 +161,15 @@ class List(object):
             # then delete the client itself
             self.client_list.pop(self.get_client_index(client))
             self.delete_client_file(client=client)
+
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
+
             return True
         except Exception:
             return False
 
-    def deactivate_client(self, client=None, inactive_dir=None):
+    def deactivate_client(self, client=None, inactive_dir=None, settings=None):
         """Pop client and move its file to the inactive dir."""
         # create absolute path to deactivated_dir and working dir
         path = self.data_path + self.client_dir
@@ -207,6 +213,10 @@ class List(object):
 
             # pop it from the list
             self.client_list.pop(self.get_client_index(client))
+
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
+
             return True
         except Exception:
             return False
@@ -259,6 +269,9 @@ class List(object):
             if os.path.isfile(filename_old_bu):
                 shutil.move(filename_old_bu, filename_new_bu)
 
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
+
             return True
         except Exception:
             return False
@@ -303,7 +316,7 @@ class List(object):
         self.save_project_to_file(project=project)
         return True
 
-    def remove_project(self, project=None):
+    def remove_project(self, project=None, settings=None):
         """Remove project, if it exists (according to its ID)."""
         is_project = type(project) is Project
         pid_exists = project.project_id() in [p.project_id() for p in self.project_list]
@@ -316,11 +329,15 @@ class List(object):
         try:
             self.project_list.pop(self.project_list.index(project))
             self.delete_project_file(project=project)
+
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
+
             return True
         except Exception:
             return False
 
-    def deactivate_project(self, project=None, inactive_dir=None):
+    def deactivate_project(self, project=None, inactive_dir=None, settings=None):
         """Pop project and move its file to the inactive dir."""
         # create absolute path to deactivated_dir and working dir
         path = self.data_path + self.project_dir
@@ -356,6 +373,10 @@ class List(object):
 
             # pop it from list
             self.project_list.pop(self.project_list.index(project))
+
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
+
             return True
         except Exception:
             return False
@@ -403,6 +424,9 @@ class List(object):
             # move backup only if it exists
             if os.path.isfile(filename_old_bu):
                 shutil.move(filename_old_bu, filename_new_bu)
+
+            # update the inactive_list
+            self.update_inactive_list(settings=settings)
 
             return True
         except Exception:
@@ -735,17 +759,26 @@ class List(object):
         """Return string with underscores instead of whitespace."""
         return string.replace(' ', '_')
 
+    def update_inactive_list(self, settings=None):
+        """Update the own inactive_list to speeden up things in Freelance."""
+        self.inactive_list = None
+        return self.get_inactive_list(settings=settings)
+
     def get_inactive_list(self, settings=None):
         """Get inactive clients and projects and return it into new list."""
+        if self.inactive_list is not None:
+            return self.inactive_list
+
         if type(settings) is Settings:
             data_path = settings.data_path
             client_dir = self.client_dir + settings.inactive_dir
             project_dir = self.project_dir + settings.inactive_dir
-            return List(
+            self.inactive_list = List(
                 data_path=data_path,
                 client_dir=client_dir,
                 project_dir=project_dir
             )
+            return self.inactive_list
 
     def get_active_and_inactive_list(self, settings=None):
         """Get inactive clients and projects and active together."""

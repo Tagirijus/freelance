@@ -132,7 +132,8 @@ class ClientList(npyscreen.MultiLineAction):
         if really:
             worked = self.parent.parentApp.L.deactivate_client(
                 client=self.parent.parentApp.tmpClient,
-                inactive_dir=self.parent.parentApp.S.inactive_dir
+                inactive_dir=self.parent.parentApp.S.inactive_dir,
+                settings=self.parent.parentApp.S
             )
 
             # something went wrong
@@ -264,7 +265,8 @@ class ProjectList(npyscreen.MultiLineAction):
         if really:
             worked = self.parent.parentApp.L.deactivate_project(
                 project=self.values[self.cursor_line],
-                inactive_dir=self.parent.parentApp.S.inactive_dir
+                inactive_dir=self.parent.parentApp.S.inactive_dir,
+                settings=self.parent.parentApp.S
             )
 
             # something went wrong

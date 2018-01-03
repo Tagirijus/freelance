@@ -83,21 +83,14 @@ def replacer(
 
     # global lists related
     if is_global_list and is_settings:
-        # get active stuff
-        active_clients = set([c.client_id for c in global_list.client_list])
-        active_projects = set([p for p in global_list.project_list])
 
-        # get inactive stuff
-        inactive_clients = set([c for c in global_list.get_inactive_list(
+        # get active + inactive lists
+        all_list = global_list.get_active_and_inactive_list(
             settings=settings
-        ).client_list])
-        inactive_projects = set([p for p in global_list.get_inactive_list(
-            settings=settings
-        ).project_list])
+        )
 
-        # put them together to get all clients and projects (but no double entries)
-        all_clients = active_clients | inactive_clients
-        all_projects = active_projects | inactive_projects
+        all_clients = all_list.client_list
+        all_projects = all_list.project_list
 
         # get all offers
         all_offers = set([off for o in all_projects for off in o.get_offer_list()])
