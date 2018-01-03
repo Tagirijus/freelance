@@ -594,14 +594,7 @@ class OfferInvoice(object):
 
         # replace the replacer
         for x in replace_me.keys():
-            replace_me[x] = replacer(
-                text=str(replace_me[x]),
-                settings=settings,
-                global_list=global_list,
-                client=client,
-                project=project,
-                offerinvoice=self
-            )
+            replace_me[x] = str(replace_me[x]).format(**replace_me)
 
         # get entries
         entries = []
@@ -659,24 +652,10 @@ class OfferInvoice(object):
                 'E_HAS_TAX': (tax > 0)
             }
 
-            title = replacer(
-                text=e.title,
-                settings=settings,
-                global_list=global_list,
-                client=client,
-                project=project,
-                offerinvoice=self
-            )
+            title = e.title.format(**replace_me)
             title = title.format(**tmp_replacer)
 
-            comment = replacer(
-                text=e.comment,
-                settings=settings,
-                global_list=global_list,
-                client=client,
-                project=project,
-                offerinvoice=self
-            )
+            comment = e.comment.format(**replace_me)
             comment = comment.format(**tmp_replacer)
 
             entries.append(
