@@ -17,6 +17,9 @@ class AllInvoicesList(npyscreen.MultiLineAction):
     def update_values(self):
         """Update the values."""
         # get inactive and active as new list combined
+        self.parent.parentApp.L.update_inactive_list(
+            settings=self.parent.parentApp.S
+        )
         self.parent.the_list = self.parent.parentApp.L.get_active_and_inactive_list(
             settings=self.parent.parentApp.S
         )
