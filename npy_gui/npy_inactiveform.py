@@ -65,7 +65,7 @@ class ClientList(npyscreen.MultiLineAction):
         # ask, if the user is sure
         really = npyscreen.notify_yes_no(
             'Really add ' + tmp_client.client_id + ': ' + tmp_client.fullname() +
-            'to the active clients?'
+            ' to the active clients?'
         )
 
         # yes, add it
