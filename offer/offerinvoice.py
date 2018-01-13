@@ -494,6 +494,49 @@ class OfferInvoice(object):
 
         return date
 
+    def get_finish_date_and_days(self, project=None):
+        """Calculate and return the finish date and finish days."""
+        # if no project is given, return 1987-15-10
+        if not check_objects.is_project(project) or self._date is None:
+            return ddate(1987, 10, 15)
+
+        # get time needed for this offer
+        time = self.get_time_total()
+
+        # get initial date
+        date = self._date
+
+        # initialize finish days output
+        days = 0
+
+        # get first workday
+        while date.weekday() not in project.get_work_days():
+            days += 1
+            date += timedelta(days=1)
+
+        # add minimum_days
+        min_days = project.get_minimum_days()
+        while min_days > 0:
+            # add the day only, if it is a working day
+            if date.weekday() in project.get_work_days():
+                min_days -= 1
+
+            # add a day
+            days += 1
+            date += timedelta(days=1)
+
+        # subtract hours_per_day from time on work_days, till time <= 0
+        while time > 0:
+            # t's a work day so subtract hours_per_day from time
+            if date.weekday() in project.get_work_days():
+                time -= project.get_hours_per_day()
+
+            # add a day
+            days += 1
+            date += timedelta(days=1)
+
+        return date, days
+
     def get_project(self, global_list=None):
         """Get project of this offer/invoice."""
         if not check_objects.is_list(global_list):

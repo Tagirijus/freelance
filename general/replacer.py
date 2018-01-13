@@ -216,14 +216,15 @@ def replacer(
         else:
             replace_me['PAID_DATE'] = '-'
 
-        # finish date
-        replace_me['FINISH_DATE'] = offerinvoice.get_finish_date(
-            project=project
-        ).strftime(offerinvoice.date_fmt)
+        # finish date and days
+        replace_me['FINISH_DATE'], replace_me['FINISH_DAYS'] = (
+            offerinvoice.get_finish_date_and_days(
+                project=project
+            )
+        )
 
-        # finish days
-        replace_me['FINISH_DAYS'] = offerinvoice.get_finish_days(
-            project=project
+        replace_me['FINISH_DATE'] = replace_me['FINISH_DATE'].strftime(
+            offerinvoice.date_fmt
         )
 
         # delivery date
