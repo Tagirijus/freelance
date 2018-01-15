@@ -16,7 +16,13 @@ The frontend is made with my tweaked version of [npyscreen](https://github.com/T
 
 # Installation
 
-To be honest: totally helpless here. I have installed my tweaked version of `npyscreen` in the system and my freelance script in my folder, which I start with `python3 run.py`, when in the folder (I made some shortcuts, of course). This is probably totally noob-alike. Maybe somebody is going to improve it some day?
+To be honest: a bit helpless here. I have installed my tweaked version of `npyscreen` in the system. I did it with this command in the terminal:
+
+	pip3 install -U git+https://github.com/Tagirijus/npyscreen@NotifyInput
+
+My freelance script is in any folder, which I start with `python3 run.py`.
+
+This is probably totally noob-alike. Maybe somebody is going to improve it some day?
 
 # Usage
 
