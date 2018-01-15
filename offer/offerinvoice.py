@@ -485,7 +485,7 @@ class OfferInvoice(object):
 
         # subtract hours_per_day from time on work_days, till time <= 0
         while time > 0:
-            # t's a work day so subtract hours_per_day from time
+            # it's a work day so subtract hours_per_day from time
             if date.weekday() in project.get_work_days():
                 time -= project.get_hours_per_day()
 

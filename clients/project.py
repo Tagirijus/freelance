@@ -44,6 +44,8 @@ class Project(object):
         """Set hours_per_day."""
         try:
             self._hours_per_day = int(value)
+            if self._hours_per_day <= 0:
+                self._hours_per_day = 1
         except Exception:
             pass
 
@@ -56,6 +58,10 @@ class Project(object):
         if type(value) is list:
             self._work_days = value
 
+            # prevent setting an empty list
+            if len(self._work_days) == 0:
+                self._work_days = [0]
+
     def get_work_days(self):
         """Get work_days."""
         return self._work_days
@@ -64,6 +70,8 @@ class Project(object):
         """Set minimum_days."""
         try:
             self._minimum_days = int(value)
+            if self._minimum_days <= 0:
+                self._minimum_days = 1
         except Exception:
             pass
 
