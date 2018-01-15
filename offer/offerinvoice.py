@@ -6,6 +6,7 @@ from datetime import timedelta
 from decimal import Decimal
 from general import check_objects
 from general.replacer import replacer
+from general.replacer import ReplacementDict
 import json
 from offer.entries import BaseEntry
 from offer.entries import MultiplyEntry
@@ -676,7 +677,7 @@ class OfferInvoice(object):
             total = price + tax
             total_unit = price_unit + tax_unit
 
-            tmp_replacer = {
+            tmp_replacer = ReplacementDict({
                 'E_POSITION': position,
                 'E_TITLE': e.title,
                 'E_COMMENT': e.comment,
@@ -693,7 +694,7 @@ class OfferInvoice(object):
                 'E_UNIT_TOTAL': '{} {}'.format(total_unit, replace_me['COMMODITY']),
                 'E_TAX_PERCENT': '{}'.format(round(e.get_tax_percent())),
                 'E_HAS_TAX': (tax > 0)
-            }
+            })
 
             title = e.title.format(**replace_me)
             title = title.format(**tmp_replacer)
