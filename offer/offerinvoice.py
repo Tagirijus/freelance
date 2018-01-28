@@ -499,7 +499,7 @@ class OfferInvoice(object):
         """Calculate and return the finish date and finish days."""
         # if no project is given, return 1987-15-10
         if not check_objects.is_project(project) or self._date is None:
-            return ddate(1987, 10, 15)
+            return ddate(1987, 10, 15), 0
 
         # get time needed for this offer
         time = self.get_time_total()
