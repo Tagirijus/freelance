@@ -40,7 +40,9 @@ class BaseEntry(object):
             self._quantity_b = QuantityTime(1)
         else:
             self._quantity_b = QuantityTime(quantity_b)
-        self.quantity_b_format = '' if quantity_b_format is None else str(quantity_b_format)
+        self.quantity_b_format = (
+            '' if quantity_b_format is None else str(quantity_b_format)
+        )
         self._tax = Decimal(0)                  # set default
         self.set_tax(tax)                       # try to set arguments value
         self._time = QuantityTime(time)
@@ -211,7 +213,7 @@ class BaseEntry(object):
         quantities = self._quantity.get()
 
         # decomment next line for getting unit price divided by quantity b as well!
-        #quantities = self._quantity.get() * self._quantity_b.get()
+        # quantities = self._quantity.get() * self._quantity_b.get()
 
         # divide with quantity, if its > 0
         if quantities > 0:
@@ -254,7 +256,7 @@ class BaseEntry(object):
         quantities = self._quantity.get()
 
         # decomment next line for getting unit price divided by quantity b as well!
-        #quantities = self._quantity.get() * self._quantity_b.get()
+        # quantities = self._quantity.get() * self._quantity_b.get()
 
         # divide with quantity, if its > 0
         if quantities > 0:
