@@ -57,6 +57,7 @@ Offer / invcoie:
 - {TAX_TOTAL}: the total tax only price
 - {PRICE_TAX_TOTAL}: the total price + tax
 - {HAS_TAX}: boolen if any tax exists
+- {PAYPAL}: the total amount + tax + commodity word (e.g. "99.45eur") for the usage in paypal.me links
 
 Entries in entry:
 

@@ -267,6 +267,12 @@ def replacer(
             replace_me['COMMODITY']
         )
 
+        paypal_commodity = 'usd' if replace_me['COMMODITY'] == '$' else 'eur'
+        replace_me['PAYPAL'] = '{}{}'.format(
+            price_total + tax_total,
+            paypal_commodity
+        )
+
     if text is None:
         return replace_me
     else:
