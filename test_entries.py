@@ -243,6 +243,7 @@ def test_json_conversion_connectentry():
     c = BaseEntry()
     a.connect_entry([a, c], c.get_id())
     assert c.get_id() in a.get_connected()
+    assert a.get_id() not in a.get_connected()
 
     # make new default object
     b = ConnectEntry()
@@ -400,3 +401,70 @@ def test_unit_price():
         entry_list=liste,
         wage=Decimal('50.00')
     ) == Decimal('100.00')
+
+
+def test_multiplyentry_wage_add():
+    """
+    The new wage_add feature lets the user add an amount to the wage
+    rate by setting wage_add in the MultiplyEntry class.
+    This simply adds the amount to the hourly wage and calculates the
+    new amount for this specific entry then.
+    """
+    a = MultiplyEntry(
+        quantity=1,
+        hour_rate=0.5
+    )
+
+    wage = Decimal('50')
+
+    # default it should just multiply the wage by 0.5 now
+    assert a.get_price(wage) == Decimal('25.00')
+
+    # now I set the wage_add so that the wage should become
+    # 75.00 in the calculation (+25.00)
+    a.set_wage_add('25.00')
+    assert a.get_price(wage) == Decimal('37.50')
+
+
+def test_connectentry_wage_add():
+    """
+    The new wage_add feature lets the user add an amount to the wage
+    rate by setting wage_add in the MultiplyEntry class.
+    The ConnectEntry should be able to know this and calculate the wage
+    correctly.
+    """
+    a = MultiplyEntry(
+        quantity=1,
+        hour_rate=1
+    )
+
+    b = MultiplyEntry(
+        quantity=1,
+        hour_rate=1
+    )
+
+    c = ConnectEntry(
+        quantity=1,
+        multiplicator=2,
+        is_time=True
+    )
+
+    # add to list and connect the stuff
+    liste = []
+    liste.append(a)
+    liste.append(b)
+    c.connect_entry(liste, a.get_id())
+    c.connect_entry(liste, b.get_id())
+    liste.append(c)
+
+    wage = Decimal('50')
+
+    # default it should just multiply the wage by 1 now
+    # and the ConnectEntry doubles it (x2)
+    assert c.get_price(liste, wage) == Decimal('200.00')
+
+    # now b gets wage_add +25 thus the new connect should
+    # output a new total of:
+    #       2x 50 = 100 + 2x 75 = 150 == 250
+    b.set_wage_add('25.00')
+    assert c.get_price(liste, wage) == Decimal('250.00')

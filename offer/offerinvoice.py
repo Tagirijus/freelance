@@ -677,6 +677,13 @@ class OfferInvoice(object):
             total = price + tax
             total_unit = price_unit + tax_unit
 
+            if type(e) is MultiplyEntry:
+                wage_add = str(e.get_wage_add())
+                wage_explain = e.wage_add_explain
+            else:
+                wage_add = '0'
+                wage_explain = ''
+
             tmp_replacer = ReplacementDict({
                 'E_POSITION': position,
                 'E_TITLE': e.title,
@@ -693,7 +700,9 @@ class OfferInvoice(object):
                 'E_TOTAL': '{} {}'.format(total, replace_me['COMMODITY']),
                 'E_UNIT_TOTAL': '{} {}'.format(total_unit, replace_me['COMMODITY']),
                 'E_TAX_PERCENT': '{}'.format(round(e.get_tax_percent())),
-                'E_HAS_TAX': (tax > 0)
+                'E_HAS_TAX': (tax > 0),
+                'E_WAGE_ADD': '{} {}/h'.format(wage_add, replace_me['COMMODITY']),
+                'E_WAGE_EXPLAIN': wage_explain
             })
 
             title = e.title.format(**replace_me)

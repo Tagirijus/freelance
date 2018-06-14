@@ -496,7 +496,9 @@ class MultiplyEntry(BaseEntry):
         quantity_b=None,
         quantity_b_format=None,
         tax=None,
-        hour_rate=None
+        hour_rate=None,
+        wage_add=None,
+        wage_add_explain=None
     ):
         """Initialize the class."""
         # values of the BaseEntry class
@@ -513,6 +515,8 @@ class MultiplyEntry(BaseEntry):
 
         # new values for this class
         self._hour_rate = QuantityTime(hour_rate)
+        self._wage_add = QuantityTime(wage_add)
+        self.wage_add_explain = '' if wage_add_explain is None else str(wage_add_explain)
 
     def set_time(self, value):
         """Disable the function."""
@@ -534,7 +538,10 @@ class MultiplyEntry(BaseEntry):
             rounder = 0
         else:
             rounder = 2
-        return round(self.get_time(*args, **kwargs).get() * wage, rounder)
+        return round(
+            self.get_time(*args, **kwargs).get() * (wage + self._wage_add.get()),
+            rounder
+        )
 
     def set_hour_rate(self, value):
         """Set hour_rate."""
@@ -543,6 +550,14 @@ class MultiplyEntry(BaseEntry):
     def get_hour_rate(self):
         """Get hour_rate."""
         return self._hour_rate
+
+    def set_wage_add(self, value):
+        """Set wage_add."""
+        self._wage_add.set(value)
+
+    def get_wage_add(self):
+        """Get wage_add."""
+        return self._wage_add
 
     def to_dict(self):
         """Convert object to dict."""
@@ -559,6 +574,8 @@ class MultiplyEntry(BaseEntry):
         out['quantity_b_format'] = self.quantity_b_format
         out['tax'] = float(self._tax)
         out['hour_rate'] = str(self._hour_rate)
+        out['wage_add'] = str(self._wage_add)
+        out['wage_add_explain'] = self.wage_add_explain
 
         return out
 
@@ -639,6 +656,16 @@ class MultiplyEntry(BaseEntry):
         else:
             hour_rate = None
 
+        if 'wage_add' in js.keys():
+            wage_add = js['wage_add']
+        else:
+            wage_add = None
+
+        if 'wage_add_explain' in js.keys():
+            wage_add_explain = js['wage_add_explain']
+        else:
+            wage_add_explain = None
+
         return cls(
             id=id,
             title=title,
@@ -648,7 +675,9 @@ class MultiplyEntry(BaseEntry):
             quantity_b=quantity_b,
             quantity_b_format=quantity_b_format,
             tax=tax,
-            hour_rate=hour_rate
+            hour_rate=hour_rate,
+            wage_add=wage_add,
+            wage_add_explain=wage_add_explain
         )
 
     def copy(self, keep_id=True):
@@ -730,6 +759,42 @@ class ConnectEntry(BaseEntry):
             # return the result
             return out * self._quantity * self._quantity_b
 
+    def get_average_wage(self, entry_list=None, wage=None, *args, **kwargs):
+        """
+        Get average wage according to entry_list or wage.
+
+        entry_list is the global list holding all entry-objects.
+        This function calculates the average wage respecting the entries from the
+        entry_list. MultiplyEntries can have a wage_add, which will be added
+        to the input wage. The ConnectENtry should put this into account,
+        when calculating the price, while is_time is True. Otherwise it
+        would just calculate the time form the connected entries and
+        calculate this with the base wage only, which would not take
+        the wage_add from connected ConnectEntries into account.
+        """
+        # if is_time() == False or entry_list not a list, return wage
+        if not self.get_is_time() or type(entry_list) is not list:
+            return wage
+        # is_time() == True, calculate time respecting other entires
+        else:
+            # otherwise iterate through entry_list and find
+            # entries which ids exist in the self._connected list
+            count = 0
+            wage_sum = 0
+            for entry in entry_list:
+                if entry.get_id() in self._connected:
+                    count += 1
+
+                    # if its in the list, check type and if wage_add exists
+                    if type(entry) is MultiplyEntry:
+                        wage_sum += wage + entry.get_wage_add().get()
+                    else:
+                        wage_sum += wage
+
+            # return the result
+            new_wage = round((wage_sum / count), 2)
+            return new_wage
+
     def set_price(self, value):
         """Disable function."""
         pass
@@ -762,7 +827,8 @@ class ConnectEntry(BaseEntry):
             return Decimal('0.00')
         # if self.is_time() == True, just multiply self.get_hours() * wage
         if self.get_is_time():
-            return round(self.get_time(entry_list=entry_list).get() * wage, rounder)
+            avg_wage = self.get_average_wage(entry_list=entry_list, wage=wage)
+            return round(self.get_time(entry_list=entry_list).get() * avg_wage, rounder)
         else:
             # otherwise iterate through entry_list and find prices of
             # entries which ids exist in the self._connected list

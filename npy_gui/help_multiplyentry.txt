@@ -2,10 +2,12 @@ A multiply entry calculates the estimated time and thus a price for a task, base
 
 
 hourly rate * amount = time
+wage add = wage added to the hourly input wage
+wage add explain = explanation of the amount added to the wage
 
 and then
 
-time * wage = price
+time * (wage + wage_add) = price
 
 
 Amount format has replacement values like this:

@@ -412,6 +412,16 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
             name='Hour rate:',
             begin_entry_at=22
         )
+        self.wage_add = self.add(
+            npyscreen.TitleText,
+            name='Wage add:',
+            begin_entry_at=22
+        )
+        self.wage_add_explain = self.add(
+            TitleMultiLineEdit,
+            name='Wage explain:',
+            begin_entry_at=22
+        )
 
     def beforeEditing(self):
         """Get values from temp object."""
@@ -424,6 +434,9 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.quantity_b_format.value = self.parentApp.tmpEntry.quantity_b_format
         self.tax.value = str(self.parentApp.tmpEntry.get_tax_percent())
         self.hour_rate.value = str(self.parentApp.tmpEntry.get_hour_rate())
+        self.wage_add.value = str(self.parentApp.tmpEntry.get_wage_add())
+        self.wage_add_explain.value = self.parentApp.tmpEntry.wage_add_explain
+        self.wage_add_explain.reformat()
 
         # get actual caption for form
         if self.parentApp.tmpEntry_offer_invoice == 'offer':
@@ -446,6 +459,10 @@ class MultiplyEntryForm(npyscreen.ActionFormWithMenus):
         self.parentApp.tmpEntry.quantity_b_format = self.quantity_b_format.value
         self.parentApp.tmpEntry.set_tax(self.tax.value)
         self.parentApp.tmpEntry.set_hour_rate(self.hour_rate.value)
+        self.parentApp.tmpEntry.set_wage_add(self.wage_add.value)
+        self.parentApp.tmpEntry.wage_add_explain = (
+            self.wage_add_explain.value.replace('\n', ' ')
+        )
 
         # save or not?
         if not save:
