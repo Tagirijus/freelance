@@ -52,6 +52,10 @@ Round price:
 If enabled the prices will be rounded to a non-decimal number.
 
 
+L com.:
+Ledger comment for the ledgeradd command.
+
+
 Generate entries from time:
 This menu option will try to generate invoice entries from the time journal for this project.
 

@@ -511,6 +511,7 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
     comment = settings.defaults[lang].invoice_comment.format(**replace_dict)
     comment_b = settings.defaults[lang].invoice_comment_b.format(**replace_dict)
     delivery = settings.defaults[lang].invoice_delivery.format(**replace_dict)
+    ledger_comment = settings.defaults[lang].invoice_ledger_comment.format(**replace_dict)
 
     # date
     due_days = settings.defaults[lang].get_invoice_due_days()
@@ -530,7 +531,8 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         delivery=delivery,
         due_days=due_days,
         commodity=client.def_commodity,
-        round_price=round_price
+        round_price=round_price,
+        ledger_comment=ledger_comment
     )
 
 
@@ -565,6 +567,7 @@ def PresetInvoice(
     comment = invoice_preset.comment.format(**replace_dict)
     comment_b = invoice_preset.comment_b.format(**replace_dict)
     delivery = invoice_preset.delivery.format(**replace_dict)
+    ledger_comment = invoice_preset.ledger_comment.format(**replace_dict)
 
     # dates
     inv_date = invoice_preset.get_date()
@@ -600,5 +603,6 @@ def PresetInvoice(
         wage=wage,
         commodity=commodity,
         round_price=round_price,
-        entry_list=entry_list
+        entry_list=entry_list,
+        ledger_comment=ledger_comment
     )

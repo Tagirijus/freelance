@@ -811,6 +811,13 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             scroll_exit=True,
             values=['enabled']
         )
+        self.ledger_comment = self.add_widget_intelligent(
+            TitleTextRefresh,
+            name='L com.:',
+            begin_entry_at=12,
+            relx=60,
+            rely=self.round_price.rely
+        )
 
     def update_info(self):
         """Update info for the invoice - summerize etc."""
@@ -885,6 +892,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         self.round_price.value = (
             [0] if self.parentApp.tmpInvoice.get_round_price() else []
         )
+        self.ledger_comment.value = self.parentApp.tmpInvoice.ledger_comment
 
         self.update_info()
 
@@ -917,6 +925,8 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             self.parentApp.tmpInvoice.set_round_price(True)
         else:
             self.parentApp.tmpInvoice.set_round_price(False)
+
+        self.parentApp.tmpInvoice.ledger_comment = self.ledger_comment.value
 
         # save or not?
         if not save:

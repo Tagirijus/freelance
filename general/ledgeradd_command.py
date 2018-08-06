@@ -45,6 +45,10 @@ def generate_parameter(
     else:
         args.append('-p "{}"'.format(payee))
 
+    # get the comment
+    if invoice.ledger_comment != '':
+        args.append('-cm "{}"'.format(invoice.ledger_comment))
+
     # now generate the entries / postings / accounts
 
     # the client account

@@ -28,6 +28,7 @@ class Default(object):
         invoice_templates=None,
         invoice_due_days=None,
         invoice_delivery=None,
+        invoice_ledger_comment=None,
         date_fmt=None,
         commodity=None,
         client_id=None,
@@ -99,6 +100,9 @@ class Default(object):
         self._invoice_due_days = 14                         # set default
         self.set_invoice_due_days(invoice_due_days)         # try to set arguments value
         self.invoice_delivery = '' if invoice_delivery is None else invoice_delivery
+        self.invoice_ledger_comment = (
+            '' if invoice_ledger_comment is None else invoice_ledger_comment
+        )
 
         self.date_fmt = '' if date_fmt is None else date_fmt
         self.commodity = '' if commodity is None else commodity
@@ -449,6 +453,7 @@ class Default(object):
         out['invoice_templates'] = self._invoice_templates
         out['invoice_due_days'] = self._invoice_due_days
         out['invoice_delivery'] = self.invoice_delivery
+        out['invoice_ledger_comment'] = self.invoice_ledger_comment
 
         out['date_fmt'] = self.date_fmt
         out['commodity'] = self.commodity
@@ -564,6 +569,9 @@ class Default(object):
 
         if 'invoice_delivery' in js.keys():
             self.invoice_delivery = js['invoice_delivery']
+
+        if 'invoice_ledger_comment' in js.keys():
+            self.invoice_ledger_comment = js['invoice_ledger_comment']
 
         if 'date_fmt' in js.keys():
             self.date_fmt = js['date_fmt']
@@ -747,6 +755,7 @@ class Default(object):
             invoice_templates=self._invoice_templates,
             invoice_due_days=self._invoice_due_days,
             invoice_delivery=self.invoice_delivery,
+            invoice_ledger_comment=self.invoice_ledger_comment,
             date_fmt=self.date_fmt,
             commodity=self.commodity,
             client_id=self.client_id,

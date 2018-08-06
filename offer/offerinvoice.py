@@ -32,7 +32,8 @@ class OfferInvoice(object):
         wage=None,
         commodity=None,
         round_price=None,
-        entry_list=None
+        entry_list=None,
+        ledger_comment=None
     ):
         """Initialize the class."""
         self.title = '' if title is None else str(title)
@@ -53,6 +54,7 @@ class OfferInvoice(object):
         self.commodity = '$' if commodity is None else str(commodity)
         self._entry_list = []               # set default
         self.set_entry_list(entry_list)     # try to set arguments value
+        self.ledger_comment = '' if ledger_comment is None else str(ledger_comment)
 
     def set_date(self, value):
         """Set date."""
@@ -214,6 +216,8 @@ class OfferInvoice(object):
             except Exception:
                 out['entry_list'].append(entry)
 
+        out['ledger_comment'] = self.ledger_comment
+
         return out
 
     def to_json(self, indent=2, ensure_ascii=False):
@@ -342,6 +346,11 @@ class OfferInvoice(object):
         else:
             entry_list = None
 
+        if 'ledger_comment' in js.keys():
+            ledger_comment = js['ledger_comment']
+        else:
+            ledger_comment = None
+
         # return new object
         return cls(
             title=title,
@@ -356,7 +365,8 @@ class OfferInvoice(object):
             wage=wage,
             commodity=commodity,
             round_price=round_price,
-            entry_list=entry_list
+            entry_list=entry_list,
+            ledger_comment=ledger_comment
         )
 
     def get_price_total(self, wage=None, project=None, tax=False, round_price=None):
