@@ -792,7 +792,10 @@ class ConnectEntry(BaseEntry):
                         wage_sum += wage
 
             # return the result
-            new_wage = round((wage_sum / count), 2)
+            try:
+                new_wage = round((wage_sum / count), 2)
+            except Exception as e:
+                new_wage = 0
             return new_wage
 
     def set_price(self, value):
