@@ -1,6 +1,7 @@
 """Module for generating a proper ledgeradd command line output with given invoice."""
 
 from general import check_objects
+from general.functions import logger
 import os
 
 
@@ -61,7 +62,7 @@ def generate_parameter(
     entries = []
     if single_account == '':
         for e in invoice.get_entry_list():
-            name = e.title
+            name = e.title.replace('"', '\\"')
             price = e.get_price(
                 entry_list=invoice.get_entry_list(),
                 wage=invoice.get_wage(project=project),
