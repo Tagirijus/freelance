@@ -606,3 +606,9 @@ def PresetInvoice(
         entry_list=entry_list,
         ledger_comment=ledger_comment
     )
+
+
+def logger(variable):
+    with open('app.log', 'a') as f:
+        f.write(str(variable) + '\n')
+        f.close()

@@ -7,6 +7,7 @@ from general.functions import NewBaseEntry
 from general.functions import NewMultiplyEntry
 from general.functions import NewConnectEntry
 from general.functions import PresetInvoice
+from general.functions import logger
 from general.ledgeradd_command import generate_parameter
 from general.ledger_time import get_invoice_entries_from_time_journal
 from general.ledger_time import update_entry
