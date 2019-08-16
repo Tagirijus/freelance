@@ -75,7 +75,7 @@ def replacer(
     # if text is None:
     #     return replace_me
     # else:
-    #     return text.format(**replace_me)
+    #     return text.format_map(replace_me)
 
     # simple date stuff
     replace_me['YEAR'] = date.today().strftime('%Y')
@@ -277,4 +277,4 @@ def replacer(
     if text is None:
         return replace_me
     else:
-        return text.format(**replace_me)
+        return text.format_map(replace_me)

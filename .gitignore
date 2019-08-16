@@ -7,3 +7,4 @@
 *.pyc
 *.csv
 /TEST
+app.log

@@ -632,11 +632,11 @@ class OfferInvoice(object):
 
         # get filename with replaced values, if file not empty
         if file != '':
-            file = file.format(**replace_me).replace(' ', '_')
+            file = file.format_map(replace_me).replace(' ', '_')
 
         # use the offer title as filename
         else:
-            file = self.title.format(**replace_me).replace(' ', '_')
+            file = self.title.format_map(replace_me).replace(' ', '_')
 
         # check if output file exists and alter the name then
         file_num = 2
@@ -648,7 +648,7 @@ class OfferInvoice(object):
 
         # replace the replacer
         for x in replace_me.keys():
-            replace_me[x] = str(replace_me[x]).format(**replace_me)
+            replace_me[x] = str(replace_me[x]).format_map(replace_me)
 
         # get entries
         entries = []
@@ -715,10 +715,10 @@ class OfferInvoice(object):
                 'E_WAGE_EXPLAIN': wage_explain
             })
 
-            title = e.title.format(**replace_me)
+            title = e.title.format_map(replace_me)
             title = title.format(**tmp_replacer)
 
-            comment = e.comment.format(**replace_me)
+            comment = e.comment.format_map(replace_me)
             comment = comment.format(**tmp_replacer)
 
             entries.append(

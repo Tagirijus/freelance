@@ -159,9 +159,9 @@ def NewOffer(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    title = settings.defaults[lang].offer_title.format(**replace_dict)
-    comment = settings.defaults[lang].offer_comment.format(**replace_dict)
-    comment_b = settings.defaults[lang].offer_comment_b.format(**replace_dict)
+    title = settings.defaults[lang].offer_title.format_map(replace_dict)
+    comment = settings.defaults[lang].offer_comment.format_map(replace_dict)
+    comment_b = settings.defaults[lang].offer_comment_b.format_map(replace_dict)
 
     # get other values
     date_fmt = settings.defaults[lang].date_fmt
@@ -205,9 +205,9 @@ def PresetOffer(
         offerinvoice=offer_preset
     )
 
-    title = offer_preset.title.format(**replace_dict)
-    comment = offer_preset.comment.format(**replace_dict)
-    comment_b = offer_preset.comment_b.format(**replace_dict)
+    title = offer_preset.title.format_map(replace_dict)
+    comment = offer_preset.comment.format_map(replace_dict)
+    comment_b = offer_preset.comment_b.format_map(replace_dict)
 
     # dates
     off_date = offer_preset.get_date()
@@ -256,8 +256,8 @@ def NewBaseEntry(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    title = settings.defaults[lang].baseentry_title.format(**replace_dict)
-    comment = settings.defaults[lang].baseentry_comment.format(**replace_dict)
+    title = settings.defaults[lang].baseentry_title.format_map(replace_dict)
+    comment = settings.defaults[lang].baseentry_comment.format_map(replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_baseentry_quantity()
@@ -295,8 +295,8 @@ def PresetBaseEntry(
         project=project
     )
 
-    title = entry_preset.title.format(**replace_dict)
-    comment = entry_preset.comment.format(**replace_dict)
+    title = entry_preset.title.format_map(replace_dict)
+    comment = entry_preset.comment.format_map(replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -340,8 +340,8 @@ def NewMultiplyEntry(settings=None, global_list=None, client=None, project=None)
         project=project
     )
 
-    title = settings.defaults[lang].multiplyentry_title.format(**replace_dict)
-    comment = settings.defaults[lang].multiplyentry_comment.format(**replace_dict)
+    title = settings.defaults[lang].multiplyentry_title.format_map(replace_dict)
+    comment = settings.defaults[lang].multiplyentry_comment.format_map(replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_multiplyentry_quantity()
@@ -377,8 +377,8 @@ def PresetMultiplyEntry(
         project=project
     )
 
-    title = entry_preset.title.format(**replace_dict)
-    comment = entry_preset.comment.format(**replace_dict)
+    title = entry_preset.title.format_map(replace_dict)
+    comment = entry_preset.comment.format_map(replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -420,8 +420,8 @@ def NewConnectEntry(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    title = settings.defaults[lang].connectentry_title.format(**replace_dict)
-    comment = settings.defaults[lang].connectentry_comment.format(**replace_dict)
+    title = settings.defaults[lang].connectentry_title.format_map(replace_dict)
+    comment = settings.defaults[lang].connectentry_comment.format_map(replace_dict)
 
     # get other values
     quantity = settings.defaults[lang].get_connectentry_quantity()
@@ -459,8 +459,8 @@ def PresetConnectEntry(
         project=project
     )
 
-    title = entry_preset.title.format(**replace_dict)
-    comment = entry_preset.comment.format(**replace_dict)
+    title = entry_preset.title.format_map(replace_dict)
+    comment = entry_preset.comment.format_map(replace_dict)
 
     # get other values
     id = entry_preset._id
@@ -506,12 +506,12 @@ def NewInvoice(settings=None, global_list=None, client=None, project=None):
         project=project
     )
 
-    title = settings.defaults[lang].invoice_title.format(**replace_dict)
-    id = settings.defaults[lang].invoice_id.format(**replace_dict)
-    comment = settings.defaults[lang].invoice_comment.format(**replace_dict)
-    comment_b = settings.defaults[lang].invoice_comment_b.format(**replace_dict)
-    delivery = settings.defaults[lang].invoice_delivery.format(**replace_dict)
-    ledger_comment = settings.defaults[lang].invoice_ledger_comment.format(**replace_dict)
+    title = settings.defaults[lang].invoice_title.format_map(replace_dict)
+    id = settings.defaults[lang].invoice_id.format_map(replace_dict)
+    comment = settings.defaults[lang].invoice_comment.format_map(replace_dict)
+    comment_b = settings.defaults[lang].invoice_comment_b.format_map(replace_dict)
+    delivery = settings.defaults[lang].invoice_delivery.format_map(replace_dict)
+    ledger_comment = settings.defaults[lang].invoice_ledger_comment.format_map(replace_dict)
 
     # date
     due_days = settings.defaults[lang].get_invoice_due_days()
@@ -562,12 +562,12 @@ def PresetInvoice(
         offerinvoice=invoice_preset
     )
 
-    title = invoice_preset.title.format(**replace_dict)
-    id = invoice_preset.id.format(**replace_dict)
-    comment = invoice_preset.comment.format(**replace_dict)
-    comment_b = invoice_preset.comment_b.format(**replace_dict)
-    delivery = invoice_preset.delivery.format(**replace_dict)
-    ledger_comment = invoice_preset.ledger_comment.format(**replace_dict)
+    title = invoice_preset.title.format_map(replace_dict)
+    id = invoice_preset.id.format_map(replace_dict)
+    comment = invoice_preset.comment.format_map(replace_dict)
+    comment_b = invoice_preset.comment_b.format_map(replace_dict)
+    delivery = invoice_preset.delivery.format_map(replace_dict)
+    ledger_comment = invoice_preset.ledger_comment.format_map(replace_dict)
 
     # dates
     inv_date = invoice_preset.get_date()

@@ -581,7 +581,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
         )
 
         # ask for payee
-        def_payee = self.parentApp.S.ledgeradd_def_payee.format(**replacer_dict)
+        def_payee = self.parentApp.S.ledgeradd_def_payee.format_map(replacer_dict)
         payee = npyscreen.notify_input(
             'Payee:',
             pre_text=def_payee,
@@ -593,7 +593,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             return False
 
         # get payee replaced
-        payee = payee.format(**replacer_dict)
+        payee = payee.format_map(replacer_dict)
 
         # generate parameters
         parameter = generate_parameter(
@@ -611,7 +611,7 @@ class InvoiceForm(npyscreen.FormMultiPageActionWithMenus):
             )
             return False
 
-        parameter = parameter.format(**replacer_dict)
+        parameter = parameter.format_map(replacer_dict)
 
         try:
             os.system(
