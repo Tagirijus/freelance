@@ -61,10 +61,11 @@ class List(object):
         """Add a client, if its ID does not already exist."""
         is_client = type(client) is Client
         id_exists = client.client_id in [c.client_id for c in self.client_list]
+        id_exists_inactive = self.inactive_list.client_exists(client)
         id_is_empty = client.client_id == ''
 
         # cancel if it's no client or the client_id already exists or empty
-        if not is_client or id_exists or id_is_empty:
+        if not is_client or id_exists or id_exists_inactive or id_is_empty:
             return False
 
         # append the client and save it immediately
@@ -360,7 +361,9 @@ class List(object):
         filename_old = path + '/' + self.us(project.project_id()) + '.flproject'
         filename_old_bu = path + '/' + self.us(project.project_id()) + '.flproject_bu'
         filename_new = path_deact + '/' + self.us(project.project_id()) + '.flproject'
-        filename_new_bu = path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
+        filename_new_bu = (
+            path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
+        )
 
         # move the old file to the inactive directory and pop variable from list
         try:
@@ -402,7 +405,9 @@ class List(object):
 
         # generate filenames
         filename_old = path_deact + '/' + self.us(project.project_id()) + '.flproject'
-        filename_old_bu = path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
+        filename_old_bu = (
+            path_deact + '/' + self.us(project.project_id()) + '.flproject_bu'
+        )
         filename_new = path + '/' + self.us(project.project_id()) + '.flproject'
         filename_new_bu = path + '/' + self.us(project.project_id()) + '.flproject_bu'
 
@@ -791,7 +796,6 @@ class List(object):
         inact_list.client_list += act_list.client_list
 
         return inact_list
-
 
     def get_unpaid_invoices(self):
         """Return list with unpaid invoices - sorted by due date."""
