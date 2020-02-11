@@ -66,7 +66,7 @@ def generate_parameter(
             price = e.get_price(
                 entry_list=invoice.get_entry_list(),
                 wage=invoice.get_wage(project=project),
-                round_prive=invoice.get_round_price()
+                round_price=invoice.get_round_price()
             )
 
             entries.append(
