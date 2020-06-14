@@ -57,11 +57,15 @@ class List(object):
 
         return False
 
-    def add_client(self, client=None):
+    def add_client(self, client=None, activate=False):
         """Add a client, if its ID does not already exist."""
         is_client = type(client) is Client
         id_exists = client.client_id in [c.client_id for c in self.client_list]
-        id_exists_inactive = self.inactive_list.client_exists(client)
+        id_exists_inactive = (
+            self.inactive_list.client_exists(client)
+            if not activate
+            else False
+        )
         id_is_empty = client.client_id == ''
 
         # cancel if it's no client or the client_id already exists or empty
@@ -254,7 +258,7 @@ class List(object):
                 client.language = 'en'
 
             # add client to the active list
-            added = self.add_client(client=client)
+            added = self.add_client(client=client, activate=True)
 
             # cancel if it did not work
             if not added:
