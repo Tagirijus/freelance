@@ -44,6 +44,7 @@ def code_str(text):
     text = text.replace('Ã', 'É')
     text = text.replace('Ã', 'È')
     text = text.replace('Ã¡', 'á')
+    text = text.replace('Ã§', 'ç')
     return text
 
 
