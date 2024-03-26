@@ -40,6 +40,8 @@ Start the programm and open the menu with `Ctrl+X`. Then you have a help option 
 
 Apparently the ODT export with the module _secretary_ uses another Python module called _Jinja2_. Since version 3 of the latter module the ODT export does not work anymore. The ugly workaround is to downgrade to an older version of Jinja2: `pip3 install Jinja2==2.10`. This did the trick for me.
 
+Also the programm only works with python3.6 as it seems ...
+
 # To do
 
 - Make Freelance work faster. Especially the `replacer()` function slows the programm down very much.
