@@ -1,3 +1,9 @@
+# Archived
+
+**ATTENTION:** Since _2024-06-16_ I decided to archive this project, due to compability and dependency problems or so ... also due to bad coding etc. While I archive this repo I start a new project, though. Feel free to check out [plainvoice](https://github.com/Tagirijus/plainvoice) here on github!
+
+# Description
+
 A programm for managing clients, projects and connected offers and invoices.
 
 # Example workflow
